@@ -28,6 +28,9 @@ FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.
 <!-- Start Installation [installation] -->
 ## Installation
 
+> [!TIP]
+> To finish publishing your MCP Server to npm and others you must [run your first generation action](https://www.speakeasy.com/docs/github-setup#step-by-step-guide).
+
 ### Claude
 
 Add the following server definition to your `claude_desktop_config.json` file:
@@ -106,25 +109,25 @@ The MCP Server can be installed with either [npm](https://www.npmjs.com/), [pnpm
 #### NPM
 
 ```bash
-npm add firehydrant-mcp
+npm add <UNSET>
 ```
 
 #### PNPM
 
 ```bash
-pnpm add firehydrant-mcp
+pnpm add <UNSET>
 ```
 
 #### Bun
 
 ```bash
-bun add firehydrant-mcp
+bun add <UNSET>
 ```
 
 #### Yarn
 
 ```bash
-yarn add firehydrant-mcp
+yarn add <UNSET>
 ```
 <!-- End Installation [installation] -->
 

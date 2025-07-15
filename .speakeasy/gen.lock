@@ -5,8 +5,8 @@ management:
   docVersion: 0.0.1
   speakeasyVersion: 1.581.2
   generationVersion: 2.656.9
-  releaseVersion: 0.0.1-beta.5
-  configChecksum: 3e9718aa27d6bceeafd73e7ac113b5b7
+  releaseVersion: 0.0.1-beta.6
+  configChecksum: 5dc9af60230c815359f96fea93ca0535
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
 features:
   mcp-typescript:
