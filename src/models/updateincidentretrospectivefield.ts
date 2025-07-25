@@ -4,60 +4,12 @@
 
 import * as z from "zod";
 
-export type UpdateIncidentRetrospectiveFieldValue2 = Array<any> | number;
-
-export const UpdateIncidentRetrospectiveFieldValue2$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveFieldValue2,
-  z.ZodTypeDef,
-  unknown
-> = z.union([
-  z.array(z.any()),
-  z.number().int(),
-]);
-
-export type UpdateIncidentRetrospectiveFieldValue1 = string | number;
-
-export const UpdateIncidentRetrospectiveFieldValue1$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveFieldValue1,
-  z.ZodTypeDef,
-  unknown
-> = z.union([
-  z.string(),
-  z.number().int(),
-]);
-
-/**
- * The value to set for the field.
- */
-export type UpdateIncidentRetrospectiveFieldValue3 =
-  | number
-  | string
-  | number
-  | Array<any>
-  | number;
-
-export const UpdateIncidentRetrospectiveFieldValue3$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveFieldValue3,
-  z.ZodTypeDef,
-  unknown
-> = z.union([
-  z.number().int(),
-  z.union([
-    z.string(),
-    z.number().int(),
-  ]),
-  z.union([
-    z.array(z.any()),
-    z.number().int(),
-  ]),
-]).describe("The value to set for the field.");
-
 /**
  * Update retrospective field value
  */
 export type UpdateIncidentRetrospectiveField = {
   dynamic_input_field_id?: string | null | undefined;
-  value: number | string | number | Array<any> | number;
+  value: string;
 };
 
 export const UpdateIncidentRetrospectiveField$zodSchema: z.ZodType<
@@ -66,15 +18,5 @@ export const UpdateIncidentRetrospectiveField$zodSchema: z.ZodType<
   unknown
 > = z.object({
   dynamic_input_field_id: z.string().nullable().optional(),
-  value: z.union([
-    z.number().int(),
-    z.union([
-      z.string(),
-      z.number().int(),
-    ]),
-    z.union([
-      z.array(z.any()),
-      z.number().int(),
-    ]),
-  ]),
+  value: z.string(),
 }).describe("Update retrospective field value");

@@ -1,4 +1,4 @@
-speakeasyVersion: 1.582.0
+speakeasyVersion: 1.590.0
 sources:
     FireHydrant-OAS:
         sourceNamespace: fire-hydrant-mcp-oas

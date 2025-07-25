@@ -19,7 +19,7 @@ export const tool$retrospectivesUpdateIncidentRetrospectiveField:
   - Updating a field in a retrospective,
   - Updating the value of a field in a retrospective.
 
-Values should be compatible with the tiptap editor (array structure).
+The value should be unstyled HTML.
 `,
     args,
     tool: async (client, args, ctx) => {

@@ -28,29 +28,17 @@ FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.
 <!-- Start Installation [installation] -->
 ## Installation
 
-### Claude
+<details>
+<summary>Cursor</summary>
 
-Add the following server definition to your `claude_desktop_config.json` file:
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](https://cursor.com/install-mcp?name=FireHydrant&config=eyJtY3BTZXJ2ZXJzIjp7IkZpcmVIeWRyYW50Ijp7ImNvbW1hbmQiOiJucHgiLCJhcmdzIjpbImZpcmVoeWRyYW50LW1jcCIsInN0YXJ0IiwiLS1hcGkta2V5IiwiLi4uIl19fX0=)
 
-```json
-{
-  "mcpServers": {
-    "FireHydrant": {
-      "command": "npx",
-      "args": [
-        "-y", "--package", "firehydrant-mcp",
-        "--",
-        "mcp", "start",
-        "--api-key", "..."
-      ]
-    }
-  }
-}
-```
+Or manually:
 
-### Cursor
-
-Create a `.cursor/mcp.json` file in your project root with the following content:
+1. Open Cursor Settings
+2. Select Tools and Integrations
+3. Select New MCP Server
+4. If the configuration file is empty paste the following JSON into the MCP Server Configuration:
 
 ```json
 {
@@ -58,74 +46,51 @@ Create a `.cursor/mcp.json` file in your project root with the following content
     "FireHydrant": {
       "command": "npx",
       "args": [
-        "-y", "--package", "firehydrant-mcp",
-        "--",
-        "mcp", "start",
-        "--api-key", "..."
+        "firehydrant-mcp",
+        "start",
+        "--api-key",
+        "..."
       ]
     }
   }
 }
 ```
 
-### Standalone Binary
+</details>
 
-Run the MCP server as a standalone binary with no additional dependencies. Pull these binaries from available Github releases:
+<details>
+<summary>Claude Code CLI</summary>
 
 ```bash
-curl -L -o mcp-server \
-    https://github.com/{org}/{repo}/releases/download/{tag}/mcp-server-bun-darwin-arm64 && \
-chmod +x mcp-server
+npx firehydrant-mcp start --api-key ...
 ```
 
-If the repo is a private repo you must add your Github PAT to download a release `-H "Authorization: Bearer {GITHUB_PAT}"`.
+</details>
+<details>
+<summary>Claude Desktop</summary>
+Claude Desktop doesn't yet support SSE/remote MCP servers.
+
+However, you can run the MCP server locally by cloning this repository. Once cloned, you'll need to install dependencies (`npm install`) and build the server (`npm run build`).
+
+Then, configure your server definition to reference your local clone. For example:
 
 ```json
 {
   "mcpServers": {
-    "Todos": {
-      "command": "./DOWNLOAD/PATH/mcp-server",
+    "FireHydrant": {
+      "command": "node",
       "args": [
-        "start"
+        "./bin/mcp-server.js",
+        "start",
+        "--api-key",
+        "..."
       ]
     }
   }
 }
 ```
 
-For a full list of server arguments, run:
-
-```bash
-npx -y --package firehydrant-mcp -- mcp start --help
-```
-
-### Package Managers
-
-The MCP Server can be installed with either [npm](https://www.npmjs.com/), [pnpm](https://pnpm.io/), [bun](https://bun.sh/) or [yarn](https://classic.yarnpkg.com/en/) package managers.
-
-#### NPM
-
-```bash
-npm add firehydrant-mcp
-```
-
-#### PNPM
-
-```bash
-pnpm add firehydrant-mcp
-```
-
-#### Bun
-
-```bash
-bun add firehydrant-mcp
-```
-
-#### Yarn
-
-```bash
-yarn add firehydrant-mcp
-```
+</details>
 <!-- End Installation [installation] -->
 
 <!-- Placeholder for Future Speakeasy SDK Sections -->

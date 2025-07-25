@@ -457,7 +457,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/Incidents_RetrospectiveFieldEntity"}
       x-codegen-request-body-name: "update_incident_retrospective_field"
-      x-speakeasy-mcp: {"disabled": false, "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nValues should be compatible with the tiptap editor (array structure).\n"}
+      x-speakeasy-mcp: {"disabled": false, "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nThe value should be unstyled HTML.\n"}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}/inputs": {}
   "/v1/incident_roles": {}
   "/v1/incident_roles/{incident_role_id}": {}
@@ -2051,13 +2051,19 @@ components:
             properties:
               "user_id":
                 type: "string"
+                description: "The ID of a user to add to the team. This parameter is mutually exclusive with schedule_id and signals_on_call_schedule_id."
                 nullable: true
               "schedule_id":
                 type: "string"
+                description: "The ID of a third-party on-call schedule to add to the team, allowing you to specify that whoever is on call for this schedule when the team is assigned to an incident gets added to the incident and optionally assigned to the configured incident role. This parameter is mutually exclusive with user_id and signals_on_call_schedule_id."
+                nullable: true
+              "signals_on_call_schedule_id":
+                type: "string"
+                description: "The ID of a Signals on-call schedule to add to the team, allowing you to specify that whoever is on call for this schedule when the team is assigned to an incident gets added to the incident and optionally assigned to the configured incident role.. This parameter is mutually exclusive with user_id and schedule_id."
                 nullable: true
               "incident_role_id":
                 type: "string"
-                description: "An incident role ID that this user will automatically assigned if this team is assigned to an incident"
+                description: "An incident role ID that the user will automatically assigned if this team is assigned to an incident"
                 nullable: true
         "invite_emails":
           type: "array"
@@ -3088,8 +3094,8 @@ components:
       type: "object"
       properties:
         "logic":
-          type: "object"
-          description: "An unstructured object of key/value pairs describing the logic for applying the rule."
+          type: "string"
+          description: "JSON stringified object of key/value pairs describing the logic for applying the rule."
           nullable: true
         "user_data": {"$ref": "#/components/schemas/NullableFHTypes_GenericEntity"}
     "FHTypes_GenericEntity":
@@ -3149,9 +3155,15 @@ components:
             properties:
               "user_id":
                 type: "string"
+                description: "The ID of a user to add to the team. This parameter is mutually exclusive with schedule_id and signals_on_call_schedule_id."
                 nullable: true
               "schedule_id":
                 type: "string"
+                description: "The ID of a third-party on-call schedule to add to the team, allowing you to specify that whoever is on call for this schedule when the team is assigned to an incident gets added to the incident and optionally assigned to the configured incident role. This parameter is mutually exclusive with user_id and signals_on_call_schedule_id."
+                nullable: true
+              "signals_on_call_schedule_id":
+                type: "string"
+                description: "The ID of a Signals on-call schedule to add to the team, allowing you to specify that whoever is on call for this schedule when the team is assigned to an incident gets added to the incident and optionally assigned to the configured incident role.. This parameter is mutually exclusive with user_id and schedule_id."
                 nullable: true
               "incident_role_id":
                 type: "string"
@@ -4197,9 +4209,11 @@ components:
         "start_time":
           type: "string"
           description: "The start time of the shift in ISO8601 format."
+          format: "date-time"
         "end_time":
           type: "string"
           description: "The end time of the shift in ISO8601 format."
+          format: "date-time"
         "user_id":
           type: "string"
           description: "The ID of the user who is on-call for the shift. If not provided, the shift will be unassigned."
@@ -4215,10 +4229,12 @@ components:
         "start_time":
           type: "string"
           description: "The start time of the shift in ISO8601 format."
+          format: "date-time"
           nullable: true
         "end_time":
           type: "string"
           description: "The end time of the shift in ISO8601 format."
+          format: "date-time"
           nullable: true
         "user_id":
           type: "string"
@@ -6103,16 +6119,9 @@ components:
           description: "The ID of the dynamic input field to update."
           nullable: true
         "value":
-          type: "integer"
-          description: "The value to set for the field."
+          type: "string"
+          description: "The value of the field in the retrospective. Unstyled HTML is expected.\n"
           format: "~"
-          oneOf:
-            - type: "integer"
-            - type: "string"
-            - type: "array"
-              items:
-                type: "object"
-                additionalProperties: true
       description: "Update retrospective field value"
     "IncidentRoleEntityPaginated":
       type: "object"
@@ -9957,6 +9966,26 @@ components:
           type: "boolean"
           description: "Boolean that represents whether user is active"
           nullable: true
+        "phoneNumbers":
+          type: "array"
+          description: "Phone numbers for the User"
+          nullable: true
+          items:
+            required:
+              - "value"
+            type: "object"
+            properties:
+              "value":
+                type: "string"
+                description: "String that represents a phone number for the User"
+              "type":
+                type: "string"
+                description: "Type of phone number (mobile, work, home, etc.)"
+                nullable: true
+              "primary":
+                type: "boolean"
+                description: "Boolean which signifies if a phone number is intended as the primary phone for the User"
+                nullable: true
       description: "PUT SCIM endpoint to update a User. This endpoint is used to replace a resource's attributes."
     "create_scim_user":
       required:
@@ -10004,6 +10033,26 @@ components:
           type: "string"
           description: "This attribute is intended to be used as a means to set, replace, or compare (i.e., filter for equality) a password"
           nullable: true
+        "phoneNumbers":
+          type: "array"
+          description: "Phone numbers for the User"
+          nullable: true
+          items:
+            required:
+              - "value"
+            type: "object"
+            properties:
+              "value":
+                type: "string"
+                description: "String that represents a phone number for the User"
+              "type":
+                type: "string"
+                description: "Type of phone number (mobile, work, home, etc.)"
+                nullable: true
+              "primary":
+                type: "boolean"
+                description: "Boolean which signifies if a phone number is intended as the primary phone for the User"
+                nullable: true
       description: "SCIM endpoint to create and provision a new User. This endpoint will provision the User, which allows them to accept their account throught their IDP or via the Forgot Password flow."
     "ingest_catalog_data":
       required:

@@ -1,19 +1,19 @@
 lockVersion: 2.0.0
 id: 0dd544ca-3933-4c41-a5b5-b9a57ec94099
 management:
-  docChecksum: d8567cd95746cb3ff71d167db27789e2
+  docChecksum: f0c9b1fde7f1749425dc69efbe0c3b69
   docVersion: 0.0.1
-  speakeasyVersion: 1.582.0
-  generationVersion: 2.657.1
-  releaseVersion: 0.0.1-beta.7
-  configChecksum: 0e55683e8db955378f6f7a158d7b7096
+  speakeasyVersion: 1.590.0
+  generationVersion: 2.666.0
+  releaseVersion: 0.0.1-beta.8
+  configChecksum: 1fa58f017066d97cacd77b213f4cfadf
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
   published: true
 features:
   mcp-typescript:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.0
-    core: 0.1.4
+    core: 0.2.3
     defaultEnabledRetries: 0.1.0
     enumUnions: 0.1.0
     globalSecurity: 0.1.0

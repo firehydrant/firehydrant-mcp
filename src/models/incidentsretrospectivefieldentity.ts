@@ -19,20 +19,15 @@ export type IncidentsRetrospectiveFieldEntityType = z.infer<
   typeof IncidentsRetrospectiveFieldEntityType$zodSchema
 >;
 
-export type IncidentsRetrospectiveFieldEntityValue =
-  | number
-  | string
-  | Array<{ [k: string]: any }>;
+export type Value = number | string | Array<{ [k: string]: any }>;
 
-export const IncidentsRetrospectiveFieldEntityValue$zodSchema: z.ZodType<
-  IncidentsRetrospectiveFieldEntityValue,
-  z.ZodTypeDef,
-  unknown
-> = z.union([
-  z.number().int(),
-  z.string(),
-  z.array(z.record(z.any())),
-]);
+export const Value$zodSchema: z.ZodType<Value, z.ZodTypeDef, unknown> = z.union(
+  [
+    z.number().int(),
+    z.string(),
+    z.array(z.record(z.any())),
+  ],
+);
 
 /**
  * Incidents_RetrospectiveFieldEntity model

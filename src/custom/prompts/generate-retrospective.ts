@@ -17,11 +17,6 @@ After generating the retrospetive, offer to:
 - Make changes or corrections based on my feedback.
 - Update the fiels of the retrosepctive for the incident using the content
   generated for each template field.
-
-When update the retrospective fields, keep the following in mind:
-  - When updating FireHydrant retrospective fields, the value field must be an
-    array containing tiptap editor objects.
-  - For bold text, be sure to use \`strong\` as the mark type.
 `;
 
 export const prompt$GenerateRetrospective: PromptDefinition = {

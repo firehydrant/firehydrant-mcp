@@ -1,6 +1,6 @@
 {
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "author": "FireHydrant",
   "type": "module",
   "sideEffects": false,
@@ -9,6 +9,7 @@
     "url": "https://github.com/firehydrant/firehydrant-mcp.git"
   },
   "bin": {
+    "firehydrant-mcp": "bin/mcp-server.js",
     "mcp": "bin/mcp-server.js"
   },
   "scripts": {
@@ -20,6 +21,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.11.5",
     "@stricli/core": "^1.1.2",
+    "@tiptap/core": "^3.0.7",
+    "@tiptap/html": "^3.0.7",
+    "@tiptap/starter-kit": "^3.0.7",
     "bun": "^1.2.12",
     "express": "^5.1.0",
     "zod": "^3.25.7"
