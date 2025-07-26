@@ -22,13 +22,14 @@ generation:
     generateNewTests: false
     skipResponseBodyAssertions: false
 mcp-typescript:
-  version: 0.0.1-beta.7
+  version: 0.0.1-beta.8
   additionalDependencies:
     dependencies: {}
     devDependencies: {}
     peerDependencies: {}
   author: FireHydrant
   baseErrorName: FireHydrantError
+  cloudflareEnabled: false
   defaultErrorName: FireHydrantDefaultError
   inputModelSuffix: input
   outputModelSuffix: output

@@ -11,12 +11,16 @@ export const consoleLoggerLevels = [
 
 export type ConsoleLoggerLevel = (typeof consoleLoggerLevels)[number];
 
-export type ConsoleLogger = {
-  [key in ConsoleLoggerLevel]: (
-    message: string,
-    data?: Record<string, unknown>,
-  ) => void;
-};
+export type ConsoleLogger =
+  & {
+    [key in ConsoleLoggerLevel]: (
+      message: string,
+      data?: Record<string, unknown>,
+    ) => void;
+  }
+  & {
+    level: ConsoleLoggerLevel;
+  };
 
 export function createConsoleLogger(level: ConsoleLoggerLevel): ConsoleLogger {
   const min = consoleLoggerLevels.indexOf(level);
@@ -27,6 +31,7 @@ export function createConsoleLogger(level: ConsoleLoggerLevel): ConsoleLogger {
     warning: noop,
     info: noop,
     error: noop,
+    level,
   };
 
   return consoleLoggerLevels.reduce((logger, level, i) => {

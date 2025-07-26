@@ -108,7 +108,7 @@ async function stringifySSEToJSON(
 export function createRegisterResource(
   logger: ConsoleLogger,
   server: McpServer,
-  sdk: FireHydrantCore,
+  getSDK: () => FireHydrantCore,
   allowedScopes: Set<MCPScope>,
 ): (resource: ResourceDefinition) => void {
   return (resource: ResourceDefinition): void => {
@@ -133,7 +133,7 @@ export function createRegisterResource(
       resource.name,
       resource.resource,
       metadata,
-      async (uri, ctx) => resource.read(sdk, uri, ctx),
+      async (uri, ctx) => resource.read(getSDK(), uri, ctx),
     );
 
     logger.debug("Registered resource", { name: resource.name });
@@ -143,7 +143,7 @@ export function createRegisterResource(
 export function createRegisterResourceTemplate(
   logger: ConsoleLogger,
   server: McpServer,
-  sdk: FireHydrantCore,
+  getSDK: () => FireHydrantCore,
   allowedScopes: Set<MCPScope>,
 ): (resource: ResourceTemplateDefinition) => void {
   return (resource: ResourceTemplateDefinition): void => {
@@ -168,7 +168,7 @@ export function createRegisterResourceTemplate(
       resource.name,
       resource.resource,
       metadata,
-      async (uri, vars, ctx) => resource.read(sdk, uri, vars, ctx),
+      async (uri, vars, ctx) => resource.read(getSDK(), uri, vars, ctx),
     );
 
     logger.debug("Registered resource template", { name: resource.name });
