@@ -97,7 +97,7 @@ async function consumeSSE(
 export function createRegisterTool(
   logger: ConsoleLogger,
   server: McpServer,
-  sdk: FireHydrantCore,
+  getSDK: () => FireHydrantCore,
   allowedScopes: Set<MCPScope>,
   allowedTools?: Set<string>,
 ): <A extends ZodRawShape | undefined>(tool: ToolDefinition<A>) => void {
@@ -120,11 +120,11 @@ export function createRegisterTool(
 
     if (tool.args) {
       server.tool(tool.name, tool.description, tool.args, async (args, ctx) => {
-        return tool.tool(sdk, args, ctx);
+        return tool.tool(getSDK(), args, ctx);
       });
     } else {
       server.tool(tool.name, tool.description, async (ctx) => {
-        return tool.tool(sdk, ctx);
+        return tool.tool(getSDK(), ctx);
       });
     }
 
