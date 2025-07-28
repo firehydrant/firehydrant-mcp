@@ -69,7 +69,7 @@ export async function formatResult(value: string): Promise<GetPromptResult> {
 export function createRegisterPrompt(
   logger: ConsoleLogger,
   server: McpServer,
-  sdk: FireHydrantCore,
+  getSDK: () => FireHydrantCore,
   allowedScopes: Set<MCPScope>,
 ): <A extends PromptArgsRawShape | undefined>(
   prompt: PromptDefinition<A>,
@@ -95,13 +95,13 @@ export function createRegisterPrompt(
           prompt.name,
           prompt.description,
           prompt.args,
-          async (args, ctx) => prompt.prompt(sdk, args, ctx),
+          async (args, ctx) => prompt.prompt(getSDK(), args, ctx),
         );
       } else {
         server.prompt(
           prompt.name,
           prompt.args,
-          async (args, ctx) => prompt.prompt(sdk, args, ctx),
+          async (args, ctx) => prompt.prompt(getSDK(), args, ctx),
         );
       }
     } else {
@@ -109,10 +109,10 @@ export function createRegisterPrompt(
         server.prompt(
           prompt.name,
           prompt.description,
-          async (ctx) => prompt.prompt(sdk, ctx),
+          async (ctx) => prompt.prompt(getSDK(), ctx),
         );
       } else {
-        server.prompt(prompt.name, async (ctx) => prompt.prompt(sdk, ctx));
+        server.prompt(prompt.name, async (ctx) => prompt.prompt(getSDK(), ctx));
       }
     }
 

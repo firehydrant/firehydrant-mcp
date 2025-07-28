@@ -8,12 +8,13 @@ export class APIError extends Error {
     public readonly httpMeta: {
       response: Response;
       request: Request;
+      body: string;
     },
   ) {
     super(
       `${message}: Status ${httpMeta.response.status} Content-Type ${
         httpMeta.response.headers.get("content-type") || ""
-      }`,
+      } Body: ${httpMeta.body}`,
     );
     this.name = "APIError";
   }

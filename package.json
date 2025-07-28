@@ -1,6 +1,6 @@
 {
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.7",
+  "version": "0.0.1-beta.8",
   "author": "FireHydrant",
   "type": "module",
   "sideEffects": false,
@@ -9,6 +9,7 @@
     "url": "https://github.com/firehydrant/firehydrant-mcp.git"
   },
   "bin": {
+    "firehydrant-mcp": "bin/mcp-server.js",
     "mcp": "bin/mcp-server.js"
   },
   "scripts": {
