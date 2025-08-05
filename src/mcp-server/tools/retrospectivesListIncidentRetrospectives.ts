@@ -21,6 +21,7 @@ export const tool$retrospectivesListIncidentRetrospectives: ToolDefinition<
   - Getting basic data about a retrospective.
   - Getting the fields of a retrospective.
 `,
+  scopes: ["read"],
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await retrospectivesListIncidentRetrospectives(

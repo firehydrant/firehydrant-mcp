@@ -15,6 +15,7 @@ export const tool$incidentsCreateIncident: ToolDefinition<typeof args> = {
   description: `Create an incident
 
 Create a new incident`,
+  scopes: ["read", "write"],
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await incidentsCreateIncident(

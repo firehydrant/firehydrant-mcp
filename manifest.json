@@ -1,7 +1,7 @@
 {
   "dxt_version": "0.1",
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.11",
+  "version": "0.0.1-beta.12",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {

@@ -15,6 +15,7 @@ export const tool$incidentsListIncidents: ToolDefinition<typeof args> = {
   description: `List incidents
 
 List all of the incidents in the organization`,
+  scopes: ["read"],
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await incidentsListIncidents(

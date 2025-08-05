@@ -13,7 +13,8 @@ actions:
       x-speakeasy-mcp:
         disabled: false
         name: list-retros-by-incident
-        scopes: "read"
+        scopes:
+          - "read"
         description: >
           Lists all retrospectives (RCAs) for an incident. Among other things, this is
           useful for:
@@ -27,7 +28,8 @@ actions:
       x-speakeasy-mcp:
         disabled: false
         name: list-incidents
-        scopes: "read"
+        scopes:
+          - "read"
 
   - target: $.paths..[?@.operationId == "create_incident"]
     update:
@@ -83,7 +85,8 @@ actions:
       x-speakeasy-mcp:
         disabled: false
         name: list-alerts
-        scopes: "read"
+        scopes:
+          - "read"
 
   - target: $.paths.*[?@["x-speakeasy-mcp"].disabled != false]
     remove: true

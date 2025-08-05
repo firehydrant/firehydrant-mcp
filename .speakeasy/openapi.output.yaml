@@ -316,7 +316,7 @@ paths:
           content:
             "application/json":
               schema: {"$ref": "#/components/schemas/IncidentEntityPaginated"}
-      x-speakeasy-mcp: {"disabled": false, "name": "list-incidents"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-incidents", "scopes": ["read"]}
     post:
       tags:
         - "Incidents"
@@ -335,7 +335,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/IncidentEntity"}
       x-codegen-request-body-name: "create_incident"
-      x-speakeasy-mcp: {"disabled": false, "name": "create-incident"}
+      x-speakeasy-mcp: {"disabled": false, "name": "create-incident", "scopes": ["read", "write"]}
   "/v1/incidents/{incident_id}/channel": {}
   "/v1/incidents/{incident_id}/close": {}
   "/v1/incidents/{incident_id}/resolve": {}
@@ -419,7 +419,7 @@ paths:
           content:
             "application/json":
               schema: {"$ref": "#/components/schemas/Incidents_RetrospectiveEntityPaginated"}
-      x-speakeasy-mcp: {"disabled": false, "name": "list-retros-by-incident", "description": "Lists all retrospectives (RCAs) for an incident. Among other things, this is useful for:\n\n  - Getting a list of retrospectives for an incident,\n  - Getting basic data about a retrospective.\n  - Getting the fields of a retrospective.\n"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-retros-by-incident", "scopes": ["read"], "description": "Lists all retrospectives (RCAs) for an incident. Among other things, this is useful for:\n\n  - Getting a list of retrospectives for an incident,\n  - Getting basic data about a retrospective.\n  - Getting the fields of a retrospective.\n"}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}": {}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields": {}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}":
@@ -457,7 +457,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/Incidents_RetrospectiveFieldEntity"}
       x-codegen-request-body-name: "update_incident_retrospective_field"
-      x-speakeasy-mcp: {"disabled": false, "name": "update-retrospective-field", "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nThe value should be unstyled HTML.\n"}
+      x-speakeasy-mcp: {"disabled": false, "name": "update-retrospective-field", "scopes": ["read", "write"], "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nThe value should be unstyled HTML.\n"}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}/inputs": {}
   "/v1/incident_roles": {}
   "/v1/incident_roles/{incident_role_id}": {}
@@ -655,7 +655,7 @@ paths:
           content:
             "application/json":
               schema: {"$ref": "#/components/schemas/Alerts_AlertEntityPaginated"}
-      x-speakeasy-mcp: {"disabled": false, "name": "list-alerts"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-alerts", "scopes": ["read"]}
   "/v1/alerts/{alert_id}": {}
   "/v1/processing_log_entries": {}
   "/v1/ticketing/tickets": {}
