@@ -76,8 +76,14 @@ paths:
   "/v1/teams/{team_id}/call_routes": {}
   "/v1/teams/{team_id}/escalation_policies": {}
   "/v1/teams/{team_id}/escalation_policies/{id}": {}
+  "/v1/teams/{team_id}/on_call_schedules/preview": {}
   "/v1/teams/{team_id}/on_call_schedules": {}
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}": {}
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/preview": {}
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations": {}
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/{rotation_id}/copy": {}
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/{rotation_id}": {}
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/{rotation_id}/overrides": {}
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/shifts": {}
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/shifts/{id}": {}
   "/v1/teams/{team_id}/signal_rules": {}
@@ -1229,6 +1235,9 @@ components:
         "in_support_hours":
           type: "boolean"
           nullable: true
+        "restrict_signals_resource_management":
+          type: "boolean"
+          nullable: true
     "AuthorEntity":
       type: "object"
       properties:
@@ -2100,6 +2109,9 @@ components:
           nullable: true
         "created_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
         "in_support_hours":
+          type: "boolean"
+          nullable: true
+        "restrict_signals_resource_management":
           type: "boolean"
           nullable: true
         "slack_channel": {"$ref": "#/components/schemas/NullableIntegrations_Slack_SlackChannelEntity"}
@@ -3296,6 +3308,7 @@ components:
         "timeout":
           type: "string"
           nullable: true
+        "on_call_rotation": {"$ref": "#/components/schemas/NullableSuccinctEntity"}
     "Signals_API_TargetEntity":
       type: "object"
       properties:
@@ -3782,6 +3795,193 @@ components:
           description: "Priority-specific settings for dynamic escalation policies"
           nullable: true
       description: "Update a Signals escalation policy by ID"
+    "preview_team_on_call_schedule":
+      required:
+        - "name"
+        - "rotations"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The on-call schedule's name."
+        "description":
+          type: "string"
+          description: "A detailed description of the on-call schedule."
+          nullable: true
+        "rotations":
+          type: "array"
+          description: "An array of objects that specify rotations for the schedule. If not provided, the deprecated single-rotation parameters can be used instead, with `time_zone` and `strategy` being required."
+          items:
+            required:
+              - "name"
+              - "strategy"
+              - "time_zone"
+            type: "object"
+            properties:
+              "name":
+                type: "string"
+                description: "The name of the on-call rotation"
+              "description":
+                type: "string"
+                description: "A detailed description of the on-call schedule."
+                nullable: true
+              "time_zone":
+                type: "string"
+                description: "The timezone of the on-call rotation as a string"
+              "slack_user_group_id":
+                type: "string"
+                description: "The Slack Usergroup ID for the on-call rotation"
+                nullable: true
+              "enable_slack_channel_notifications":
+                type: "boolean"
+                description: "Notify the team's Slack channel when handoffs occur"
+                nullable: true
+              "prevent_shift_deletion":
+                type: "boolean"
+                description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+                nullable: true
+              "coverage_gap_notification_interval":
+                type: "string"
+                description: "An ISO8601 duration string specifying that the team should be notified about gaps in coverage for the upcoming interval. Notifications are sent at 9am daily in the rotation's time zone via email and, if enabled, the team's Slack channel."
+                nullable: true
+              "color":
+                type: "string"
+                description: "A hex color code that will be used to represent the rotation in FireHydrant's UI."
+                nullable: true
+              "members":
+                type: "array"
+                description: "An ordered list of objects that specify members of the schedule's rotation."
+                nullable: true
+                items:
+                  type: "object"
+                  properties:
+                    "user_id":
+                      type: "string"
+                      description: "The ID of a user who should be added to the rotation. You can add a user to the rotation\nmultiple times to construct more complex rotations, and you can specify a `null` user ID to create\nunassigned slots in the rotation.\n"
+                      nullable: true
+              "strategy":
+                required:
+                  - "type"
+                type: "object"
+                properties:
+                  "type":
+                    type: "string"
+                    description: "The type of strategy. Must be one of \"daily\", \"weekly\", or \"custom\"."
+                    enum:
+                      - "daily"
+                      - "weekly"
+                      - "custom"
+                  "handoff_time":
+                    type: "string"
+                    description: "An ISO8601 time string specifying when on-call shifts should hand off. This value is only used if the strategy type is \"daily\" or \"weekly\"."
+                    nullable: true
+                  "handoff_day":
+                    type: "string"
+                    description: "The day of the week on which on-call shifts should hand off, as its long-form name (e.g. \"monday\", \"tuesday\", etc). This value is only used if the strategy type is \"weekly\"."
+                    nullable: true
+                    enum:
+                      - "monday"
+                      - "tuesday"
+                      - "wednesday"
+                      - "thursday"
+                      - "friday"
+                      - "saturday"
+                      - "sunday"
+                  "shift_duration":
+                    type: "string"
+                    description: "An ISO8601 duration string specifying how long each shift should last. This value is only used if the strategy type is \"custom\"."
+                    nullable: true
+                description: "An object that specifies how the rotation's on-call shifts should be generated."
+              "restrictions":
+                type: "array"
+                description: "A list of objects that restrict the rotation to specific on-call periods."
+                nullable: true
+                items:
+                  required:
+                    - "end_day"
+                    - "end_time"
+                    - "start_day"
+                    - "start_time"
+                  type: "object"
+                  properties:
+                    "start_day":
+                      type: "string"
+                      description: "The day of the week on which the restriction should start, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                      enum:
+                        - "monday"
+                        - "tuesday"
+                        - "wednesday"
+                        - "thursday"
+                        - "friday"
+                        - "saturday"
+                        - "sunday"
+                    "start_time":
+                      type: "string"
+                      description: "An ISO8601 time string specifying when the restriction should start."
+                    "end_day":
+                      type: "string"
+                      description: "The day of the week on which the restriction should end, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                      enum:
+                        - "monday"
+                        - "tuesday"
+                        - "wednesday"
+                        - "thursday"
+                        - "friday"
+                        - "saturday"
+                        - "sunday"
+                    "end_time":
+                      type: "string"
+                      description: "An ISO8601 time string specifying when the restriction should end."
+              "start_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the initial rotation should start. This value is only used if the rotation's strategy type is \"custom\"."
+                nullable: true
+        "from":
+          type: "string"
+          description: "An ISO8601 time string specifying the start of the time window to preview. Defaults to now."
+          nullable: true
+        "to":
+          type: "string"
+          description: "An ISO8601 time string specifying the end of the time window to preview. Defaults to two weeks from now."
+          nullable: true
+      description: "Preview a new on-call schedule based on the provided rotations, allowing you to see how the schedule will look before saving it."
+    "Signals_API_OnCallSchedulePreviewEntity":
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          nullable: true
+        "rotations":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Signals_API_OnCallSchedulePreviewEntity_RotationPreviewEntity"}
+      description: "Signals_API_OnCallSchedulePreviewEntity model"
+    "Signals_API_OnCallSchedulePreviewEntity_RotationPreviewEntity":
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          nullable: true
+        "color":
+          type: "string"
+          nullable: true
+        "shifts":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Signals_API_OnCallSchedulePreviewEntity_ShiftPreviewEntity"}
+      description: "Signals_API_OnCallSchedulePreviewEntity_RotationPreviewEntity model"
+    "Signals_API_OnCallSchedulePreviewEntity_ShiftPreviewEntity":
+      type: "object"
+      properties:
+        "start_time":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "end_time":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "user": {"$ref": "#/components/schemas/NullableSuccinctEntity"}
     "create_team_on_call_schedule":
       required:
         - "name"
@@ -3794,6 +3994,135 @@ components:
           type: "string"
           description: "A detailed description of the on-call schedule."
           nullable: true
+        "rotations":
+          type: "array"
+          description: "An array of objects that specify rotations for the schedule. If not provided, the deprecated single-rotation parameters can be used instead, with `time_zone` and `strategy` being required."
+          nullable: true
+          items:
+            required:
+              - "name"
+              - "strategy"
+              - "time_zone"
+            type: "object"
+            properties:
+              "name":
+                type: "string"
+                description: "The name of the on-call rotation"
+              "description":
+                type: "string"
+                description: "A detailed description of the on-call schedule."
+                nullable: true
+              "time_zone":
+                type: "string"
+                description: "The timezone of the on-call rotation as a string"
+              "slack_user_group_id":
+                type: "string"
+                description: "The Slack Usergroup ID for the on-call rotation"
+                nullable: true
+              "enable_slack_channel_notifications":
+                type: "boolean"
+                description: "Notify the team's Slack channel when handoffs occur"
+                nullable: true
+              "prevent_shift_deletion":
+                type: "boolean"
+                description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+                nullable: true
+              "coverage_gap_notification_interval":
+                type: "string"
+                description: "An ISO8601 duration string specifying that the team should be notified about gaps in coverage for the upcoming interval. Notifications are sent at 9am daily in the rotation's time zone via email and, if enabled, the team's Slack channel."
+                nullable: true
+              "color":
+                type: "string"
+                description: "A hex color code that will be used to represent the rotation in FireHydrant's UI."
+                nullable: true
+              "members":
+                type: "array"
+                description: "An ordered list of objects that specify members of the schedule's rotation."
+                nullable: true
+                items:
+                  type: "object"
+                  properties:
+                    "user_id":
+                      type: "string"
+                      description: "The ID of a user who should be added to the rotation. You can add a user to the rotation\nmultiple times to construct more complex rotations, and you can specify a `null` user ID to create\nunassigned slots in the rotation.\n"
+                      nullable: true
+              "strategy":
+                required:
+                  - "type"
+                type: "object"
+                properties:
+                  "type":
+                    type: "string"
+                    description: "The type of strategy. Must be one of \"daily\", \"weekly\", or \"custom\"."
+                    enum:
+                      - "daily"
+                      - "weekly"
+                      - "custom"
+                  "handoff_time":
+                    type: "string"
+                    description: "An ISO8601 time string specifying when on-call shifts should hand off. This value is only used if the strategy type is \"daily\" or \"weekly\"."
+                    nullable: true
+                  "handoff_day":
+                    type: "string"
+                    description: "The day of the week on which on-call shifts should hand off, as its long-form name (e.g. \"monday\", \"tuesday\", etc). This value is only used if the strategy type is \"weekly\"."
+                    nullable: true
+                    enum:
+                      - "monday"
+                      - "tuesday"
+                      - "wednesday"
+                      - "thursday"
+                      - "friday"
+                      - "saturday"
+                      - "sunday"
+                  "shift_duration":
+                    type: "string"
+                    description: "An ISO8601 duration string specifying how long each shift should last. This value is only used if the strategy type is \"custom\"."
+                    nullable: true
+                description: "An object that specifies how the rotation's on-call shifts should be generated."
+              "restrictions":
+                type: "array"
+                description: "A list of objects that restrict the rotation to specific on-call periods."
+                nullable: true
+                items:
+                  required:
+                    - "end_day"
+                    - "end_time"
+                    - "start_day"
+                    - "start_time"
+                  type: "object"
+                  properties:
+                    "start_day":
+                      type: "string"
+                      description: "The day of the week on which the restriction should start, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                      enum:
+                        - "monday"
+                        - "tuesday"
+                        - "wednesday"
+                        - "thursday"
+                        - "friday"
+                        - "saturday"
+                        - "sunday"
+                    "start_time":
+                      type: "string"
+                      description: "An ISO8601 time string specifying when the restriction should start."
+                    "end_day":
+                      type: "string"
+                      description: "The day of the week on which the restriction should end, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                      enum:
+                        - "monday"
+                        - "tuesday"
+                        - "wednesday"
+                        - "thursday"
+                        - "friday"
+                        - "saturday"
+                        - "sunday"
+                    "end_time":
+                      type: "string"
+                      description: "An ISO8601 time string specifying when the restriction should end."
+              "start_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the initial rotation should start. This value is only used if the rotation's strategy type is \"custom\"."
+                nullable: true
         "rotation_name":
           type: "string"
           description: "An optional name for the initial rotation. If not provided, the schedule's name will be used."
@@ -4200,6 +4529,420 @@ components:
           items:
             type: "string"
       description: "Update a Signals on-call schedule by ID. For backwards compatibility, all parameters except for\n`name` and `description` will be ignored if the schedule has more than one rotation. If the schedule\nhas only one rotation, you can continue to update that rotation using the rotation-specific parameters.\n"
+    "preview_on_call_schedule_rotation":
+      type: "object"
+      properties:
+        "rotation_id":
+          type: "string"
+          description: "The ID of a rotation being updated. Leave this blank if you're previewing the creation of a new rotation."
+          nullable: true
+        "name":
+          type: "string"
+          description: "The name of the on-call rotation"
+          nullable: true
+        "description":
+          type: "string"
+          description: "The description of the on-call rotation"
+          nullable: true
+        "time_zone":
+          type: "string"
+          description: "The timezone of the on-call rotation as a string"
+          nullable: true
+        "slack_user_group_id":
+          type: "string"
+          description: "The Slack Usergroup ID for the on-call rotation"
+          nullable: true
+        "enable_slack_channel_notifications":
+          type: "boolean"
+          description: "Notify the team's Slack channel when handoffs occur"
+          nullable: true
+        "prevent_shift_deletion":
+          type: "boolean"
+          description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+          nullable: true
+        "color":
+          type: "string"
+          description: "A hex color code that will be used to represent the rotation in FireHydrant's UI."
+          nullable: true
+        "members":
+          type: "array"
+          description: "An ordered list of objects that specify members of the schedule's rotation."
+          nullable: true
+          items:
+            type: "object"
+            properties:
+              "user_id":
+                type: "string"
+                description: "The ID of a user who should be added to the rotation. You can add a user to the rotation\nmultiple times to construct more complex rotations, and you can specify a `null` user ID to create\nunassigned slots in the rotation.\n"
+                nullable: true
+        "strategy":
+          required:
+            - "type"
+          type: "object"
+          properties:
+            "type":
+              type: "string"
+              description: "The type of strategy. Must be one of \"daily\", \"weekly\", or \"custom\"."
+              enum:
+                - "daily"
+                - "weekly"
+                - "custom"
+            "handoff_time":
+              type: "string"
+              description: "An ISO8601 time string specifying when on-call shifts should hand off. This value is only used if the strategy type is \"daily\" or \"weekly\"."
+              nullable: true
+            "handoff_day":
+              type: "string"
+              description: "The day of the week on which on-call shifts should hand off, as its long-form name (e.g. \"monday\", \"tuesday\", etc). This value is only used if the strategy type is \"weekly\"."
+              nullable: true
+              enum:
+                - "monday"
+                - "tuesday"
+                - "wednesday"
+                - "thursday"
+                - "friday"
+                - "saturday"
+                - "sunday"
+            "shift_duration":
+              type: "string"
+              description: "An ISO8601 duration string specifying how long each shift should last. This value is only used if the strategy type is \"custom\"."
+              nullable: true
+          description: "An object that specifies how the rotation's on-call shifts should be generated."
+          nullable: true
+        "restrictions":
+          type: "array"
+          description: "A list of objects that restrict the rotation to specific on-call periods."
+          nullable: true
+          items:
+            required:
+              - "end_day"
+              - "end_time"
+              - "start_day"
+              - "start_time"
+            type: "object"
+            properties:
+              "start_day":
+                type: "string"
+                description: "The day of the week on which the restriction should start, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "start_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should start."
+              "end_day":
+                type: "string"
+                description: "The day of the week on which the restriction should end, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "end_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should end."
+        "start_time":
+          type: "string"
+          description: "An ISO8601 time string specifying when the initial rotation should start. This value is only used if the rotation's strategy type is \"custom\"."
+          nullable: true
+        "effective_at":
+          type: "string"
+          description: "An ISO8601 time string specifying when the updated schedule should take effect. This\nvalue must be provided if editing an attribute that would affect how the schedule's\nshifts are generated, such as the time zone, members, strategy, or restrictions.\n"
+          nullable: true
+        "from":
+          type: "string"
+          description: "An ISO8601 time string specifying the start of the time window to preview. Defaults to now."
+          nullable: true
+        "to":
+          type: "string"
+          description: "An ISO8601 time string specifying the end of the time window to preview. Defaults to two weeks from now."
+          nullable: true
+      description: "Preview a new on-call rotation orchanges to an existing on-call rotation"
+    "create_on_call_schedule_rotation":
+      required:
+        - "name"
+        - "strategy"
+        - "time_zone"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the on-call rotation"
+        "time_zone":
+          type: "string"
+          description: "The timezone of the on-call rotation as a string"
+        "description":
+          type: "string"
+          description: "The description of the on-call rotation"
+          nullable: true
+        "slack_user_group_id":
+          type: "string"
+          description: "The Slack Usergroup ID for the on-call rotation"
+          nullable: true
+        "enable_slack_channel_notifications":
+          type: "boolean"
+          description: "Notify the team's Slack channel when handoffs occur"
+          nullable: true
+        "prevent_shift_deletion":
+          type: "boolean"
+          description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+          nullable: true
+        "coverage_gap_notification_interval":
+          type: "string"
+          description: "An ISO8601 duration string specifying that the team should be notified about gaps in coverage for the upcoming interval. Notifications are sent at 9am daily in the rotation's time zone via email and, if enabled, the team's Slack channel."
+          nullable: true
+        "color":
+          type: "string"
+          description: "A hex color code that will be used to represent the rotation in FireHydrant's UI."
+          nullable: true
+        "members":
+          type: "array"
+          description: "An ordered list of objects that specify members of the schedule's rotation."
+          nullable: true
+          items:
+            type: "object"
+            properties:
+              "user_id":
+                type: "string"
+                description: "The ID of a user who should be added to the rotation. You can add a user to the rotation\nmultiple times to construct more complex rotations, and you can specify a `null` user ID to create\nunassigned slots in the rotation.\n"
+                nullable: true
+        "strategy":
+          required:
+            - "type"
+          type: "object"
+          properties:
+            "type":
+              type: "string"
+              description: "The type of strategy. Must be one of \"daily\", \"weekly\", or \"custom\"."
+              enum:
+                - "daily"
+                - "weekly"
+                - "custom"
+            "handoff_time":
+              type: "string"
+              description: "An ISO8601 time string specifying when on-call shifts should hand off. This value is only used if the strategy type is \"daily\" or \"weekly\"."
+              nullable: true
+            "handoff_day":
+              type: "string"
+              description: "The day of the week on which on-call shifts should hand off, as its long-form name (e.g. \"monday\", \"tuesday\", etc). This value is only used if the strategy type is \"weekly\"."
+              nullable: true
+              enum:
+                - "monday"
+                - "tuesday"
+                - "wednesday"
+                - "thursday"
+                - "friday"
+                - "saturday"
+                - "sunday"
+            "shift_duration":
+              type: "string"
+              description: "An ISO8601 duration string specifying how long each shift should last. This value is only used if the strategy type is \"custom\"."
+              nullable: true
+          description: "An object that specifies how the rotation's on-call shifts should be generated."
+        "restrictions":
+          type: "array"
+          description: "A list of objects that restrict the rotation to specific on-call periods."
+          nullable: true
+          items:
+            required:
+              - "end_day"
+              - "end_time"
+              - "start_day"
+              - "start_time"
+            type: "object"
+            properties:
+              "start_day":
+                type: "string"
+                description: "The day of the week on which the restriction should start, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "start_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should start."
+              "end_day":
+                type: "string"
+                description: "The day of the week on which the restriction should end, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "end_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should end."
+        "start_time":
+          type: "string"
+          description: "An ISO8601 time string specifying when the initial rotation should start. This value is only used if the rotation's strategy type is \"custom\"."
+          nullable: true
+      description: "Add a new rotation to an existing on-call schedule"
+    "copy_on_call_schedule_rotation":
+      required:
+        - "target_schedule_id"
+      type: "object"
+      properties:
+        "target_schedule_id":
+          type: "string"
+          description: "The ID of the schedule to clone the rotation into"
+        "name":
+          type: "string"
+          description: "The name of the on-call rotation"
+          nullable: true
+      description: "Copy an on-call rotation into a different schedule, allowing you to merge them together safely."
+    "override_on_call_schedule_rotation_shifts":
+      required:
+        - "end_time"
+        - "start_time"
+      type: "object"
+      properties:
+        "start_time":
+          type: "string"
+          description: "An ISO8601 time string specifying when the override should start."
+        "end_time":
+          type: "string"
+          description: "An ISO8601 time string specifying when the override should end."
+        "user_id":
+          type: "string"
+          description: "The ID of the user who should be on-call for the overridden period. If not provided, the override will be unassigned and claimable by any user."
+          nullable: true
+      description: "Create an override covering a specific time period in an on-call rotation, re-assigning that period to a specific user."
+    "update_on_call_schedule_rotation":
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the on-call rotation"
+          nullable: true
+        "description":
+          type: "string"
+          description: "The description of the on-call rotation"
+          nullable: true
+        "time_zone":
+          type: "string"
+          description: "The timezone of the on-call rotation as a string"
+          nullable: true
+        "slack_user_group_id":
+          type: "string"
+          description: "The Slack Usergroup ID for the on-call rotation"
+          nullable: true
+        "enable_slack_channel_notifications":
+          type: "boolean"
+          description: "Notify the team's Slack channel when handoffs occur"
+          nullable: true
+        "prevent_shift_deletion":
+          type: "boolean"
+          description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+          nullable: true
+        "color":
+          type: "string"
+          description: "A hex color code that will be used to represent the rotation in FireHydrant's UI."
+          nullable: true
+        "members":
+          type: "array"
+          description: "An ordered list of objects that specify members of the schedule's rotation."
+          nullable: true
+          items:
+            type: "object"
+            properties:
+              "user_id":
+                type: "string"
+                description: "The ID of a user who should be added to the rotation. You can add a user to the rotation\nmultiple times to construct more complex rotations, and you can specify a `null` user ID to create\nunassigned slots in the rotation.\n"
+                nullable: true
+        "strategy":
+          required:
+            - "type"
+          type: "object"
+          properties:
+            "type":
+              type: "string"
+              description: "The type of strategy. Must be one of \"daily\", \"weekly\", or \"custom\"."
+              enum:
+                - "daily"
+                - "weekly"
+                - "custom"
+            "handoff_time":
+              type: "string"
+              description: "An ISO8601 time string specifying when on-call shifts should hand off. This value is only used if the strategy type is \"daily\" or \"weekly\"."
+              nullable: true
+            "handoff_day":
+              type: "string"
+              description: "The day of the week on which on-call shifts should hand off, as its long-form name (e.g. \"monday\", \"tuesday\", etc). This value is only used if the strategy type is \"weekly\"."
+              nullable: true
+              enum:
+                - "monday"
+                - "tuesday"
+                - "wednesday"
+                - "thursday"
+                - "friday"
+                - "saturday"
+                - "sunday"
+            "shift_duration":
+              type: "string"
+              description: "An ISO8601 duration string specifying how long each shift should last. This value is only used if the strategy type is \"custom\"."
+              nullable: true
+          description: "An object that specifies how the rotation's on-call shifts should be generated."
+          nullable: true
+        "restrictions":
+          type: "array"
+          description: "A list of objects that restrict the rotation to specific on-call periods."
+          nullable: true
+          items:
+            required:
+              - "end_day"
+              - "end_time"
+              - "start_day"
+              - "start_time"
+            type: "object"
+            properties:
+              "start_day":
+                type: "string"
+                description: "The day of the week on which the restriction should start, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "start_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should start."
+              "end_day":
+                type: "string"
+                description: "The day of the week on which the restriction should end, as its long-form name (e.g. \"monday\", \"tuesday\", etc)."
+                enum:
+                  - "monday"
+                  - "tuesday"
+                  - "wednesday"
+                  - "thursday"
+                  - "friday"
+                  - "saturday"
+                  - "sunday"
+              "end_time":
+                type: "string"
+                description: "An ISO8601 time string specifying when the restriction should end."
+        "effective_at":
+          type: "string"
+          description: "An ISO8601 time string specifying when the updated schedule should take effect. This\nvalue must be provided if editing an attribute that would affect how the schedule's\nshifts are generated, such as the time zone, members, strategy, or restrictions.\n"
+          nullable: true
+      description: "Update an on-call schedule's rotation by ID"
     "create_on_call_shift":
       required:
         - "end_time"
@@ -11682,6 +12425,22 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_team_escalation_policy"}
+    "Nullablepreview_team_on_call_schedule":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/preview_team_on_call_schedule"}
+    "NullableSignals_API_OnCallSchedulePreviewEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Signals_API_OnCallSchedulePreviewEntity"}
+    "NullableSignals_API_OnCallSchedulePreviewEntity_RotationPreviewEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Signals_API_OnCallSchedulePreviewEntity_RotationPreviewEntity"}
+    "NullableSignals_API_OnCallSchedulePreviewEntity_ShiftPreviewEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Signals_API_OnCallSchedulePreviewEntity_ShiftPreviewEntity"}
     "Nullablecreate_team_on_call_schedule":
       nullable: true
       allOf:
@@ -11714,6 +12473,26 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_team_on_call_schedule"}
+    "Nullablepreview_on_call_schedule_rotation":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/preview_on_call_schedule_rotation"}
+    "Nullablecreate_on_call_schedule_rotation":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_on_call_schedule_rotation"}
+    "Nullablecopy_on_call_schedule_rotation":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/copy_on_call_schedule_rotation"}
+    "Nullableoverride_on_call_schedule_rotation_shifts":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/override_on_call_schedule_rotation_shifts"}
+    "Nullableupdate_on_call_schedule_rotation":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/update_on_call_schedule_rotation"}
     "Nullablecreate_on_call_shift":
       nullable: true
       allOf:
