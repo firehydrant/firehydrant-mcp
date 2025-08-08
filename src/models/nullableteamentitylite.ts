@@ -18,6 +18,7 @@ export type NullableTeamEntityLite = {
   signals_ical_url?: string | null | undefined;
   created_by?: NullableAuthorEntity | null | undefined;
   in_support_hours?: boolean | null | undefined;
+  restrict_signals_resource_management?: boolean | null | undefined;
 };
 
 export const NullableTeamEntityLite$zodSchema: z.ZodType<
@@ -31,6 +32,7 @@ export const NullableTeamEntityLite$zodSchema: z.ZodType<
   id: z.string().nullable().optional(),
   in_support_hours: z.boolean().nullable().optional(),
   name: z.string().nullable().optional(),
+  restrict_signals_resource_management: z.boolean().nullable().optional(),
   signals_ical_url: z.string().nullable().optional(),
   slug: z.string().nullable().optional(),
   updated_at: z.string().datetime({ offset: true }).nullable().optional(),
