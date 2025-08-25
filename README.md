@@ -76,25 +76,27 @@ Or manually:
 <summary>Claude Code CLI</summary>
 
 ```bash
-npx firehydrant-mcp start --api-key ...
+claude mcp add firehydrant-mcp npx firehydrant-mcp start -- --api-key ...
 ```
 
 </details>
 <details>
-<summary>Claude Desktop</summary>
-Claude Desktop doesn't yet support SSE/remote MCP servers.
+<summary>Windsurf</summary>
 
-However, you can run the MCP server locally by cloning this repository. Once cloned, you'll need to install dependencies (`npm install`) and build the server (`npm run build`).
+Refer to [Official Windsurf documentation](https://docs.windsurf.com/windsurf/cascade/mcp#adding-a-new-mcp-plugin) for latest information
 
-Then, configure your server definition to reference your local clone. For example:
-
-```json
+1. Open Windsurf Settings
+2. Select Cascade on left side menu
+3. Click on `Manage MCPs`. (To Manage MCPs you should be signed in with a Windsurf Account)
+4. Click on `View raw config` to open up the mcp configuration file.
+5. If the configuration file is empty paste the full json
+```
 {
   "mcpServers": {
     "FireHydrant": {
-      "command": "node",
+      "command": "npx",
       "args": [
-        "./bin/mcp-server.js",
+        "firehydrant-mcp",
         "start",
         "--api-key",
         "..."
@@ -102,6 +104,76 @@ Then, configure your server definition to reference your local clone. For exampl
     }
   }
 }
+```
+</details>
+<details>
+<summary>VS Code</summary>
+
+Refer to [Official VS Code documentation](https://code.visualstudio.com/api/extension-guides/ai/mcp) for latest information
+
+1. Open [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette)
+1. Search and open `MCP: Open User Configuration`. This should open mcp.json file
+2. If the configuration file is empty paste the full json
+```
+{
+  "mcpServers": {
+    "FireHydrant": {
+      "command": "npx",
+      "args": [
+        "firehydrant-mcp",
+        "start",
+        "--api-key",
+        "..."
+      ]
+    }
+  }
+}
+```
+
+</details>
+<details>
+<summary>Claude Desktop</summary>
+Claude Desktop doesn't yet support SSE/remote MCP servers.
+
+You need to do the following
+1. Open claude Desktop
+2. Open left hand side pane, then click on your Username
+3. Go to `Settings`
+4. Go to `Developer` tab (on the left hand side)
+5. Click on `Edit Config`
+Paste the following config in the configuration
+
+```json
+{
+  "mcpServers": {
+    "FireHydrant": {
+      "command": "npx",
+      "args": [
+        "firehydrant-mcp",
+        "start",
+        "--api-key",
+        "..."
+      ]
+    }
+  }
+}
+```
+
+</details>
+
+
+<details>
+<summary> Stdio installation via npm </summary>
+To start the MCP server, run:
+
+```bash
+npx firehydrant-mcp start --api-key ...
+```
+
+For a full list of server arguments, run:
+
+```
+npx firehydrant-mcp --help
 ```
 
 </details>

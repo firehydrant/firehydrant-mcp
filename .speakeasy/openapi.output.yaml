@@ -12,6 +12,8 @@ tags:
     description: "Operations about Call Routes"
   - name: "Audit Events"
     description: "Operations about Audit Events"
+  - name: "Pages"
+    description: "Operations about Pages"
   - name: "Account Settings"
     description: "Operations related to Account Settings"
   - name: "Alerts"
@@ -664,6 +666,7 @@ paths:
       x-speakeasy-mcp: {"disabled": false, "name": "list-alerts", "scopes": ["read"]}
   "/v1/alerts/{alert_id}": {}
   "/v1/processing_log_entries": {}
+  "/v1/page/signals": {}
   "/v1/ticketing/tickets": {}
   "/v1/ticketing/tickets/{ticket_id}": {}
   "/v1/ticketing/projects": {}
@@ -3102,6 +3105,12 @@ components:
           nullable: true
           items:
             type: "string"
+        "last_executed_at":
+          type: "string"
+          description: "The timestamp when this runbook was last executed"
+          format: "date-time"
+          nullable: true
+        "last_executed_for_incident": {"$ref": "#/components/schemas/NullablePublicAPI_V1_Incidents_SuccinctEntity"}
     "Rules_RuleEntity":
       type: "object"
       properties:
@@ -3121,6 +3130,19 @@ components:
           nullable: true
         "label":
           type: "string"
+          nullable: true
+    "PublicAPI_V1_Incidents_SuccinctEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "number":
+          type: "integer"
+          format: "int32"
           nullable: true
     "TeamEntityPaginated":
       type: "object"
@@ -4312,6 +4334,15 @@ components:
         "slack_user_group_id":
           type: "string"
           nullable: true
+        "enable_slack_channel_notifications":
+          type: "boolean"
+          nullable: true
+        "prevent_shift_deletion":
+          type: "boolean"
+          nullable: true
+        "coverage_gap_notification_interval":
+          type: "string"
+          nullable: true
         "members":
           type: "array"
           nullable: true
@@ -4335,6 +4366,7 @@ components:
           type: "string"
           format: "date-time"
           nullable: true
+      description: "Signals_API_OnCallRotationEntity model"
     "Signals_API_OnCallShiftEntity":
       type: "object"
       properties:
@@ -4559,6 +4591,10 @@ components:
         "prevent_shift_deletion":
           type: "boolean"
           description: "Prevent shifts from being deleted by users and leading to gaps in coverage."
+          nullable: true
+        "coverage_gap_notification_interval":
+          type: "string"
+          description: "An ISO8601 duration string specifying that the team should be notified about gaps in coverage for the upcoming interval. Notifications are sent at 9am daily in the rotation's time zone via email and, if enabled, the team's Slack channel."
           nullable: true
         "color":
           type: "string"
@@ -4844,6 +4880,10 @@ components:
         "enable_slack_channel_notifications":
           type: "boolean"
           description: "Notify the team's Slack channel when handoffs occur"
+          nullable: true
+        "coverage_gap_notification_interval":
+          type: "string"
+          description: "An ISO8601 duration string specifying that the team should be notified about gaps in coverage for the upcoming interval. Notifications are sent at 9am daily in the rotation's time zone via email and, if enabled, the team's Slack channel."
           nullable: true
         "prevent_shift_deletion":
           type: "boolean"
@@ -5900,19 +5940,6 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/Conversations_API_Entities_Reference"}
       description: "Alerts_AlertEntity model"
-    "PublicAPI_V1_Incidents_SuccinctEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "number":
-          type: "integer"
-          format: "int32"
-          nullable: true
     "Alerts_SirenEventEntity":
       type: "object"
       properties:
@@ -6833,7 +6860,10 @@ components:
           type: "array"
           nullable: true
           items:
-            type: "string"
+            type: "object"
+        "required_at_milestone_id":
+          type: "string"
+          nullable: true
       description: "Incidents_RetrospectiveFieldEntity model"
     "Incidents_RetrospectiveEntityPaginated":
       type: "object"
@@ -8725,6 +8755,12 @@ components:
         "tutorial":
           type: "boolean"
           nullable: true
+        "last_executed_at":
+          type: "string"
+          description: "The timestamp when this runbook was last executed"
+          format: "date-time"
+          nullable: true
+        "last_executed_for_incident": {"$ref": "#/components/schemas/NullablePublicAPI_V1_Incidents_SuccinctEntity"}
       description: "RunbookEntity model"
     "RunbookStepEntity":
       type: "object"
@@ -9043,6 +9079,20 @@ components:
           type: "string"
           nullable: true
       description: "Update a link to be displayed on a FireHydrant status page"
+    "update_saved_search":
+      type: "object"
+      properties:
+        "is_private":
+          type: "boolean"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "filter_values":
+          type: "object"
+          additionalProperties: true
+          nullable: true
+      description: "Update a specific saved search"
     "SavedSearchEntity":
       type: "object"
       properties:
@@ -9075,20 +9125,6 @@ components:
           description: "An unstructured key/value pair of saved values for searching"
           nullable: true
       description: "SavedSearchEntity model"
-    "update_saved_search":
-      type: "object"
-      properties:
-        "is_private":
-          type: "boolean"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "filter_values":
-          type: "object"
-          additionalProperties: true
-          nullable: true
-      description: "Update a specific saved search"
     "create_saved_search":
       required:
         - "filter_values"
@@ -9641,13 +9677,6 @@ components:
           type: "string"
           nullable: true
       description: "InfrastructureSearchEntity model"
-    "Nunc_NuncSubscription":
-      type: "object"
-      properties:
-        "response":
-          type: "string"
-          nullable: true
-      description: "Nunc_NuncSubscription model"
     "create_nunc_subscription":
       required:
         - "email"
@@ -9656,6 +9685,13 @@ components:
         "email":
           type: "string"
       description: "Subscribe to status page updates"
+    "Nunc_NuncSubscription":
+      type: "object"
+      properties:
+        "response":
+          type: "string"
+          nullable: true
+      description: "Nunc_NuncSubscription model"
     "create_status_update_template":
       required:
         - "body"
@@ -9702,6 +9738,28 @@ components:
           type: "string"
           nullable: true
       description: "Update a single status update template"
+    "update_custom_field_definition":
+      type: "object"
+      properties:
+        "description":
+          type: "string"
+          nullable: true
+        "display_name":
+          type: "string"
+          nullable: true
+        "permissible_values":
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
+        "required":
+          type: "boolean"
+          nullable: true
+        "required_at_milestone_id":
+          type: "string"
+          description: "An optional milestone ID to specify when the field should become required, if `required` is set to `true`. If not provided, required fields are always required."
+          nullable: true
+      description: "Update a single custom field definition"
     "Organizations_CustomFieldDefinitionEntity":
       type: "object"
       properties:
@@ -9733,28 +9791,6 @@ components:
           items:
             type: "string"
       description: "Organizations_CustomFieldDefinitionEntity model"
-    "update_custom_field_definition":
-      type: "object"
-      properties:
-        "description":
-          type: "string"
-          nullable: true
-        "display_name":
-          type: "string"
-          nullable: true
-        "permissible_values":
-          type: "array"
-          nullable: true
-          items:
-            type: "string"
-        "required":
-          type: "boolean"
-          nullable: true
-        "required_at_milestone_id":
-          type: "string"
-          description: "An optional milestone ID to specify when the field should become required, if `required` is set to `true`. If not provided, required fields are always required."
-          nullable: true
-      description: "Update a single custom field definition"
     "create_custom_field_definition":
       required:
         - "display_name"
@@ -10156,6 +10192,9 @@ components:
             type: "string"
         "is_required":
           type: "boolean"
+          nullable: true
+        "required_at_milestone_id":
+          type: "string"
           nullable: true
         "schema":
           type: "array"
@@ -12369,6 +12408,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/FHTypes_GenericEntity"}
+    "NullablePublicAPI_V1_Incidents_SuccinctEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PublicAPI_V1_Incidents_SuccinctEntity"}
     "NullableTeamEntityPaginated":
       nullable: true
       allOf:
@@ -12605,10 +12648,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Alerts_AlertEntity"}
-    "NullablePublicAPI_V1_Incidents_SuccinctEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/PublicAPI_V1_Incidents_SuccinctEntity"}
     "NullableAlerts_SirenEventEntity":
       nullable: true
       allOf:
@@ -13201,14 +13240,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_nunc_link"}
-    "NullableSavedSearchEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/SavedSearchEntity"}
     "Nullableupdate_saved_search":
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_saved_search"}
+    "NullableSavedSearchEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/SavedSearchEntity"}
     "Nullablecreate_saved_search":
       nullable: true
       allOf:
@@ -13309,14 +13348,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/InfrastructureSearchEntity"}
-    "NullableNunc_NuncSubscription":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Nunc_NuncSubscription"}
     "Nullablecreate_nunc_subscription":
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/create_nunc_subscription"}
+    "NullableNunc_NuncSubscription":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Nunc_NuncSubscription"}
     "Nullablecreate_status_update_template":
       nullable: true
       allOf:
@@ -13329,14 +13368,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_status_update_template"}
-    "NullableOrganizations_CustomFieldDefinitionEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Organizations_CustomFieldDefinitionEntity"}
     "Nullableupdate_custom_field_definition":
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_custom_field_definition"}
+    "NullableOrganizations_CustomFieldDefinitionEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Organizations_CustomFieldDefinitionEntity"}
     "Nullablecreate_custom_field_definition":
       nullable: true
       allOf:
