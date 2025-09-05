@@ -4,7 +4,9 @@
 
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import express from "express";
+import { randomUUID } from "node:crypto";
 import { SDKOptions } from "../../../lib/config.js";
 import { LocalContext } from "../../cli.js";
 import {
@@ -15,7 +17,7 @@ import { MCPScope } from "../../scopes.js";
 import { createMCPServer } from "../../server.js";
 
 interface StartCommandFlags {
-  readonly transport: "stdio" | "sse";
+  readonly transport: "stdio" | "sse" | "streamable-http";
   readonly port: number;
   readonly tool?: string[];
   readonly scope?: MCPScope[];
@@ -37,6 +39,9 @@ export async function main(this: LocalContext, flags: StartCommandFlags) {
       break;
     case "sse":
       await startSSE(flags);
+      break;
+    case "streamable-http":
+      await startStreamableHTTP(flags);
       break;
     default:
       throw new Error(`Invalid transport: ${flags.transport}`);
@@ -78,6 +83,13 @@ async function startSSE(flags: StartCommandFlags) {
   let transport: SSEServerTransport | undefined;
   const controller = new AbortController();
 
+  app.get("/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      transport: "sse",
+    });
+  });
+
   app.get("/sse", async (_req, res) => {
     transport = new SSEServerTransport("/message", res);
 
@@ -116,6 +128,82 @@ async function startSSE(flags: StartCommandFlags) {
 
     logger.info("Shutting down HTTP server");
 
+    const timer = setTimeout(() => {
+      logger.info("Forcing shutdown");
+      process.exit(1);
+    }, 5000);
+
+    httpServer.close(() => {
+      clearTimeout(timer);
+      logger.info("Graceful shutdown complete");
+      process.exit(0);
+    });
+  });
+
+  const abort = () => controller.abort();
+  process.on("SIGTERM", abort);
+  process.on("SIGINT", abort);
+}
+
+async function startStreamableHTTP(flags: StartCommandFlags) {
+  const logger = createConsoleLogger(flags["log-level"]);
+  const app = express();
+  
+  app.use(express.json());
+  
+  const mcpServer = createMCPServer({
+    logger,
+    allowedTools: flags.tool,
+    scopes: flags.scope,
+    security: { api_key: flags["api-key"] ?? "" },
+    serverURL: flags["server-url"],
+    serverIdx: flags["server-index"],
+  });
+
+  const transport = new StreamableHTTPServerTransport({
+    sessionIdGenerator: () => randomUUID(),
+  });
+
+  await mcpServer.connect(transport);
+
+  app.get("/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      transport: "streamable-http",
+    });
+  });
+
+  app.all("/message", async (req, res) => {
+    try {
+      await transport.handleRequest(req, res, req.body);
+    } catch (error) {
+      logger.error("Error handling streamable HTTP request", { error });
+      if (!res.headersSent) {
+        res.status(500).json({ error: "Internal server error" });
+      }
+    }
+  });
+
+  const httpServer = app.listen(flags.port, "0.0.0.0", () => {
+    const ha = httpServer.address();
+    const host = typeof ha === "string" ? ha : `${ha?.address}:${ha?.port}`;
+    logger.info("MCP Streamable HTTP server started", { host });
+  });
+
+  let closing = false;
+  const controller = new AbortController();
+  
+  controller.signal.addEventListener("abort", async () => {
+    if (closing) {
+      logger.info("Received second signal. Forcing shutdown.");
+      process.exit(1);
+    }
+    closing = true;
+
+    logger.info("Shutting down MCP server");
+    await mcpServer.close();
+
+    logger.info("Shutting down HTTP server");
     const timer = setTimeout(() => {
       logger.info("Forcing shutdown");
       process.exit(1);

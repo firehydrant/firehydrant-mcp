@@ -19,7 +19,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@modelcontextprotocol/sdk": "^1.17.5",
     "@stricli/core": "^1.1.2",
     "@tiptap/core": "^3.0.7",
     "@tiptap/html": "^3.0.7",
