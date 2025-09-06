@@ -1,12 +1,12 @@
 lockVersion: 2.0.0
 id: 0dd544ca-3933-4c41-a5b5-b9a57ec94099
 management:
-  docChecksum: c617421c76246bbd42a1dd36e4e3ba71
+  docChecksum: c9c0d4718b9da5f9a7d7691884f15f35
   docVersion: 0.0.1
-  speakeasyVersion: 1.606.3
-  generationVersion: 2.687.1
-  releaseVersion: 0.0.1-beta.14
-  configChecksum: 04f9e0e798941663db361a6e2a79021b
+  speakeasyVersion: 1.611.0
+  generationVersion: 2.694.1
+  releaseVersion: 0.0.1-beta.15
+  configChecksum: 6e9d205e7e0c676d7159f3aa21152643
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
   published: true
 features:
@@ -22,7 +22,7 @@ features:
     nullables: 0.1.0
     responseFormat: 0.1.0
     retries: 0.1.0
-    sdkHooks: 0.1.0
+    sdkHooks: 0.2.0
     unions: 0.1.0
 generatedFiles:
   - .dxtignore
@@ -139,7 +139,3 @@ generatedFiles:
   - tsconfig.json
 examplesVersion: 1.0.2
 generatedTests: {}
-releaseNotes: |
-  ## SDK Changes Detected:
-  * `FireHydrant.Retrospectives.list_incident_retrospectives()`:  `response.data.[].fields.[]` **Changed** **Breaking** :warning:
-  * `FireHydrant.Retrospectives.update_incident_retrospective_field()`:  `response` **Changed** **Breaking** :warning:

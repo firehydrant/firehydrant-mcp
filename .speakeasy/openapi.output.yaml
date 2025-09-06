@@ -10,6 +10,10 @@ security:
 tags:
   - name: "Call Routes"
     description: "Operations about Call Routes"
+  - name: "Permissions"
+    description: "Operations about Permissions"
+  - name: "Roles"
+    description: "Operations about Roles"
   - name: "Audit Events"
     description: "Operations about Audit Events"
   - name: "Pages"
@@ -505,8 +509,13 @@ paths:
   "/v1/users/{id}": {}
   "/v1/users/{id}/services": {}
   "/v1/current_user": {}
+  "/v1/permissions": {}
+  "/v1/permissions/current_user": {}
+  "/v1/permissions/team": {}
   "/v1/reports/mean_time": {}
   "/v1/retrospectives": {}
+  "/v1/roles": {}
+  "/v1/roles/{id}": {}
   "/v1/metrics/ticket_funnel": {}
   "/v1/metrics/retrospectives": {}
   "/v1/metrics/milestone_funnel": {}
@@ -578,7 +587,7 @@ paths:
       tags:
         - "Alerts"
       summary: "List alerts"
-      description: "Retrieve all alerts from third parties"
+      description: "Retrieve all alerts, including Signals alerts and third-party"
       operationId: "list_alerts"
       parameters:
         - name: "page"
@@ -659,7 +668,7 @@ paths:
             nullable: true
       responses:
         "200":
-          description: "Retrieve all alerts from third parties"
+          description: "Retrieve all alerts, including Signals alerts and third-party"
           content:
             "application/json":
               schema: {"$ref": "#/components/schemas/Alerts_AlertEntityPaginated"}
@@ -7849,6 +7858,43 @@ components:
           format: "int32"
           nullable: true
       description: "CurrentUserEntity model"
+    "PermissionEntityList":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
+      description: "PermissionEntityList model"
+    "PublicAPI_V1_PermissionEntity":
+      type: "object"
+      properties:
+        "slug":
+          type: "string"
+          nullable: true
+        "display_name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "category_display_name":
+          type: "string"
+          nullable: true
+        "category_slug":
+          type: "string"
+          nullable: true
+        "parent_slug":
+          type: "string"
+          nullable: true
+        "available":
+          type: "boolean"
+          nullable: true
+        "dependency_slugs":
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
     "ReportEntity":
       type: "object"
       properties:
@@ -7888,6 +7934,209 @@ components:
           type: "integer"
           format: "int32"
           nullable: true
+    "create_role":
+      required:
+        - "name"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the role."
+        "slug":
+          type: "string"
+          description: "A unique identifier for the role. If not provided, one will be generated from the name."
+          nullable: true
+        "description":
+          type: "string"
+          description: "A long-form description of the role's purpose."
+          nullable: true
+        "permissions":
+          type: "array"
+          description: "An array of permission slugs to assign to the role."
+          nullable: true
+          items:
+            type: "string"
+            enum:
+              - "create_alerts"
+              - "respond_to_alerts"
+              - "read_alerts"
+              - "manage_alert_grouping"
+              - "read_alert_grouping"
+              - "manage_alert_rules"
+              - "read_alert_rules"
+              - "manage_call_routes"
+              - "read_call_routes"
+              - "manage_escalation_policies"
+              - "read_escalation_policies"
+              - "manage_event_sources"
+              - "read_event_sources"
+              - "manage_on_call_schedules"
+              - "read_on_call_schedules"
+              - "manage_on_call_shifts"
+              - "claim_on_call_shifts"
+              - "manage_organization_notification_policies"
+              - "read_notification_policy_compliance"
+              - "manage_webhook_targets"
+              - "read_webhook_targets"
+              - "read_analytics"
+              - "manage_api_keys"
+              - "read_api_keys"
+              - "manage_audiences"
+              - "read_audiences"
+              - "read_audit_events"
+              - "manage_change_events"
+              - "read_change_events"
+              - "manage_incidents"
+              - "create_incidents"
+              - "read_incidents"
+              - "manage_incident_settings"
+              - "read_incident_settings"
+              - "manage_integrations"
+              - "read_integrations"
+              - "manage_private_incidents"
+              - "manage_organization_secrets"
+              - "read_organization_secrets"
+              - "manage_organization_settings"
+              - "read_organization_settings"
+              - "manage_roles"
+              - "read_roles"
+              - "manage_runbooks"
+              - "read_runbooks"
+              - "manage_service_catalog"
+              - "read_service_catalog"
+              - "manage_status_templates"
+              - "read_status_templates"
+              - "manage_status_page_updates"
+              - "manage_support_hours"
+              - "read_support_hours"
+              - "manage_teams"
+              - "read_teams"
+              - "manage_users"
+              - "read_users"
+              - "manage_webhooks"
+              - "read_webhooks"
+      description: "Create a new role"
+    "PublicAPI_V1_RoleEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "built_in":
+          type: "boolean"
+          nullable: true
+        "read_only":
+          type: "boolean"
+          nullable: true
+        "permissions":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
+      description: "PublicAPI_V1_RoleEntity model"
+    "RoleEntityPaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_RoleEntity"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "RoleEntityPaginated model"
+    "update_role":
+      required:
+        - "name"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the role."
+        "description":
+          type: "string"
+          description: "A long-form description of the role's purpose."
+          nullable: true
+        "permissions":
+          type: "array"
+          description: "An array of permission slugs to assign to the role."
+          nullable: true
+          items:
+            type: "string"
+            enum:
+              - "create_alerts"
+              - "respond_to_alerts"
+              - "read_alerts"
+              - "manage_alert_grouping"
+              - "read_alert_grouping"
+              - "manage_alert_rules"
+              - "read_alert_rules"
+              - "manage_call_routes"
+              - "read_call_routes"
+              - "manage_escalation_policies"
+              - "read_escalation_policies"
+              - "manage_event_sources"
+              - "read_event_sources"
+              - "manage_on_call_schedules"
+              - "read_on_call_schedules"
+              - "manage_on_call_shifts"
+              - "claim_on_call_shifts"
+              - "manage_organization_notification_policies"
+              - "read_notification_policy_compliance"
+              - "manage_webhook_targets"
+              - "read_webhook_targets"
+              - "read_analytics"
+              - "manage_api_keys"
+              - "read_api_keys"
+              - "manage_audiences"
+              - "read_audiences"
+              - "read_audit_events"
+              - "manage_change_events"
+              - "read_change_events"
+              - "manage_incidents"
+              - "create_incidents"
+              - "read_incidents"
+              - "manage_incident_settings"
+              - "read_incident_settings"
+              - "manage_integrations"
+              - "read_integrations"
+              - "manage_private_incidents"
+              - "manage_organization_secrets"
+              - "read_organization_secrets"
+              - "manage_organization_settings"
+              - "read_organization_settings"
+              - "manage_roles"
+              - "read_roles"
+              - "manage_runbooks"
+              - "read_runbooks"
+              - "manage_service_catalog"
+              - "read_service_catalog"
+              - "manage_status_templates"
+              - "read_status_templates"
+              - "manage_status_page_updates"
+              - "manage_support_hours"
+              - "read_support_hours"
+              - "manage_teams"
+              - "read_teams"
+              - "manage_users"
+              - "read_users"
+              - "manage_webhooks"
+              - "read_webhooks"
+      description: "Update a role"
     "Metrics_TicketFunnelMetricsEntity":
       type: "object"
       properties:
@@ -8738,7 +8987,7 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/RunbookStepEntity"}
         "attachment_rule": {"$ref": "#/components/schemas/NullableRules_RuleEntity"}
-        "votes": {"$ref": "#/components/schemas/NullableVotesEntity"}
+        "votes": {"$ref": "#/components/schemas/NullableEmptyVotesEntity"}
         "is_editable":
           type: "boolean"
           nullable: true
@@ -8806,8 +9055,31 @@ components:
         "repeats_duration":
           type: "string"
           nullable: true
-        "votes": {"$ref": "#/components/schemas/NullableVotesEntity"}
+        "votes": {"$ref": "#/components/schemas/NullableEmptyVotesEntity"}
         "rule": {"$ref": "#/components/schemas/NullableRules_RuleEntity"}
+    "EmptyVotesEntity":
+      type: "object"
+      properties:
+        "voted":
+          type: "boolean"
+          description: "Whether or not the current actor has voted"
+          nullable: true
+        "liked":
+          type: "boolean"
+          description: "Whether or not the current actor has voted positively"
+          nullable: true
+        "disliked":
+          type: "boolean"
+          description: "Whether or not the current actor has voted negatively"
+          nullable: true
+        "likes":
+          type: "integer"
+          format: "int32"
+          nullable: true
+        "dislikes":
+          type: "integer"
+          format: "int32"
+          nullable: true
     "update_runbook":
       type: "object"
       properties:
@@ -13028,6 +13300,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/CurrentUserEntity"}
+    "NullablePermissionEntityList":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PermissionEntityList"}
+    "NullablePublicAPI_V1_PermissionEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
     "NullableReportEntity":
       nullable: true
       allOf:
@@ -13040,6 +13320,22 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Reports_DataPointEntity"}
+    "Nullablecreate_role":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_role"}
+    "NullablePublicAPI_V1_RoleEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PublicAPI_V1_RoleEntity"}
+    "NullableRoleEntityPaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/RoleEntityPaginated"}
+    "Nullableupdate_role":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/update_role"}
     "NullableMetrics_TicketFunnelMetricsEntity":
       nullable: true
       allOf:
@@ -13204,6 +13500,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/RunbookStepEntity"}
+    "NullableEmptyVotesEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/EmptyVotesEntity"}
     "Nullableupdate_runbook":
       nullable: true
       allOf:
