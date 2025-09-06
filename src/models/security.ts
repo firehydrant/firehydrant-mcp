@@ -8,5 +8,5 @@ export type Security = { api_key: string };
 
 export const Security$zodSchema: z.ZodType<Security, z.ZodTypeDef, unknown> = z
   .object({
-    api_key: z.string(),
+    api_key: z.string().describe("API Key"),
   });
