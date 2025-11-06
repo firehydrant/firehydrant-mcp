@@ -10,6 +10,10 @@ security:
 tags:
   - name: "Call Routes"
     description: "Operations about Call Routes"
+  - name: "Permissions"
+    description: "Operations about Permissions"
+  - name: "Roles"
+    description: "Operations about Roles"
   - name: "Audit Events"
     description: "Operations about Audit Events"
   - name: "Pages"
@@ -505,8 +509,13 @@ paths:
   "/v1/users/{id}": {}
   "/v1/users/{id}/services": {}
   "/v1/current_user": {}
+  "/v1/permissions": {}
+  "/v1/permissions/current_user": {}
+  "/v1/permissions/team": {}
   "/v1/reports/mean_time": {}
   "/v1/retrospectives": {}
+  "/v1/roles": {}
+  "/v1/roles/{id}": {}
   "/v1/metrics/ticket_funnel": {}
   "/v1/metrics/retrospectives": {}
   "/v1/metrics/milestone_funnel": {}
@@ -578,7 +587,7 @@ paths:
       tags:
         - "Alerts"
       summary: "List alerts"
-      description: "Retrieve all alerts from third parties"
+      description: "Retrieve all alerts, including Signals alerts and third-party"
       operationId: "list_alerts"
       parameters:
         - name: "page"
@@ -659,7 +668,7 @@ paths:
             nullable: true
       responses:
         "200":
-          description: "Retrieve all alerts from third parties"
+          description: "Retrieve all alerts, including Signals alerts and third-party"
           content:
             "application/json":
               schema: {"$ref": "#/components/schemas/Alerts_AlertEntityPaginated"}
@@ -1104,6 +1113,7 @@ components:
             type: "string"
         "labels":
           type: "object"
+          additionalProperties: true
           description: "An object of label key and values"
           nullable: true
         "alert_on_add":
@@ -1290,6 +1300,7 @@ components:
             type: "string"
         "labels":
           type: "object"
+          additionalProperties: true
           description: "An object of label key and values"
           nullable: true
         "alert_on_add":
@@ -1332,6 +1343,7 @@ components:
           nullable: true
         "labels":
           type: "object"
+          additionalProperties: true
           description: "An object of label key and values"
           nullable: true
         "active_incidents":
@@ -1418,6 +1430,7 @@ components:
             type: "string"
         "labels":
           type: "object"
+          additionalProperties: true
           description: "An object of label key and values"
           nullable: true
         "alert_on_add":
@@ -3050,6 +3063,7 @@ components:
           nullable: true
         "labels":
           type: "object"
+          additionalProperties: true
           description: "An object of label key and values"
           nullable: true
         "active_incidents":
@@ -7031,8 +7045,19 @@ components:
         "description":
           type: "string"
           nullable: true
+        "allowed_role_ids":
+          type: "array"
+          description: "IDs of roles allowed to create incidents of this type. Empty array means all roles are allowed."
+          nullable: true
+          items:
+            type: "string"
         "template": {"$ref": "#/components/schemas/NullableIncidentTypeEntity_TemplateEntity"}
         "template_values": {"$ref": "#/components/schemas/NullableIncidentTypeEntity_TemplateValuesEntity"}
+        "required_fields":
+          type: "array"
+          description: "A list of fields that are required on incidents of this type."
+          nullable: true
+          items: {"$ref": "#/components/schemas/Incidents_RequiredFieldEntity"}
         "created_at":
           type: "string"
           format: "date-time"
@@ -7059,6 +7084,7 @@ components:
           nullable: true
         "labels":
           type: "object"
+          additionalProperties: true
           description: "Arbitrary key:value pairs of labels for your incidents."
           nullable: true
         "severity":
@@ -7137,7 +7163,18 @@ components:
         "teams":
           type: "array"
           nullable: true
-          items: {"$ref": "#/components/schemas/TeamEntity"}
+          items: {"$ref": "#/components/schemas/TeamEntityLite"}
+    "Incidents_RequiredFieldEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          description: "A unique identifier for the field. For built-in fields, this will be human-readable. For custom fields or milestone timestamps, it will be a prefixed version of the field or milestone's UUID."
+          nullable: true
+        "required_at_milestone_id":
+          type: "string"
+          description: "The milestone at which this field is required. If null, this field is always required."
+          nullable: true
     "IncidentTypeEntityPaginated":
       type: "object"
       properties:
@@ -7849,6 +7886,43 @@ components:
           format: "int32"
           nullable: true
       description: "CurrentUserEntity model"
+    "PermissionEntityList":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
+      description: "PermissionEntityList model"
+    "PublicAPI_V1_PermissionEntity":
+      type: "object"
+      properties:
+        "slug":
+          type: "string"
+          nullable: true
+        "display_name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "category_display_name":
+          type: "string"
+          nullable: true
+        "category_slug":
+          type: "string"
+          nullable: true
+        "parent_slug":
+          type: "string"
+          nullable: true
+        "available":
+          type: "boolean"
+          nullable: true
+        "dependency_slugs":
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
     "ReportEntity":
       type: "object"
       properties:
@@ -7888,6 +7962,209 @@ components:
           type: "integer"
           format: "int32"
           nullable: true
+    "create_role":
+      required:
+        - "name"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the role."
+        "slug":
+          type: "string"
+          description: "A unique identifier for the role. If not provided, one will be generated from the name."
+          nullable: true
+        "description":
+          type: "string"
+          description: "A long-form description of the role's purpose."
+          nullable: true
+        "permissions":
+          type: "array"
+          description: "An array of permission slugs to assign to the role."
+          nullable: true
+          items:
+            type: "string"
+            enum:
+              - "create_alerts"
+              - "respond_to_alerts"
+              - "read_alerts"
+              - "manage_alert_grouping"
+              - "read_alert_grouping"
+              - "manage_alert_rules"
+              - "read_alert_rules"
+              - "manage_call_routes"
+              - "read_call_routes"
+              - "manage_escalation_policies"
+              - "read_escalation_policies"
+              - "manage_event_sources"
+              - "read_event_sources"
+              - "manage_on_call_schedules"
+              - "read_on_call_schedules"
+              - "manage_on_call_shifts"
+              - "claim_on_call_shifts"
+              - "manage_organization_notification_policies"
+              - "read_notification_policy_compliance"
+              - "manage_webhook_targets"
+              - "read_webhook_targets"
+              - "read_analytics"
+              - "manage_api_keys"
+              - "read_api_keys"
+              - "manage_audiences"
+              - "read_audiences"
+              - "read_audit_events"
+              - "manage_change_events"
+              - "read_change_events"
+              - "manage_incidents"
+              - "create_incidents"
+              - "read_incidents"
+              - "manage_incident_settings"
+              - "read_incident_settings"
+              - "manage_integrations"
+              - "read_integrations"
+              - "manage_private_incidents"
+              - "manage_organization_secrets"
+              - "read_organization_secrets"
+              - "manage_organization_settings"
+              - "read_organization_settings"
+              - "manage_roles"
+              - "read_roles"
+              - "manage_runbooks"
+              - "read_runbooks"
+              - "manage_service_catalog"
+              - "read_service_catalog"
+              - "manage_status_templates"
+              - "read_status_templates"
+              - "manage_status_page_updates"
+              - "manage_support_hours"
+              - "read_support_hours"
+              - "manage_teams"
+              - "read_teams"
+              - "manage_users"
+              - "read_users"
+              - "manage_webhooks"
+              - "read_webhooks"
+      description: "Create a new role"
+    "PublicAPI_V1_RoleEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "built_in":
+          type: "boolean"
+          nullable: true
+        "read_only":
+          type: "boolean"
+          nullable: true
+        "permissions":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
+      description: "PublicAPI_V1_RoleEntity model"
+    "RoleEntityPaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/PublicAPI_V1_RoleEntity"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "RoleEntityPaginated model"
+    "update_role":
+      required:
+        - "name"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the role."
+        "description":
+          type: "string"
+          description: "A long-form description of the role's purpose."
+          nullable: true
+        "permissions":
+          type: "array"
+          description: "An array of permission slugs to assign to the role."
+          nullable: true
+          items:
+            type: "string"
+            enum:
+              - "create_alerts"
+              - "respond_to_alerts"
+              - "read_alerts"
+              - "manage_alert_grouping"
+              - "read_alert_grouping"
+              - "manage_alert_rules"
+              - "read_alert_rules"
+              - "manage_call_routes"
+              - "read_call_routes"
+              - "manage_escalation_policies"
+              - "read_escalation_policies"
+              - "manage_event_sources"
+              - "read_event_sources"
+              - "manage_on_call_schedules"
+              - "read_on_call_schedules"
+              - "manage_on_call_shifts"
+              - "claim_on_call_shifts"
+              - "manage_organization_notification_policies"
+              - "read_notification_policy_compliance"
+              - "manage_webhook_targets"
+              - "read_webhook_targets"
+              - "read_analytics"
+              - "manage_api_keys"
+              - "read_api_keys"
+              - "manage_audiences"
+              - "read_audiences"
+              - "read_audit_events"
+              - "manage_change_events"
+              - "read_change_events"
+              - "manage_incidents"
+              - "create_incidents"
+              - "read_incidents"
+              - "manage_incident_settings"
+              - "read_incident_settings"
+              - "manage_integrations"
+              - "read_integrations"
+              - "manage_private_incidents"
+              - "manage_organization_secrets"
+              - "read_organization_secrets"
+              - "manage_organization_settings"
+              - "read_organization_settings"
+              - "manage_roles"
+              - "read_roles"
+              - "manage_runbooks"
+              - "read_runbooks"
+              - "manage_service_catalog"
+              - "read_service_catalog"
+              - "manage_status_templates"
+              - "read_status_templates"
+              - "manage_status_page_updates"
+              - "manage_support_hours"
+              - "read_support_hours"
+              - "manage_teams"
+              - "read_teams"
+              - "manage_users"
+              - "read_users"
+              - "manage_webhooks"
+              - "read_webhooks"
+      description: "Update a role"
     "Metrics_TicketFunnelMetricsEntity":
       type: "object"
       properties:
@@ -8738,7 +9015,7 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/RunbookStepEntity"}
         "attachment_rule": {"$ref": "#/components/schemas/NullableRules_RuleEntity"}
-        "votes": {"$ref": "#/components/schemas/NullableVotesEntity"}
+        "votes": {"$ref": "#/components/schemas/NullableEmptyVotesEntity"}
         "is_editable":
           type: "boolean"
           nullable: true
@@ -8806,8 +9083,31 @@ components:
         "repeats_duration":
           type: "string"
           nullable: true
-        "votes": {"$ref": "#/components/schemas/NullableVotesEntity"}
+        "votes": {"$ref": "#/components/schemas/NullableEmptyVotesEntity"}
         "rule": {"$ref": "#/components/schemas/NullableRules_RuleEntity"}
+    "EmptyVotesEntity":
+      type: "object"
+      properties:
+        "voted":
+          type: "boolean"
+          description: "Whether or not the current actor has voted"
+          nullable: true
+        "liked":
+          type: "boolean"
+          description: "Whether or not the current actor has voted positively"
+          nullable: true
+        "disliked":
+          type: "boolean"
+          description: "Whether or not the current actor has voted negatively"
+          nullable: true
+        "likes":
+          type: "integer"
+          format: "int32"
+          nullable: true
+        "dislikes":
+          type: "integer"
+          format: "int32"
+          nullable: true
     "update_runbook":
       type: "object"
       properties:
@@ -9122,6 +9422,7 @@ components:
           nullable: true
         "filter_values":
           type: "object"
+          additionalProperties: true
           description: "An unstructured key/value pair of saved values for searching"
           nullable: true
       description: "SavedSearchEntity model"
@@ -9171,7 +9472,6 @@ components:
           type: "array"
           nullable: true
           items: {"$ref": "#/components/schemas/Lifecycles_MilestoneEntity"}
-      description: "Lifecycles_PhaseEntity model"
     "Lifecycles_MilestoneEntity":
       type: "object"
       properties:
@@ -9204,6 +9504,7 @@ components:
           type: "string"
           format: "date-time"
           nullable: true
+      description: "Lifecycles_MilestoneEntity model"
     "create_priority":
       required:
         - "slug"
@@ -9281,6 +9582,12 @@ components:
             - "teal"
             - "grey"
             - "green"
+        "allowed_role_ids":
+          type: "array"
+          description: "IDs of roles allowed to use this severity. Empty array means all roles are allowed."
+          nullable: true
+          items:
+            type: "string"
       description: "Create a new severity"
     "SeverityEntity":
       type: "object"
@@ -9312,6 +9619,12 @@ components:
         "color":
           type: "string"
           nullable: true
+        "allowed_role_ids":
+          type: "array"
+          description: "IDs of roles allowed to use this severity. Empty array means all roles are allowed."
+          nullable: true
+          items:
+            type: "string"
       description: "SeverityEntity model"
     "SeverityEntityPaginated":
       type: "object"
@@ -9346,6 +9659,12 @@ components:
             - "teal"
             - "grey"
             - "green"
+        "allowed_role_ids":
+          type: "array"
+          description: "IDs of roles allowed to use this severity. Empty array means all roles are allowed."
+          nullable: true
+          items:
+            type: "string"
       description: "Update a specific severity"
     "update_severity_matrix":
       required:
@@ -9780,6 +10099,7 @@ components:
           nullable: true
         "required":
           type: "boolean"
+          description: "Whether this field is required for all incidents."
           nullable: true
         "required_at_milestone_id":
           type: "string"
@@ -9795,7 +10115,6 @@ components:
       required:
         - "display_name"
         - "field_type"
-        - "required"
       type: "object"
       properties:
         "display_name":
@@ -9812,6 +10131,8 @@ components:
             type: "string"
         "required":
           type: "boolean"
+          description: "Whether this field should be required for all incidents."
+          nullable: true
         "required_at_milestone_id":
           type: "string"
           description: "An optional milestone ID to specify when the field should become required, if `required` is set to `true`. If not provided, required fields are always required."
@@ -10284,6 +10605,29 @@ components:
           enum:
             - "i18n_key"
             - "custom"
+    "create_signals_page":
+      required:
+        - "summary"
+        - "target_id"
+        - "target_type"
+      type: "object"
+      properties:
+        "summary":
+          type: "string"
+        "target_type":
+          type: "string"
+          enum:
+            - "EscalationPolicy"
+            - "OnCallSchedule"
+            - "Team"
+            - "User"
+        "target_id":
+          type: "string"
+          description: "The ID of the target. Should be a UUID for the target type."
+        "body":
+          type: "string"
+          nullable: true
+      description: "Used for paging an on-call target within FireHydrant's signals product. This can be used for paging users, teams, on-call schedules, and escalation policies."
     "create_ticket":
       required:
         - "summary"
@@ -10638,6 +10982,31 @@ components:
                 description: "A long-form description for the task if additional context is helpful"
                 nullable: true
       description: "Updates a task list's attributes and task list items"
+    "patch_scim_group":
+      required:
+        - "Operations"
+      type: "object"
+      properties:
+        "trail":
+          type: "string"
+          description: "An optional trail to log the request"
+          nullable: true
+        "Operations":
+          type: "array"
+          description: "An array of operations to perform on the group"
+          items:
+            required:
+              - "op"
+              - "path"
+            type: "object"
+            properties:
+              "op":
+                type: "string"
+                description: "The operation to perform. Options are add, remove, replace"
+              "path":
+                type: "string"
+                description: "The path to the attribute to be modified"
+      description: "SCIM endpoint to partially update a Team (Colloquial for Group in the SCIM protocol). Supports adding, removing, or replacing members using SCIM PATCH operations."
     "update_scim_group":
       required:
         - "displayName"
@@ -10693,7 +11062,6 @@ components:
           items:
             required:
               - "op"
-              - "path"
             type: "object"
             properties:
               "op":
@@ -10701,7 +11069,8 @@ components:
                 description: "The operation to perform on the user. Options are add, remove, replace"
               "path":
                 type: "string"
-                description: "The path to the attribute to be modified"
+                description: "The path to the attribute to be modified. Optional for Okta OIN format where value contains the full update object"
+                nullable: true
       description: "PATCH SCIM endpoint to update a User. This endpoint is used to update a resource's attributes."
     "update_scim_user":
       type: "object"
@@ -10779,6 +11148,10 @@ components:
         "userName":
           type: "string"
           description: "A service provider's unique identifier for the user"
+        "externalId":
+          type: "string"
+          description: "A unique identifier for the user from the external provisioning system"
+          nullable: true
         "name":
           required:
             - "familyName"
@@ -12097,6 +12470,163 @@ components:
           type: "string"
           description: "Slug of the detail, unique and autogenerated"
           nullable: true
+    "create_audience":
+      required:
+        - "description"
+        - "name"
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "Name of the audience (max 255 characters)"
+        "description":
+          type: "string"
+          description: "Description of the audience (max 4000 characters)"
+        "default":
+          type: "boolean"
+          description: "Whether this is the default audience"
+          nullable: true
+          default: false
+        "details":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "prompt"
+              - "question"
+            type: "object"
+            properties:
+              "question":
+                type: "string"
+                description: "The incident detail question (max 255 characters)"
+              "prompt":
+                type: "string"
+                description: "The prompt to display when collecting this detail"
+              "slug":
+                type: "string"
+                description: "Optional unique identifier for this detail"
+                nullable: true
+        "settings":
+          required:
+            - "alerts"
+            - "communications"
+            - "current_milestone"
+            - "custom_fields"
+            - "customer_impact_summary"
+            - "description"
+            - "high_value_events"
+            - "id"
+            - "medium_value_events"
+            - "name"
+            - "responders"
+            - "services"
+            - "severity"
+            - "started_at"
+            - "status"
+            - "timeline"
+            - "work_items"
+          type: "object"
+          properties:
+            "id":
+              type: "boolean"
+              description: "Include the incident's id in summarization"
+            "name":
+              type: "boolean"
+              description: "Include the incident's name in summarization"
+            "started_at":
+              type: "boolean"
+              description: "Include the datetime the incident started in summarization"
+            "status":
+              type: "boolean"
+              description: "Include the incident's status in summarization"
+            "severity":
+              type: "boolean"
+              description: "Include the incident's severity in summarization"
+            "description":
+              type: "boolean"
+              description: "Include the incident's description in summarization"
+            "customer_impact_summary":
+              type: "boolean"
+              description: "Include the incident's customer impact summary in summarization"
+            "current_milestone":
+              type: "boolean"
+              description: "Include the incident's current milestone in summarization"
+            "timeline":
+              type: "boolean"
+              description: "Include each milestone change and any high or medium value event in summarization"
+            "communications":
+              type: "boolean"
+              description: "Include all communication (starred or not) in summarization"
+            "work_items":
+              type: "boolean"
+              description: "Include all tickets and tasks in summarization"
+            "services":
+              type: "boolean"
+              description: "Include all impacted catalog items in summarization"
+            "custom_fields":
+              type: "boolean"
+              description: "Include all custom fields for the incident in summarization"
+            "alerts":
+              type: "boolean"
+              description: "Include all alerts related to the incident in summarization"
+            "responders":
+              type: "boolean"
+              description: "Include all information on responders, their roles, and any assigned teams"
+            "high_value_events":
+              required:
+                - "add_task_list"
+                - "bulk_milestone_update"
+                - "external_link"
+                - "handoff"
+                - "impact_update"
+                - "incident_status"
+              type: "object"
+              properties:
+                "incident_status":
+                  type: "boolean"
+                  description: "Include incident status change events in the timeline"
+                "bulk_milestone_update":
+                  type: "boolean"
+                  description: "Include bulk updates (including runbook or automation events) in the timeline"
+                "impact_update":
+                  type: "boolean"
+                  description: "Include any catalog item impact events in the timeline"
+                "handoff":
+                  type: "boolean"
+                  description: "Include any handoff events in the timeline"
+                "add_task_list":
+                  type: "boolean"
+                  description: "Include any additions to the task list in the timeline"
+                "external_link":
+                  type: "boolean"
+                  description: "Include any external link events in the timeline"
+            "medium_value_events":
+              required:
+                - "change_type"
+                - "child_changed"
+                - "new_related_change_event"
+                - "parent_changed"
+                - "runbook_step_execution_update"
+              type: "object"
+              properties:
+                "parent_changed":
+                  type: "boolean"
+                  description: "Include any events where the incident's parent changes in the timeline"
+                "child_changed":
+                  type: "boolean"
+                  description: "Include any events where the incident's children change in the timeline"
+                "new_related_change_event":
+                  type: "boolean"
+                  description: "Include any related change events in the timeline"
+                "runbook_step_execution_update":
+                  type: "boolean"
+                  description: "Include any runbook step updates in the timeline"
+                "change_type":
+                  type: "boolean"
+                  description: "Include any incident type change events in the timeline"
+          description: "audience settings for initial audience creation"
+          nullable: true
+      description: "Create a new audience"
     "Audiences_Entities_AudienceSummariesEntity":
       type: "object"
       properties:
@@ -12896,6 +13426,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/IncidentTypeEntity_TemplateValuesEntity"}
+    "NullableIncidents_RequiredFieldEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Incidents_RequiredFieldEntity"}
     "NullableIncidentTypeEntityPaginated":
       nullable: true
       allOf:
@@ -13028,6 +13562,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/CurrentUserEntity"}
+    "NullablePermissionEntityList":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PermissionEntityList"}
+    "NullablePublicAPI_V1_PermissionEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PublicAPI_V1_PermissionEntity"}
     "NullableReportEntity":
       nullable: true
       allOf:
@@ -13040,6 +13582,22 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Reports_DataPointEntity"}
+    "Nullablecreate_role":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_role"}
+    "NullablePublicAPI_V1_RoleEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/PublicAPI_V1_RoleEntity"}
+    "NullableRoleEntityPaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/RoleEntityPaginated"}
+    "Nullableupdate_role":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/update_role"}
     "NullableMetrics_TicketFunnelMetricsEntity":
       nullable: true
       allOf:
@@ -13204,6 +13762,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/RunbookStepEntity"}
+    "NullableEmptyVotesEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/EmptyVotesEntity"}
     "Nullableupdate_runbook":
       nullable: true
       allOf:
@@ -13480,6 +14042,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Alerts_ProcessingLogEntryEntity"}
+    "Nullablecreate_signals_page":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_signals_page"}
     "Nullablecreate_ticket":
       nullable: true
       allOf:
@@ -13552,6 +14118,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_task_list"}
+    "Nullablepatch_scim_group":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/patch_scim_group"}
     "Nullableupdate_scim_group":
       nullable: true
       allOf:
@@ -13796,6 +14366,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Audiences_Entities_DetailEntity"}
+    "Nullablecreate_audience":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_audience"}
     "NullableAudiences_Entities_AudienceSummariesEntity":
       nullable: true
       allOf:

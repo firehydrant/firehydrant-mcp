@@ -1,3 +1,4 @@
+.env.local
 **/.speakeasy/logs/
 **/.speakeasy/reports/
 **/.speakeasy/temp/

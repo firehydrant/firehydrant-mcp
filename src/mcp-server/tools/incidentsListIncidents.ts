@@ -16,6 +16,13 @@ export const tool$incidentsListIncidents: ToolDefinition<typeof args> = {
 
 List all of the incidents in the organization`,
   scopes: ["read"],
+  annotations: {
+    "title": "",
+    "destructiveHint": false,
+    "idempotentHint": false,
+    "openWorldHint": false,
+    "readOnlyHint": false,
+  },
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await incidentsListIncidents(

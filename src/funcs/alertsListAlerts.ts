@@ -32,7 +32,7 @@ import { Result } from "../types/fp.js";
  * List alerts
  *
  * @remarks
- * Retrieve all alerts from third parties
+ * Retrieve all alerts, including Signals alerts and third-party
  */
 export function alertsListAlerts(
   client$: FireHydrantCore,
@@ -109,9 +109,10 @@ async function $do(
   const requestSecurity = resolveGlobalSecurity(securityInput);
 
   const context = {
+    options: client$._options,
     baseURL: options?.serverURL ?? client$._baseURL ?? "",
     operationID: "list_alerts",
-    oAuth2Scopes: [],
+    oAuth2Scopes: null,
     resolvedSecurity: requestSecurity,
     securitySource: client$._options.security,
     retryConfig: options?.retries
@@ -134,6 +135,7 @@ async function $do(
     headers: headers$,
     query: query$,
     body: body$,
+    userAgent: client$._options.userAgent,
     timeoutMs: options?.timeoutMs || client$._options.timeoutMs
       || -1,
   }, options);

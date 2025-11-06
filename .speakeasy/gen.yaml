@@ -16,13 +16,16 @@ generation:
   auth:
     oAuth2ClientCredentialsEnabled: true
     oAuth2PasswordEnabled: true
+    hoistGlobalSecurity: true
   sdkHooksConfigAccess: true
+  schemas:
+    allOfMergeStrategy: shallowMerge
   tests:
     generateTests: true
     generateNewTests: false
     skipResponseBodyAssertions: false
 mcp-typescript:
-  version: 0.0.1-beta.14
+  version: 0.0.1-beta.15
   additionalDependencies:
     dependencies:
       '@tiptap/core': ^3.0.7
@@ -35,5 +38,6 @@ mcp-typescript:
   cloudflareEnabled: false
   defaultErrorName: FireHydrantDefaultError
   inputModelSuffix: input
+  maxMethodParams: 0
   outputModelSuffix: output
   packageName: firehydrant-mcp
