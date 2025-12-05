@@ -22,6 +22,13 @@ export const tool$retrospectivesUpdateIncidentRetrospectiveField:
 The value should be unstyled HTML.
 `,
     scopes: ["read", "write"],
+    annotations: {
+      "title": "",
+      "destructiveHint": false,
+      "idempotentHint": false,
+      "openWorldHint": false,
+      "readOnlyHint": false,
+    },
     args,
     tool: async (client, args, ctx) => {
       const [result, apiCall] =

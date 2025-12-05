@@ -2,7 +2,7 @@
 
 import { build } from "bun";
 import { chmod, copyFile, mkdir } from "node:fs/promises";
-import { packExtension } from "@anthropic-ai/dxt";
+import { packExtension } from "@anthropic-ai/mcpb";
 import { join } from "node:path";
 
 async function buildMcpServer() {
@@ -24,17 +24,17 @@ async function buildMcpServer() {
   const outputFile = join(destinationDir, "mcp-server.js");
   await chmod(outputFile, 0o755);
 
-    // Build the DXT file
+    // Build the MCP bundle file
   await packExtension({
     extensionPath: ".",
-    outputPath: "mcp-server.dxt",
+    outputPath: "mcp-server.mcpb",
     silent: false,
   });
 
-  // Copy the DXT file to `./static` to have the CloudFlare Worker serve it
+  // Copy the MCP bundle file to `./static` to have the CloudFlare Worker serve it
   const staticDir = "./static";
   await mkdir(staticDir, { recursive: true });
-  await copyFile("mcp-server.dxt", join(staticDir, "mcp-server.dxt"));
+  await copyFile("mcp-server.mcpb", join(staticDir, "mcp-server.mcpb"));
 }
 
 await buildMcpServer().catch((error) => {

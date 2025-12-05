@@ -1,6 +1,6 @@
 {
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.14",
+  "version": "0.0.1-beta.15",
   "author": "FireHydrant",
   "type": "module",
   "sideEffects": false,
@@ -29,7 +29,7 @@
     "zod": "^3.25.7"
   },
   "devDependencies": {
-    "@anthropic-ai/dxt": "^0.1.0",
+    "@anthropic-ai/mcpb": "^1.2.0",
     "@eslint/js": "^9.26.0",
     "@types/bun": "^1.2.13",
     "@types/express": "^5.0.1",
