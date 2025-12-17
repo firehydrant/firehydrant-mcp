@@ -14,8 +14,15 @@ export const tool$alertsListAlerts: ToolDefinition<typeof args> = {
   name: "list-alerts",
   description: `List alerts
 
-Retrieve all alerts from third parties`,
+Retrieve all alerts, including Signals alerts and third-party`,
   scopes: ["read"],
+  annotations: {
+    "title": "",
+    "destructiveHint": false,
+    "idempotentHint": false,
+    "openWorldHint": false,
+    "readOnlyHint": false,
+  },
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await alertsListAlerts(
