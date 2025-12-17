@@ -1,6 +1,6 @@
 {
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.15",
+  "version": "0.0.2",
   "author": "FireHydrant",
   "type": "module",
   "sideEffects": false,
@@ -20,14 +20,14 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.17.0",
+    "@modelcontextprotocol/sdk": "^1.23.0",
     "@stricli/core": "^1.1.2",
     "@tiptap/core": "^3.0.7",
     "@tiptap/html": "^3.0.7",
     "@tiptap/starter-kit": "^3.0.7",
     "bun": "^1.2.12",
     "express": "^5.1.0",
-    "zod": "^3.25.7"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@anthropic-ai/mcpb": "^1.2.0",

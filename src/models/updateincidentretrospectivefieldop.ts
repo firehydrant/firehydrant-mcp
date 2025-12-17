@@ -20,9 +20,7 @@ export type UpdateIncidentRetrospectiveFieldRequest = {
 };
 
 export const UpdateIncidentRetrospectiveFieldRequest$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveFieldRequest,
-  z.ZodTypeDef,
-  unknown
+  UpdateIncidentRetrospectiveFieldRequest
 > = z.object({
   field_id: z.string(),
   incident_id: z.string(),
@@ -41,13 +39,11 @@ export type UpdateIncidentRetrospectiveFieldResponse = {
 };
 
 export const UpdateIncidentRetrospectiveFieldResponse$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveFieldResponse,
-  z.ZodTypeDef,
-  unknown
+  UpdateIncidentRetrospectiveFieldResponse
 > = z.object({
   ContentType: z.string(),
   Incidents_RetrospectiveFieldEntity:
     IncidentsRetrospectiveFieldEntity$zodSchema.optional(),
-  RawResponse: z.instanceof(Response),
-  StatusCode: z.number().int(),
+  RawResponse: z.custom<Response>(x => x instanceof Response),
+  StatusCode: z.int(),
 });

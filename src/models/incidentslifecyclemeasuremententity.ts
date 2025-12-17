@@ -16,11 +16,9 @@ export type IncidentsLifecycleMeasurementEntity = {
 };
 
 export const IncidentsLifecycleMeasurementEntity$zodSchema: z.ZodType<
-  IncidentsLifecycleMeasurementEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsLifecycleMeasurementEntity
 > = z.object({
-  calculated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  calculated_at: z.iso.datetime({ offset: true }).nullable().optional(),
   description: z.string().nullable().optional(),
   ends_at_milestone: z.string().nullable().optional(),
   id: z.string().nullable().optional(),

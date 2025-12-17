@@ -10,11 +10,7 @@ export type SignalsAPINotificationPolicyItemComplianceEntity = {
 };
 
 export const SignalsAPINotificationPolicyItemComplianceEntity$zodSchema:
-  z.ZodType<
-    SignalsAPINotificationPolicyItemComplianceEntity,
-    z.ZodTypeDef,
-    unknown
-  > = z.object({
+  z.ZodType<SignalsAPINotificationPolicyItemComplianceEntity> = z.object({
     is_compliant: z.boolean().nullable().optional(),
     notification_policy_item_id: z.string().nullable().optional(),
   });

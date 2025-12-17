@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import { AuthorEntity, AuthorEntity$zodSchema } from "./authorentity.js";
 import {
   NullableAttachmentsLinkEntity,
@@ -16,6 +17,20 @@ import {
   NullableTicketingPriorityEntity,
   NullableTicketingPriorityEntity$zodSchema,
 } from "./nullableticketingpriorityentity.js";
+import {
+  TicketingCustomFieldsFieldValue,
+  TicketingCustomFieldsFieldValue$zodSchema,
+} from "./ticketingcustomfieldsfieldvalue.js";
+
+export const TicketingTicketEntityState = {
+  Open: "open",
+  InProgress: "in_progress",
+  Cancelled: "cancelled",
+  Done: "done",
+} as const;
+export type TicketingTicketEntityState = ClosedEnum<
+  typeof TicketingTicketEntityState
+>;
 
 export const TicketingTicketEntityState$zodSchema = z.enum([
   "open",
@@ -24,8 +39,13 @@ export const TicketingTicketEntityState$zodSchema = z.enum([
   "done",
 ]);
 
-export type TicketingTicketEntityState = z.infer<
-  typeof TicketingTicketEntityState$zodSchema
+export const TicketingTicketEntityType = {
+  Incident: "incident",
+  Task: "task",
+  FollowUp: "follow_up",
+} as const;
+export type TicketingTicketEntityType = ClosedEnum<
+  typeof TicketingTicketEntityType
 >;
 
 export const TicketingTicketEntityType$zodSchema = z.enum([
@@ -34,16 +54,10 @@ export const TicketingTicketEntityType$zodSchema = z.enum([
   "follow_up",
 ]);
 
-export type TicketingTicketEntityType = z.infer<
-  typeof TicketingTicketEntityType$zodSchema
->;
-
 export type TicketingTicketEntityAttachment = {};
 
 export const TicketingTicketEntityAttachment$zodSchema: z.ZodType<
-  TicketingTicketEntityAttachment,
-  z.ZodTypeDef,
-  unknown
+  TicketingTicketEntityAttachment
 > = z.object({});
 
 /**
@@ -68,32 +82,36 @@ export type TicketingTicketEntity = {
   task_id?: string | null | undefined;
   due_at?: string | null | undefined;
   sync_error_message?: string | null | undefined;
+  ticketing_custom_fields?:
+    | Array<TicketingCustomFieldsFieldValue>
+    | null
+    | undefined;
   link?: NullableAttachmentsLinkEntity | null | undefined;
 };
 
-export const TicketingTicketEntity$zodSchema: z.ZodType<
-  TicketingTicketEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  assignees: z.array(AuthorEntity$zodSchema).nullable().optional(),
-  attachments: z.array(z.lazy(() => TicketingTicketEntityAttachment$zodSchema))
-    .nullable().optional(),
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
-  created_by: NullableAuthorEntity$zodSchema.nullable().optional(),
-  description: z.string().nullable().optional(),
-  due_at: z.string().datetime({ offset: true }).nullable().optional(),
-  id: z.string().nullable().optional(),
-  incident_current_milestone: z.string().nullable().optional(),
-  incident_id: z.string().nullable().optional(),
-  incident_name: z.string().nullable().optional(),
-  link: NullableAttachmentsLinkEntity$zodSchema.nullable().optional(),
-  priority: NullableTicketingPriorityEntity$zodSchema.nullable().optional(),
-  state: TicketingTicketEntityState$zodSchema.nullable().optional(),
-  summary: z.string().nullable().optional(),
-  sync_error_message: z.string().nullable().optional(),
-  tag_list: z.array(z.string()).nullable().optional(),
-  task_id: z.string().nullable().optional(),
-  type: TicketingTicketEntityType$zodSchema.nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
-}).describe("Ticketing_TicketEntity model");
+export const TicketingTicketEntity$zodSchema: z.ZodType<TicketingTicketEntity> =
+  z.object({
+    assignees: z.array(AuthorEntity$zodSchema).nullable().optional(),
+    attachments: z.array(
+      z.lazy(() => TicketingTicketEntityAttachment$zodSchema),
+    ).nullable().optional(),
+    created_at: z.iso.datetime({ offset: true }).nullable().optional(),
+    created_by: NullableAuthorEntity$zodSchema.nullable().optional(),
+    description: z.string().nullable().optional(),
+    due_at: z.iso.datetime({ offset: true }).nullable().optional(),
+    id: z.string().nullable().optional(),
+    incident_current_milestone: z.string().nullable().optional(),
+    incident_id: z.string().nullable().optional(),
+    incident_name: z.string().nullable().optional(),
+    link: NullableAttachmentsLinkEntity$zodSchema.nullable().optional(),
+    priority: NullableTicketingPriorityEntity$zodSchema.nullable().optional(),
+    state: TicketingTicketEntityState$zodSchema.nullable().optional(),
+    summary: z.string().nullable().optional(),
+    sync_error_message: z.string().nullable().optional(),
+    tag_list: z.array(z.string()).nullable().optional(),
+    task_id: z.string().nullable().optional(),
+    ticketing_custom_fields: z.array(TicketingCustomFieldsFieldValue$zodSchema)
+      .nullable().optional(),
+    type: TicketingTicketEntityType$zodSchema.nullable().optional(),
+    updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
+  }).describe("Ticketing_TicketEntity model");

@@ -11,11 +11,7 @@ export type AuthorEntity = {
   email?: string | null | undefined;
 };
 
-export const AuthorEntity$zodSchema: z.ZodType<
-  AuthorEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
+export const AuthorEntity$zodSchema: z.ZodType<AuthorEntity> = z.object({
   email: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),

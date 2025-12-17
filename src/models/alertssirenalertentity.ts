@@ -14,9 +14,7 @@ import {
 export type AlertsSirenAlertEntityLabels = {};
 
 export const AlertsSirenAlertEntityLabels$zodSchema: z.ZodType<
-  AlertsSirenAlertEntityLabels,
-  z.ZodTypeDef,
-  unknown
+  AlertsSirenAlertEntityLabels
 > = z.object({}).describe("Arbitrary key:value pairs of labels.");
 
 export type AlertsSirenAlertEntity = {
@@ -35,12 +33,10 @@ export type AlertsSirenAlertEntity = {
 };
 
 export const AlertsSirenAlertEntity$zodSchema: z.ZodType<
-  AlertsSirenAlertEntity,
-  z.ZodTypeDef,
-  unknown
+  AlertsSirenAlertEntity
 > = z.object({
   description: z.string().nullable().optional(),
-  ends_at: z.string().datetime({ offset: true }).nullable().optional(),
+  ends_at: z.iso.datetime({ offset: true }).nullable().optional(),
   id: z.string().nullable().optional(),
   labels: z.lazy(() => AlertsSirenAlertEntityLabels$zodSchema).nullable()
     .optional(),
@@ -48,7 +44,7 @@ export const AlertsSirenAlertEntity$zodSchema: z.ZodType<
   remote_url: z.string().nullable().optional(),
   signal_id: z.string().nullable().optional(),
   signal_rule: NullableSignalsAPIRuleEntity$zodSchema.nullable().optional(),
-  starts_at: z.string().datetime({ offset: true }).nullable().optional(),
+  starts_at: z.iso.datetime({ offset: true }).nullable().optional(),
   status: z.string().nullable().optional(),
   summary: z.string().nullable().optional(),
   tags: z.array(z.string()).nullable().optional(),

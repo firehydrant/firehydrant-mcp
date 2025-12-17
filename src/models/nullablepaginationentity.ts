@@ -15,15 +15,13 @@ export type NullablePaginationEntity = {
 };
 
 export const NullablePaginationEntity$zodSchema: z.ZodType<
-  NullablePaginationEntity,
-  z.ZodTypeDef,
-  unknown
+  NullablePaginationEntity
 > = z.object({
-  count: z.number().int().nullable().optional(),
-  items: z.number().int().nullable().optional(),
-  last: z.number().int().nullable().optional(),
-  next: z.number().int().nullable().optional(),
-  page: z.number().int().nullable().optional(),
-  pages: z.number().int().nullable().optional(),
-  prev: z.number().int().nullable().optional(),
+  count: z.int().nullable().optional(),
+  items: z.int().nullable().optional(),
+  last: z.int().nullable().optional(),
+  next: z.int().nullable().optional(),
+  page: z.int().nullable().optional(),
+  pages: z.int().nullable().optional(),
+  prev: z.int().nullable().optional(),
 });

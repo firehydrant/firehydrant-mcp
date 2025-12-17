@@ -13,12 +13,10 @@ export type CreateIncidentResponse = {
 };
 
 export const CreateIncidentResponse$zodSchema: z.ZodType<
-  CreateIncidentResponse,
-  z.ZodTypeDef,
-  unknown
+  CreateIncidentResponse
 > = z.object({
   ContentType: z.string(),
   IncidentEntity: IncidentEntity$zodSchema.optional(),
-  RawResponse: z.instanceof(Response),
-  StatusCode: z.number().int(),
+  RawResponse: z.custom<Response>(x => x instanceof Response),
+  StatusCode: z.int(),
 });

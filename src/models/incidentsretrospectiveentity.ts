@@ -26,12 +26,11 @@ export type IncidentsRetrospectiveEntity = {
   is_hidden?: boolean | null | undefined;
   fields?: Array<IncidentsRetrospectiveFieldEntity> | null | undefined;
   exports?: Array<string> | null | undefined;
+  retrospective_template_id?: string | null | undefined;
 };
 
 export const IncidentsRetrospectiveEntity$zodSchema: z.ZodType<
-  IncidentsRetrospectiveEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsRetrospectiveEntity
 > = z.object({
   description: z.string().nullable().optional(),
   exports: z.array(z.string()).nullable().optional(),
@@ -40,6 +39,7 @@ export const IncidentsRetrospectiveEntity$zodSchema: z.ZodType<
   id: z.string().nullable().optional(),
   is_hidden: z.boolean().nullable().optional(),
   name: z.string().nullable().optional(),
+  retrospective_template_id: z.string().nullable().optional(),
   sections: z.array(IncidentsRetrospectiveEntitySectionEntity$zodSchema)
     .nullable().optional(),
 }).describe("Incidents_RetrospectiveEntity model");

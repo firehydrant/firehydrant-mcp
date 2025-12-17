@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import {
   IncidentEntityPaginated,
   IncidentEntityPaginated$zodSchema,
@@ -11,15 +12,23 @@ import {
 /**
  * A matching strategy for the tags provided
  */
+export const ListIncidentsTagMatchStrategy = {
+  Any: "any",
+  MatchAll: "match_all",
+  Exclude: "exclude",
+} as const;
+/**
+ * A matching strategy for the tags provided
+ */
+export type ListIncidentsTagMatchStrategy = ClosedEnum<
+  typeof ListIncidentsTagMatchStrategy
+>;
+
 export const ListIncidentsTagMatchStrategy$zodSchema = z.enum([
   "any",
   "match_all",
   "exclude",
 ]).describe("A matching strategy for the tags provided");
-
-export type ListIncidentsTagMatchStrategy = z.infer<
-  typeof ListIncidentsTagMatchStrategy$zodSchema
->;
 
 export type ListIncidentsRequest = {
   page?: number | null | undefined;
@@ -55,99 +64,100 @@ export type ListIncidentsRequest = {
   updated_before?: string | null | undefined;
   incident_type_id?: string | null | undefined;
   retrospective_templates?: string | null | undefined;
+  attached_runbooks?: string | null | undefined;
 };
 
-export const ListIncidentsRequest$zodSchema: z.ZodType<
-  ListIncidentsRequest,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  archived: z.boolean().describe("Return archived incidents").nullable()
-    .optional(),
-  assigned_teams: z.string().describe(
-    "A comma separated list of IDs for assigned teams or 'is_empty' to filter for incidents with no active team assignments",
-  ).nullable().optional(),
-  closed_at_or_after: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were closed at or after this time",
-  ).nullable().optional(),
-  closed_at_or_before: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were closed at or before this time",
-  ).nullable().optional(),
-  conditions: z.string().describe(
-    "A JSON string that defines 'logic' and 'user_data'",
-  ).nullable().optional(),
-  created_at_or_after: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were created at or after this time",
-  ).nullable().optional(),
-  created_at_or_before: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were created at or before this time",
-  ).nullable().optional(),
-  current_milestones: z.string().describe(
-    "A comma separated list of current milestones",
-  ).nullable().optional(),
-  end_date: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that started on or before this date",
-  ).nullable().optional(),
-  environments: z.string().describe(
-    "A comma separated list of environment IDs or 'is_empty' to filter for incidents with no impacted environments",
-  ).nullable().optional(),
-  excluded_infrastructure_ids: z.string().describe(
-    "A comma separated list of infrastructure IDs. Returns incidents that do not have the following infrastructure ids associated with them.",
-  ).nullable().optional(),
-  functionalities: z.string().describe(
-    "A comma separated list of functionality IDs or 'is_empty' to filter for incidents with no impacted functionalities",
-  ).nullable().optional(),
-  incident_type_id: z.string().describe(
-    "A comma separated list of incident type IDs",
-  ).nullable().optional(),
-  name: z.string().describe("A query to search incidents by their name")
-    .nullable().optional(),
-  page: z.number().int().nullable().optional(),
-  per_page: z.number().int().nullable().optional(),
-  priorities: z.string().describe("A text value of priority").nullable()
-    .optional(),
-  priority_not_set: z.boolean().describe(
-    "Flag for including incidents where priority has not been set",
-  ).nullable().optional(),
-  query: z.string().describe(
-    "A text query for an incident that searches on name, summary, and desciption",
-  ).nullable().optional(),
-  resolved_at_or_after: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were resolved at or after this time. Combine this with the `current_milestones` parameter if you wish to omit incidents that were re-opened and are still active.",
-  ).nullable().optional(),
-  resolved_at_or_before: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were resolved at or before this time. Combine this with the `current_milestones` parameter if you wish to omit incidents that were re-opened and are still active.",
-  ).nullable().optional(),
-  retrospective_templates: z.string().describe(
-    "A comma separated list of retrospective template IDs",
-  ).nullable().optional(),
-  saved_search_id: z.string().describe("The id of a previously saved search.")
-    .nullable().optional(),
-  services: z.string().describe(
-    "A comma separated list of service IDs or 'is_empty' to filter for incidents with no impacted services",
-  ).nullable().optional(),
-  severities: z.string().describe("A text value of severity").nullable()
-    .optional(),
-  severity_not_set: z.boolean().describe(
-    "Flag for including incidents where severity has not been set",
-  ).nullable().optional(),
-  start_date: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that started on or after this date",
-  ).nullable().optional(),
-  status: z.string().describe("Incident status").nullable().optional(),
-  tag_match_strategy: ListIncidentsTagMatchStrategy$zodSchema.nullable()
-    .optional(),
-  tags: z.string().describe("A comma separated list of tags").nullable()
-    .optional(),
-  teams: z.string().describe("A comma separated list of team IDs").nullable()
-    .optional(),
-  updated_after: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were updated after this date",
-  ).nullable().optional(),
-  updated_before: z.string().datetime({ offset: true }).describe(
-    "Filters for incidents that were updated before this date",
-  ).nullable().optional(),
-});
+export const ListIncidentsRequest$zodSchema: z.ZodType<ListIncidentsRequest> = z
+  .object({
+    archived: z.boolean().describe("Return archived incidents").nullable()
+      .optional(),
+    assigned_teams: z.string().describe(
+      "A comma separated list of IDs for assigned teams or 'is_empty' to filter for incidents with no active team assignments",
+    ).nullable().optional(),
+    attached_runbooks: z.string().describe(
+      "A comma separated list of runbook IDs",
+    ).nullable().optional(),
+    closed_at_or_after: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were closed at or after this time",
+    ).nullable().optional(),
+    closed_at_or_before: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were closed at or before this time",
+    ).nullable().optional(),
+    conditions: z.string().describe(
+      "A JSON string that defines 'logic' and 'user_data'",
+    ).nullable().optional(),
+    created_at_or_after: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were created at or after this time",
+    ).nullable().optional(),
+    created_at_or_before: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were created at or before this time",
+    ).nullable().optional(),
+    current_milestones: z.string().describe(
+      "A comma separated list of current milestones",
+    ).nullable().optional(),
+    end_date: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that started on or before this date",
+    ).nullable().optional(),
+    environments: z.string().describe(
+      "A comma separated list of environment IDs or 'is_empty' to filter for incidents with no impacted environments",
+    ).nullable().optional(),
+    excluded_infrastructure_ids: z.string().describe(
+      "A comma separated list of infrastructure IDs. Returns incidents that do not have the following infrastructure ids associated with them.",
+    ).nullable().optional(),
+    functionalities: z.string().describe(
+      "A comma separated list of functionality IDs or 'is_empty' to filter for incidents with no impacted functionalities",
+    ).nullable().optional(),
+    incident_type_id: z.string().describe(
+      "A comma separated list of incident type IDs",
+    ).nullable().optional(),
+    name: z.string().describe("A query to search incidents by their name")
+      .nullable().optional(),
+    page: z.int().nullable().optional(),
+    per_page: z.int().nullable().optional(),
+    priorities: z.string().describe("A text value of priority").nullable()
+      .optional(),
+    priority_not_set: z.boolean().describe(
+      "Flag for including incidents where priority has not been set",
+    ).nullable().optional(),
+    query: z.string().describe(
+      "A text query for an incident that searches on name, summary, and desciption",
+    ).nullable().optional(),
+    resolved_at_or_after: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were resolved at or after this time. Combine this with the `current_milestones` parameter if you wish to omit incidents that were re-opened and are still active.",
+    ).nullable().optional(),
+    resolved_at_or_before: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were resolved at or before this time. Combine this with the `current_milestones` parameter if you wish to omit incidents that were re-opened and are still active.",
+    ).nullable().optional(),
+    retrospective_templates: z.string().describe(
+      "A comma separated list of retrospective template IDs",
+    ).nullable().optional(),
+    saved_search_id: z.string().describe("The id of a previously saved search.")
+      .nullable().optional(),
+    services: z.string().describe(
+      "A comma separated list of service IDs or 'is_empty' to filter for incidents with no impacted services",
+    ).nullable().optional(),
+    severities: z.string().describe("A text value of severity").nullable()
+      .optional(),
+    severity_not_set: z.boolean().describe(
+      "Flag for including incidents where severity has not been set",
+    ).nullable().optional(),
+    start_date: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that started on or after this date",
+    ).nullable().optional(),
+    status: z.string().describe("Incident status").nullable().optional(),
+    tag_match_strategy: ListIncidentsTagMatchStrategy$zodSchema.nullable()
+      .optional(),
+    tags: z.string().describe("A comma separated list of tags").nullable()
+      .optional(),
+    teams: z.string().describe("A comma separated list of team IDs").nullable()
+      .optional(),
+    updated_after: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were updated after this date",
+    ).nullable().optional(),
+    updated_before: z.iso.datetime({ offset: true }).describe(
+      "Filters for incidents that were updated before this date",
+    ).nullable().optional(),
+  });
 
 export type ListIncidentsResponse = {
   ContentType: string;
@@ -156,13 +166,10 @@ export type ListIncidentsResponse = {
   IncidentEntityPaginated?: IncidentEntityPaginated | undefined;
 };
 
-export const ListIncidentsResponse$zodSchema: z.ZodType<
-  ListIncidentsResponse,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  ContentType: z.string(),
-  IncidentEntityPaginated: IncidentEntityPaginated$zodSchema.optional(),
-  RawResponse: z.instanceof(Response),
-  StatusCode: z.number().int(),
-});
+export const ListIncidentsResponse$zodSchema: z.ZodType<ListIncidentsResponse> =
+  z.object({
+    ContentType: z.string(),
+    IncidentEntityPaginated: IncidentEntityPaginated$zodSchema.optional(),
+    RawResponse: z.custom<Response>(x => x instanceof Response),
+    StatusCode: z.int(),
+  });

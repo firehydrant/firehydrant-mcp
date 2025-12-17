@@ -16,15 +16,13 @@ export type ListIncidentRetrospectivesRequest = {
 };
 
 export const ListIncidentRetrospectivesRequest$zodSchema: z.ZodType<
-  ListIncidentRetrospectivesRequest,
-  z.ZodTypeDef,
-  unknown
+  ListIncidentRetrospectivesRequest
 > = z.object({
   incident_id: z.string(),
   is_hidden: z.boolean().describe("Filter by hidden status.").nullable()
     .optional(),
-  page: z.number().int().nullable().optional(),
-  per_page: z.number().int().nullable().optional(),
+  page: z.int().nullable().optional(),
+  per_page: z.int().nullable().optional(),
 });
 
 export type ListIncidentRetrospectivesResponse = {
@@ -37,13 +35,11 @@ export type ListIncidentRetrospectivesResponse = {
 };
 
 export const ListIncidentRetrospectivesResponse$zodSchema: z.ZodType<
-  ListIncidentRetrospectivesResponse,
-  z.ZodTypeDef,
-  unknown
+  ListIncidentRetrospectivesResponse
 > = z.object({
   ContentType: z.string(),
   Incidents_RetrospectiveEntityPaginated:
     IncidentsRetrospectiveEntityPaginated$zodSchema.optional(),
-  RawResponse: z.instanceof(Response),
-  StatusCode: z.number().int(),
+  RawResponse: z.custom<Response>(x => x instanceof Response),
+  StatusCode: z.int(),
 });

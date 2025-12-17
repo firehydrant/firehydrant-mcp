@@ -9,30 +9,23 @@ import * as z from "zod";
  */
 export type CreateIncidentLabels = {};
 
-export const CreateIncidentLabels$zodSchema: z.ZodType<
-  CreateIncidentLabels,
-  z.ZodTypeDef,
-  unknown
-> = z.object({}).describe(
-  "Key:value pairs to track custom data for the incident",
-);
+export const CreateIncidentLabels$zodSchema: z.ZodType<CreateIncidentLabels> = z
+  .object({}).describe("Key:value pairs to track custom data for the incident");
 
 export type Impact = { type: string; id: string; condition_id: string };
 
-export const Impact$zodSchema: z.ZodType<Impact, z.ZodTypeDef, unknown> = z
-  .object({
-    condition_id: z.string(),
-    id: z.string(),
-    type: z.string(),
-  });
+export const Impact$zodSchema: z.ZodType<Impact> = z.object({
+  condition_id: z.string(),
+  id: z.string(),
+  type: z.string(),
+});
 
 export type Milestone = { type: string; occurred_at: string };
 
-export const Milestone$zodSchema: z.ZodType<Milestone, z.ZodTypeDef, unknown> =
-  z.object({
-    occurred_at: z.string().datetime({ offset: true }),
-    type: z.string(),
-  });
+export const Milestone$zodSchema: z.ZodType<Milestone> = z.object({
+  occurred_at: z.iso.datetime({ offset: true }),
+  type: z.string(),
+});
 
 export type CustomField = {
   field_id: string;
@@ -40,11 +33,7 @@ export type CustomField = {
   value_array?: Array<string> | null | undefined;
 };
 
-export const CustomField$zodSchema: z.ZodType<
-  CustomField,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
+export const CustomField$zodSchema: z.ZodType<CustomField> = z.object({
   field_id: z.string(),
   value_array: z.array(z.string()).nullable().optional(),
   value_string: z.string().nullable().optional(),
@@ -76,11 +65,7 @@ export type CreateIncident = {
   skip_incident_type_values?: boolean | null | undefined;
 };
 
-export const CreateIncident$zodSchema: z.ZodType<
-  CreateIncident,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
+export const CreateIncident$zodSchema: z.ZodType<CreateIncident> = z.object({
   alert_ids: z.array(z.string()).nullable().optional(),
   custom_fields: z.array(z.lazy(() => CustomField$zodSchema)).nullable()
     .optional(),

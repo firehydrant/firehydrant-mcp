@@ -14,14 +14,12 @@ export type IncidentsMilestoneEntity = {
 };
 
 export const IncidentsMilestoneEntity$zodSchema: z.ZodType<
-  IncidentsMilestoneEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsMilestoneEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   duration: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
-  occurred_at: z.string().datetime({ offset: true }).nullable().optional(),
+  occurred_at: z.iso.datetime({ offset: true }).nullable().optional(),
   type: z.string().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
 });

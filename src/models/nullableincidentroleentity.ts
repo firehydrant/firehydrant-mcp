@@ -18,15 +18,13 @@ export type NullableIncidentRoleEntity = {
 };
 
 export const NullableIncidentRoleEntity$zodSchema: z.ZodType<
-  NullableIncidentRoleEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableIncidentRoleEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   description: z.string().nullable().optional(),
-  discarded_at: z.string().datetime({ offset: true }).nullable().optional(),
+  discarded_at: z.iso.datetime({ offset: true }).nullable().optional(),
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   summary: z.string().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
 }).describe("IncidentRoleEntity model");

@@ -14,11 +14,9 @@ export type NullableSeverityMatrixConditionEntity = {
 };
 
 export const NullableSeverityMatrixConditionEntity$zodSchema: z.ZodType<
-  NullableSeverityMatrixConditionEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableSeverityMatrixConditionEntity
 > = z.object({
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
-  position: z.number().int().nullable().optional(),
+  position: z.int().nullable().optional(),
 }).describe("SeverityMatrix_ConditionEntity model");

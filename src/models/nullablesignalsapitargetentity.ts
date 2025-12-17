@@ -13,9 +13,7 @@ export type NullableSignalsAPITargetEntity = {
 };
 
 export const NullableSignalsAPITargetEntity$zodSchema: z.ZodType<
-  NullableSignalsAPITargetEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableSignalsAPITargetEntity
 > = z.object({
   id: z.string().nullable().optional(),
   is_pageable: z.boolean().nullable().optional(),

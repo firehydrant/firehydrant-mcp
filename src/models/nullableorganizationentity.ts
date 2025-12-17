@@ -10,9 +10,7 @@ export type NullableOrganizationEntity = {
 };
 
 export const NullableOrganizationEntity$zodSchema: z.ZodType<
-  NullableOrganizationEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableOrganizationEntity
 > = z.object({
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),

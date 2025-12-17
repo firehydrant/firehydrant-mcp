@@ -88,6 +88,8 @@ async function $do(
   const body$ = null;
   const path$ = pathToFunc("/v1/alerts")();
   const query$ = encodeFormQuery({
+    "end_date": payload$?.end_date,
+    "end_datetime": payload$?.end_datetime,
     "environments": payload$?.environments,
     "functionalities": payload$?.functionalities,
     "page": payload$?.page,
@@ -95,6 +97,8 @@ async function $do(
     "query": payload$?.query,
     "services": payload$?.services,
     "signal_rules": payload$?.signal_rules,
+    "start_date": payload$?.start_date,
+    "start_datetime": payload$?.start_datetime,
     "statuses": payload$?.statuses,
     "tag_match_strategy": payload$?.tag_match_strategy,
     "tags": payload$?.tags,

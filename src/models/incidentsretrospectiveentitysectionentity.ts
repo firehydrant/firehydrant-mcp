@@ -10,9 +10,7 @@ export type IncidentsRetrospectiveEntitySectionEntity = {
 };
 
 export const IncidentsRetrospectiveEntitySectionEntity$zodSchema: z.ZodType<
-  IncidentsRetrospectiveEntitySectionEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsRetrospectiveEntitySectionEntity
 > = z.object({
   elements: z.array(z.string()).nullable().optional(),
   slug: z.string().nullable().optional(),

@@ -13,11 +13,9 @@ export type NullableIntegrationEntity = {
 };
 
 export const NullableIntegrationEntity$zodSchema: z.ZodType<
-  NullableIntegrationEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableIntegrationEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   display_name: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
   integration_name: z.string().nullable().optional(),

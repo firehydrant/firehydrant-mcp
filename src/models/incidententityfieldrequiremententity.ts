@@ -10,9 +10,7 @@ export type IncidentEntityFieldRequirementEntity = {
 };
 
 export const IncidentEntityFieldRequirementEntity$zodSchema: z.ZodType<
-  IncidentEntityFieldRequirementEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentEntityFieldRequirementEntity
 > = z.object({
   field_id: z.string().nullable().optional(),
   required_at_milestone_id: z.string().nullable().optional(),

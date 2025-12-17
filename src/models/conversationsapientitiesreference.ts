@@ -18,9 +18,7 @@ export type ConversationsAPIEntitiesReference = {
 };
 
 export const ConversationsAPIEntitiesReference$zodSchema: z.ZodType<
-  ConversationsAPIEntitiesReference,
-  z.ZodTypeDef,
-  unknown
+  ConversationsAPIEntitiesReference
 > = z.object({
   channel: NullableConversationsAPIEntitiesChannel$zodSchema.nullable()
     .optional(),

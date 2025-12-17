@@ -4,25 +4,29 @@
 
 import * as z from "zod";
 
-export type CustomFieldsFieldValue = {
+export type TicketingCustomFieldsFieldValue = {
   name?: string | null | undefined;
   value_type?: string | null | undefined;
   display_name?: string | null | undefined;
   description?: string | null | undefined;
   slug?: string | null | undefined;
   field_id?: string | null | undefined;
+  field_type?: string | null | undefined;
+  permissible_values?: Array<string> | null | undefined;
   value_array?: Array<string> | null | undefined;
   value_string?: string | null | undefined;
   value?: string | null | undefined;
 };
 
-export const CustomFieldsFieldValue$zodSchema: z.ZodType<
-  CustomFieldsFieldValue
+export const TicketingCustomFieldsFieldValue$zodSchema: z.ZodType<
+  TicketingCustomFieldsFieldValue
 > = z.object({
   description: z.string().nullable().optional(),
   display_name: z.string().nullable().optional(),
   field_id: z.string().nullable().optional(),
+  field_type: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
+  permissible_values: z.array(z.string()).nullable().optional(),
   slug: z.string().nullable().optional(),
   value: z.string().nullable().optional(),
   value_array: z.array(z.string()).nullable().optional(),

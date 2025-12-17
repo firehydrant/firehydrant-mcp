@@ -3,6 +3,21 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
+
+export const IncidentsRetrospectiveFieldEntityType = {
+  Text: "text",
+  SingleSelect: "single_select",
+  MultiSelect: "multi_select",
+  Numeric: "numeric",
+  Datetime: "datetime",
+  DynamicInputGroup: "dynamic_input_group",
+  Markdown: "markdown",
+  MarkdownText: "markdown_text",
+} as const;
+export type IncidentsRetrospectiveFieldEntityType = ClosedEnum<
+  typeof IncidentsRetrospectiveFieldEntityType
+>;
 
 export const IncidentsRetrospectiveFieldEntityType$zodSchema = z.enum([
   "text",
@@ -15,24 +30,17 @@ export const IncidentsRetrospectiveFieldEntityType$zodSchema = z.enum([
   "markdown_text",
 ]);
 
-export type IncidentsRetrospectiveFieldEntityType = z.infer<
-  typeof IncidentsRetrospectiveFieldEntityType$zodSchema
->;
-
 export type Value = number | string | Array<{ [k: string]: any }>;
 
-export const Value$zodSchema: z.ZodType<Value, z.ZodTypeDef, unknown> = z.union(
-  [
-    z.number().int(),
-    z.string(),
-    z.array(z.record(z.any())),
-  ],
-);
+export const Value$zodSchema: z.ZodType<Value> = z.union([
+  z.int(),
+  z.string(),
+  z.array(z.record(z.string(), z.any())),
+]);
 
 export type Schema = {};
 
-export const Schema$zodSchema: z.ZodType<Schema, z.ZodTypeDef, unknown> = z
-  .object({});
+export const Schema$zodSchema: z.ZodType<Schema> = z.object({});
 
 /**
  * Incidents_RetrospectiveFieldEntity model
@@ -50,9 +58,7 @@ export type IncidentsRetrospectiveFieldEntity = {
 };
 
 export const IncidentsRetrospectiveFieldEntity$zodSchema: z.ZodType<
-  IncidentsRetrospectiveFieldEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsRetrospectiveFieldEntity
 > = z.object({
   help_text: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
@@ -63,8 +69,8 @@ export const IncidentsRetrospectiveFieldEntity$zodSchema: z.ZodType<
   schema: z.array(z.lazy(() => Schema$zodSchema)).nullable().optional(),
   type: IncidentsRetrospectiveFieldEntityType$zodSchema.nullable().optional(),
   value: z.union([
-    z.number().int(),
+    z.int(),
     z.string(),
-    z.array(z.record(z.any())),
+    z.array(z.record(z.string(), z.any())),
   ]).nullable().optional(),
 }).describe("Incidents_RetrospectiveFieldEntity model");

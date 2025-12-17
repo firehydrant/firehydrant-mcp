@@ -3,54 +3,58 @@
  */
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import {
+  ShapeOutput,
+  ZodRawShapeCompat,
+} from "@modelcontextprotocol/sdk/server/zod-compat.js";
 import { RequestHandlerExtra } from "@modelcontextprotocol/sdk/shared/protocol.js";
 import {
   CallToolResult,
   ServerNotification,
   ServerRequest,
 } from "@modelcontextprotocol/sdk/types.js";
-import { objectOutputType, ZodRawShape, ZodTypeAny } from "zod";
 import { FireHydrantCore } from "../core.js";
 import { ConsoleLogger } from "./console-logger.js";
 import { MCPScope } from "./scopes.js";
 import { isAsyncIterable, isBinaryData, valueToBase64 } from "./shared.js";
 
-export type ToolDefinition<Args extends undefined | ZodRawShape = undefined> =
-  Args extends ZodRawShape ? {
-      name: string;
-      description: string;
-      scopes?: MCPScope[];
-      args: Args;
-      annotations: {
-        title: string;
-        destructiveHint: boolean;
-        idempotentHint: boolean;
-        openWorldHint: boolean;
-        readOnlyHint: boolean;
-      };
-      tool: (
-        client: FireHydrantCore,
-        args: objectOutputType<Args, ZodTypeAny>,
-        extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
-      ) => CallToolResult | Promise<CallToolResult>;
-    }
-    : {
-      name: string;
-      description: string;
-      scopes?: MCPScope[];
-      args?: undefined;
-      annotations: {
-        title: string;
-        destructiveHint: boolean;
-        idempotentHint: boolean;
-        openWorldHint: boolean;
-        readOnlyHint: boolean;
-      };
-      tool: (
-        client: FireHydrantCore,
-        extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
-      ) => CallToolResult | Promise<CallToolResult>;
+export type ToolDefinition<
+  Args extends undefined | ZodRawShapeCompat = undefined,
+> = Args extends ZodRawShapeCompat ? {
+    name: string;
+    description: string;
+    scopes?: MCPScope[];
+    args: Args;
+    annotations: {
+      title: string;
+      destructiveHint: boolean;
+      idempotentHint: boolean;
+      openWorldHint: boolean;
+      readOnlyHint: boolean;
     };
+    tool: (
+      client: FireHydrantCore,
+      args: ShapeOutput<Args>,
+      extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
+    ) => CallToolResult | Promise<CallToolResult>;
+  }
+  : {
+    name: string;
+    description: string;
+    scopes?: MCPScope[];
+    args?: undefined;
+    annotations: {
+      title: string;
+      destructiveHint: boolean;
+      idempotentHint: boolean;
+      openWorldHint: boolean;
+      readOnlyHint: boolean;
+    };
+    tool: (
+      client: FireHydrantCore,
+      extra: RequestHandlerExtra<ServerRequest, ServerNotification>,
+    ) => CallToolResult | Promise<CallToolResult>;
+  };
 
 // Optional function to assist with formatting tool results
 export async function formatResult(
@@ -115,11 +119,11 @@ export function createRegisterTool(
   allowedScopes: Set<MCPScope>,
   allowedTools?: Set<string>,
 ): [
-  <A extends ZodRawShape | undefined>(tool: ToolDefinition<A>) => void,
+  <A extends ZodRawShapeCompat | undefined>(tool: ToolDefinition<A>) => void,
   Array<{ name: string; description: string }>,
 ] {
   const tools: Array<{ name: string; description: string }> = [];
-  const registerTool = <A extends ZodRawShape | undefined>(
+  const registerTool = <A extends ZodRawShapeCompat | undefined>(
     tool: ToolDefinition<A>,
   ): void => {
     if (allowedTools && !allowedTools.has(tool.name)) {

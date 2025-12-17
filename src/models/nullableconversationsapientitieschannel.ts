@@ -9,9 +9,7 @@ export type NullableConversationsAPIEntitiesChannel = {
 };
 
 export const NullableConversationsAPIEntitiesChannel$zodSchema: z.ZodType<
-  NullableConversationsAPIEntitiesChannel,
-  z.ZodTypeDef,
-  unknown
+  NullableConversationsAPIEntitiesChannel
 > = z.object({
   name: z.string().nullable().optional(),
 });

@@ -16,6 +16,7 @@ export type NullableUserEntity = {
   name?: string | null | undefined;
   email?: string | null | undefined;
   slack_user_id?: string | null | undefined;
+  role?: string | null | undefined;
   slackLinked?: boolean | null | undefined;
   created_at?: string | null | undefined;
   updated_at?: string | null | undefined;
@@ -26,20 +27,19 @@ export type NullableUserEntity = {
     | undefined;
 };
 
-export const NullableUserEntity$zodSchema: z.ZodType<
-  NullableUserEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
-  email: z.string().nullable().optional(),
-  id: z.string().nullable().optional(),
-  name: z.string().nullable().optional(),
-  signals_enabled_notification_types: z.array(z.string()).nullable().optional(),
-  signals_notification_policy_compliance: z.array(
-    SignalsAPINotificationPolicyItemComplianceEntity$zodSchema,
-  ).nullable().optional(),
-  slackLinked: z.boolean().nullable().optional(),
-  slack_user_id: z.string().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
-}).describe("UserEntity model");
+export const NullableUserEntity$zodSchema: z.ZodType<NullableUserEntity> = z
+  .object({
+    created_at: z.iso.datetime({ offset: true }).nullable().optional(),
+    email: z.string().nullable().optional(),
+    id: z.string().nullable().optional(),
+    name: z.string().nullable().optional(),
+    role: z.string().nullable().optional(),
+    signals_enabled_notification_types: z.array(z.string()).nullable()
+      .optional(),
+    signals_notification_policy_compliance: z.array(
+      SignalsAPINotificationPolicyItemComplianceEntity$zodSchema,
+    ).nullable().optional(),
+    slackLinked: z.boolean().nullable().optional(),
+    slack_user_id: z.string().nullable().optional(),
+    updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
+  }).describe("UserEntity model");

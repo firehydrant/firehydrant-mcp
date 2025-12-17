@@ -12,9 +12,7 @@ export type NullableIncidentsContextObjectEntity = {
 };
 
 export const NullableIncidentsContextObjectEntity$zodSchema: z.ZodType<
-  NullableIncidentsContextObjectEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableIncidentsContextObjectEntity
 > = z.object({
   context_description: z.string().nullable().optional(),
   context_tag: z.string().nullable().optional(),
