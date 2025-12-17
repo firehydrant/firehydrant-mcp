@@ -18,15 +18,13 @@ export type IncidentsLifecyclePhaseEntity = {
 };
 
 export const IncidentsLifecyclePhaseEntity$zodSchema: z.ZodType<
-  IncidentsLifecyclePhaseEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsLifecyclePhaseEntity
 > = z.object({
   description: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
   milestones: z.array(IncidentsLifecycleMilestoneEntity$zodSchema).nullable()
     .optional(),
   name: z.string().nullable().optional(),
-  position: z.number().int().nullable().optional(),
+  position: z.int().nullable().optional(),
   type: z.string().nullable().optional(),
 });

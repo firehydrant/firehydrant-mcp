@@ -21,17 +21,15 @@ export type IncidentsLifecycleMilestoneEntity = {
 };
 
 export const IncidentsLifecycleMilestoneEntity$zodSchema: z.ZodType<
-  IncidentsLifecycleMilestoneEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsLifecycleMilestoneEntity
 > = z.object({
   description: z.string().nullable().optional(),
   duration: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
-  occurred_at: z.string().datetime({ offset: true }).nullable().optional(),
-  position: z.number().int().nullable().optional(),
+  occurred_at: z.iso.datetime({ offset: true }).nullable().optional(),
+  position: z.int().nullable().optional(),
   slug: z.string().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
   updated_by: NullableAuthorEntity$zodSchema.nullable().optional(),
 });

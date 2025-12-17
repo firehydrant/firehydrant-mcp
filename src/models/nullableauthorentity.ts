@@ -11,13 +11,10 @@ export type NullableAuthorEntity = {
   email?: string | null | undefined;
 };
 
-export const NullableAuthorEntity$zodSchema: z.ZodType<
-  NullableAuthorEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  email: z.string().nullable().optional(),
-  id: z.string().nullable().optional(),
-  name: z.string().nullable().optional(),
-  source: z.string().nullable().optional(),
-});
+export const NullableAuthorEntity$zodSchema: z.ZodType<NullableAuthorEntity> = z
+  .object({
+    email: z.string().nullable().optional(),
+    id: z.string().nullable().optional(),
+    name: z.string().nullable().optional(),
+    source: z.string().nullable().optional(),
+  });

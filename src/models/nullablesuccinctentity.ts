@@ -10,9 +10,7 @@ export type NullableSuccinctEntity = {
 };
 
 export const NullableSuccinctEntity$zodSchema: z.ZodType<
-  NullableSuccinctEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableSuccinctEntity
 > = z.object({
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),

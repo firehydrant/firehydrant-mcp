@@ -322,6 +322,12 @@ paths:
           schema:
             type: "string"
             nullable: true
+        - name: "attached_runbooks"
+          in: "query"
+          description: "A comma separated list of runbook IDs"
+          schema:
+            type: "string"
+            nullable: true
       responses:
         "200":
           description: "List all of the incidents in the organization"
@@ -539,6 +545,8 @@ paths:
   "/v1/nunc_connections": {}
   "/v1/nunc_connections/{nunc_connection_id}/subscribers": {}
   "/v1/nunc_connections/{nunc_connection_id}": {}
+  "/v1/nunc_connections/{nunc_connection_id}/unpublish": {}
+  "/v1/nunc_connections/{nunc_connection_id}/publish": {}
   "/v1/nunc_connections/{nunc_connection_id}/component_groups/{group_id}": {}
   "/v1/nunc_connections/{nunc_connection_id}/component_groups": {}
   "/v1/nunc_connections/{nunc_connection_id}/links/{link_id}": {}
@@ -582,6 +590,7 @@ paths:
   "/v1/post_mortems/questions/{question_id}": {}
   "/v1/retrospective_templates": {}
   "/v1/retrospective_templates/{retrospective_template_id}": {}
+  "/v1/retrospective_report_templates/{id}": {}
   "/v1/alerts":
     get:
       tags:
@@ -666,6 +675,34 @@ paths:
           schema:
             type: "string"
             nullable: true
+        - name: "start_date"
+          in: "query"
+          description: "Filters for alerts that started on or after the beginning of this date"
+          schema:
+            type: "string"
+            format: "date-time"
+            nullable: true
+        - name: "end_date"
+          in: "query"
+          description: "Filters for alerts that started on or before the end of this date"
+          schema:
+            type: "string"
+            format: "date-time"
+            nullable: true
+        - name: "start_datetime"
+          in: "query"
+          description: "Filters for alerts that started at or after this exact datetime"
+          schema:
+            type: "string"
+            format: "date-time"
+            nullable: true
+        - name: "end_datetime"
+          in: "query"
+          description: "Filters for alerts that started at or before this exact datetime"
+          schema:
+            type: "string"
+            format: "date-time"
+            nullable: true
       responses:
         "200":
           description: "Retrieve all alerts, including Signals alerts and third-party"
@@ -693,6 +730,9 @@ paths:
   "/v1/ticketing/priorities": {}
   "/v1/ticketing/priorities/{id}": {}
   "/v1/ticketing/ticket_tags": {}
+  "/v1/ticketing/form_configurations": {}
+  "/v1/ticketing/custom_fields/definitions": {}
+  "/v1/ticketing/custom_fields/definitions/{field_id}": {}
   "/v1/task_lists": {}
   "/v1/task_lists/{task_list_id}": {}
   "/v1/noauth/ping": {}
@@ -1358,6 +1398,11 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/LinksEntity"}
         "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier (0-5, lower is more critical)"
+          format: "int32"
+          nullable: true
         "alert_on_add":
           type: "boolean"
           nullable: true
@@ -1834,6 +1879,18 @@ components:
             type: "string"
           description: "A hash of label keys and values"
           nullable: true
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier. Lower values represent higher criticality. Default is 5."
+          format: "int32"
+          nullable: true
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
         "alert_on_add":
           type: "boolean"
           nullable: true
@@ -1914,6 +1971,18 @@ components:
         "description":
           type: "string"
           nullable: true
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier"
+          format: "int32"
+          nullable: true
+          enum:
+            - 0
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
         "services":
           type: "array"
           nullable: true
@@ -2618,6 +2687,9 @@ components:
         "slack_user_id":
           type: "string"
           nullable: true
+        "role":
+          type: "string"
+          nullable: true
         "slack_linked?":
           type: "boolean"
           nullable: true
@@ -2810,6 +2882,10 @@ components:
           type: "string"
           description: "Error message from syncing this ticket to integrations"
           nullable: true
+        "ticketing_custom_fields":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Ticketing_CustomFields_FieldValue"}
         "link": {"$ref": "#/components/schemas/NullableAttachments_LinkEntity"}
       description: "Ticketing_TicketEntity model"
     "Ticketing_PriorityEntity":
@@ -2834,6 +2910,57 @@ components:
           format: "date-time"
           nullable: true
       description: "Ticketing_PriorityEntity model"
+    "Ticketing_CustomFields_FieldValue":
+      type: "object"
+      properties:
+        "name":
+          type: "string"
+          description: "The name of the custom field definition"
+          nullable: true
+        "value_type":
+          type: "string"
+          description: "The type of the custom field definition"
+          nullable: true
+        "display_name":
+          type: "string"
+          description: "The display name of the custom field definition"
+          nullable: true
+        "description":
+          type: "string"
+          description: "The description of the custom field definition"
+          nullable: true
+        "slug":
+          type: "string"
+          description: "The slug of the custom field definition"
+          nullable: true
+        "field_id":
+          type: "string"
+          description: "The field id of the custom field definition"
+          nullable: true
+        "field_type":
+          type: "string"
+          description: "The field type of the custom field definition"
+          nullable: true
+        "permissible_values":
+          type: "array"
+          description: "An array of strings representing selections for single_select or multi_select fields"
+          nullable: true
+          items:
+            type: "string"
+        "value_array":
+          type: "array"
+          description: "The value of the custom field as an array (for select fields)"
+          nullable: true
+          items:
+            type: "string"
+        "value_string":
+          type: "string"
+          description: "The value of the custom field as a string (for string and datetime types)"
+          nullable: true
+        "value":
+          type: "string"
+          description: "The raw value of the custom field"
+          nullable: true
     "Attachments_LinkEntity":
       type: "object"
       properties:
@@ -3078,6 +3205,11 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/LinksEntity"}
         "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier (0-5, lower is more critical)"
+          format: "int32"
+          nullable: true
         "alert_on_add":
           type: "boolean"
           nullable: true
@@ -6818,6 +6950,9 @@ components:
           nullable: true
           items:
             type: "string"
+        "retrospective_template_id":
+          type: "string"
+          nullable: true
       description: "Incidents_RetrospectiveEntity model"
     "Incidents_RetrospectiveEntity_SectionEntity":
       type: "object"
@@ -8018,6 +8153,7 @@ components:
               - "manage_incidents"
               - "create_incidents"
               - "read_incidents"
+              - "update_incidents"
               - "manage_incident_settings"
               - "read_incident_settings"
               - "manage_integrations"
@@ -8139,6 +8275,7 @@ components:
               - "manage_incidents"
               - "create_incidents"
               - "read_incidents"
+              - "update_incidents"
               - "manage_incident_settings"
               - "read_incident_settings"
               - "manage_integrations"
@@ -9292,6 +9429,19 @@ components:
           description: "List of links attached to this status page."
           nullable: true
           items: {"$ref": "#/components/schemas/LinksEntity"}
+        "is_dns_verified":
+          type: "boolean"
+          nullable: true
+        "publish_state":
+          type: "string"
+          nullable: true
+          enum:
+            - "published"
+            - "unpublished"
+        "authentication_method":
+          type: "string"
+          nullable: true
+        "oidc_authentication_config": {"$ref": "#/components/schemas/NullableNuncOidcAuthenticationConfigEntity"}
       description: "NuncConnectionEntity model"
     "NuncConditionEntity":
       type: "object"
@@ -9349,6 +9499,15 @@ components:
         "versions_urls":
           type: "object"
           description: "An object with keys that can have different versions of an image"
+          nullable: true
+    "NuncOidcAuthenticationConfigEntity":
+      type: "object"
+      properties:
+        "issuer_url":
+          type: "string"
+          nullable: true
+        "client_id":
+          type: "string"
           nullable: true
     "NuncEmailSubscribersEntity":
       type: "object"
@@ -10555,6 +10714,77 @@ components:
           type: "string"
           format: "date-time"
           nullable: true
+        "report_elements":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
+    "Retrospectives_TemplateEntity_ReportElementEntity":
+      type: "object"
+      properties:
+        "type":
+          type: "string"
+          nullable: true
+        "data":
+          type: "string"
+          nullable: true
+        "id":
+          type: "string"
+          nullable: true
+        "label":
+          type: "string"
+          nullable: true
+        "content":
+          type: "object"
+          nullable: true
+    "Retrospectives_ReportTemplateEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "is_default":
+          type: "boolean"
+          nullable: true
+        "elements":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
+        "retrospective_template_id":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+      description: "Retrospectives_ReportTemplateEntity model"
+    "Retrospectives_ReportTemplateEntity_ElementEntity":
+      type: "object"
+      properties:
+        "type":
+          type: "string"
+          nullable: true
+        "data":
+          type: "string"
+          nullable: true
+        "id":
+          type: "string"
+          nullable: true
+        "label":
+          type: "string"
+          nullable: true
+        "content":
+          type: "object"
+          nullable: true
     "Alerts_AlertEntityPaginated":
       type: "object"
       properties:
@@ -10665,6 +10895,22 @@ components:
           type: "string"
           description: "The remote URL for an existing ticket in a supported and configured ticketing integration"
           nullable: true
+        "assignees":
+          type: "array"
+          description: "An array of assignees for the ticket"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "source":
+                type: "string"
+                description: "The source of the assignee"
+                nullable: true
+              "id":
+                type: "string"
+                description: "The uesr id of the assignee"
       description: "Creates a ticket for a project"
     "update_ticket":
       type: "object"
@@ -10690,6 +10936,22 @@ components:
           nullable: true
           items:
             type: "string"
+        "assignees":
+          type: "array"
+          description: "An array of assignees for the ticket"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "source":
+                type: "string"
+                description: "The source of the assignee"
+                nullable: true
+              "id":
+                type: "string"
+                description: "The uesr id of the assignee"
       description: "Update a ticket's attributes"
     "Ticketing_Projects_ProjectListItemEntity":
       type: "object"
@@ -10897,6 +11159,96 @@ components:
           format: "int32"
           nullable: true
       description: "Update a single ticketing priority's attributes"
+    "Ticketing_TicketFormConfigurationEntity":
+      type: "object"
+      properties:
+        "fields":
+          type: "string"
+          nullable: true
+      description: "Ticketing_TicketFormConfigurationEntity model"
+    "create_ticketing_custom_definition":
+      required:
+        - "display_name"
+        - "field_type"
+      type: "object"
+      properties:
+        "display_name":
+          type: "string"
+          description: "The display name of the ticketing custom field definition"
+        "description":
+          type: "string"
+          description: "The description of the ticketing custom field definition"
+          nullable: true
+        "field_type":
+          type: "string"
+          description: "The field type of the ticketing custom field definition (datetime, string, single_select, multi_select)"
+        "permissible_values":
+          type: "array"
+          description: "The permissible values of the ticketing custom field definition (for single_select and multi_select field types)"
+          nullable: true
+          items:
+            type: "string"
+        "required":
+          type: "boolean"
+          description: "Whether the ticketing custom field definition should be required for all follow-up tickets. If not specified, the custom field will be set as optional."
+          nullable: true
+      description: "Creates a ticketing custom field for the organization"
+    "Organizations_TicketingCustomFieldDefinitionEntity":
+      type: "object"
+      properties:
+        "display_name":
+          type: "string"
+          description: "The display name of the custom field"
+          nullable: true
+        "field_id":
+          type: "string"
+          description: "The field id of the custom field"
+          nullable: true
+        "field_type":
+          type: "string"
+          description: "The type of the custom field (datetime, string, single_select, or multi_select)"
+          nullable: true
+        "required":
+          type: "string"
+          description: "Whether this field is required for all follow-up tickets"
+          nullable: true
+        "slug":
+          type: "string"
+          description: "The slug of the custom field"
+          nullable: true
+        "description":
+          type: "string"
+          description: "The description of the custom field"
+          nullable: true
+        "permissible_values":
+          type: "array"
+          description: "An array of strings representing selections for single_select or multi_select fields"
+          nullable: true
+          items:
+            type: "string"
+      description: "Organizations_TicketingCustomFieldDefinitionEntity model"
+    "update_ticketing_custom_definition":
+      type: "object"
+      properties:
+        "display_name":
+          type: "string"
+          description: "The display name of the ticketing custom field definition"
+          nullable: true
+        "description":
+          type: "string"
+          description: "The description of the ticketing custom field definition"
+          nullable: true
+        "permissible_values":
+          type: "array"
+          description: "The permissible values of the ticketing custom field definition (for single_select and multi_select field types)"
+          nullable: true
+          items:
+            type: "string"
+        "required":
+          type: "boolean"
+          description: "Whether the ticketing custom field definition should be required for all follow-up tickets. If not specified, the custom field will be set as optional."
+          nullable: true
+      description: "Update a ticketing custom field for the organization"
     "create_task_list":
       required:
         - "name"
@@ -12909,6 +13261,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Ticketing_PriorityEntity"}
+    "NullableTicketing_CustomFields_FieldValue":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Ticketing_CustomFields_FieldValue"}
     "NullableAttachments_LinkEntity":
       nullable: true
       allOf:
@@ -13821,6 +14177,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/MediaImageEntity"}
+    "NullableNuncOidcAuthenticationConfigEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/NuncOidcAuthenticationConfigEntity"}
     "NullableNuncEmailSubscribersEntity":
       nullable: true
       allOf:
@@ -14057,6 +14417,18 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Retrospectives_IndexTemplateEntity"}
+    "NullableRetrospectives_TemplateEntity_ReportElementEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
+    "NullableRetrospectives_ReportTemplateEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity"}
+    "NullableRetrospectives_ReportTemplateEntity_ElementEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
     "NullableAlerts_AlertEntityPaginated":
       nullable: true
       allOf:
@@ -14129,6 +14501,22 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_ticketing_priority"}
+    "NullableTicketing_TicketFormConfigurationEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Ticketing_TicketFormConfigurationEntity"}
+    "Nullablecreate_ticketing_custom_definition":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/create_ticketing_custom_definition"}
+    "NullableOrganizations_TicketingCustomFieldDefinitionEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/Organizations_TicketingCustomFieldDefinitionEntity"}
+    "Nullableupdate_ticketing_custom_definition":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/update_ticketing_custom_definition"}
     "Nullablecreate_task_list":
       nullable: true
       allOf:

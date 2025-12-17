@@ -18,9 +18,7 @@ export type IncidentEntityPaginated = {
 };
 
 export const IncidentEntityPaginated$zodSchema: z.ZodType<
-  IncidentEntityPaginated,
-  z.ZodTypeDef,
-  unknown
+  IncidentEntityPaginated
 > = z.object({
   data: z.array(IncidentEntity$zodSchema).nullable().optional(),
   pagination: NullablePaginationEntity$zodSchema.nullable().optional(),

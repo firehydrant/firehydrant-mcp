@@ -19,9 +19,7 @@ export type IncidentsChannelEntity = {
 };
 
 export const IncidentsChannelEntity$zodSchema: z.ZodType<
-  IncidentsChannelEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsChannelEntity
 > = z.object({
   icon_url: z.string().nullable().optional(),
   id: z.string().nullable().optional(),

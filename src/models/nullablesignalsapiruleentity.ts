@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import {
   NullableAuthorEntity,
   NullableAuthorEntity$zodSchema,
@@ -16,6 +17,16 @@ import {
   NullableSuccinctEntity$zodSchema,
 } from "./nullablesuccinctentity.js";
 
+export const NotificationPriorityOverride = {
+  High: "HIGH",
+  Medium: "MEDIUM",
+  Low: "LOW",
+  Unknown: "",
+} as const;
+export type NotificationPriorityOverride = ClosedEnum<
+  typeof NotificationPriorityOverride
+>;
+
 export const NotificationPriorityOverride$zodSchema = z.enum([
   "HIGH",
   "MEDIUM",
@@ -23,18 +34,18 @@ export const NotificationPriorityOverride$zodSchema = z.enum([
   "",
 ]);
 
-export type NotificationPriorityOverride = z.infer<
-  typeof NotificationPriorityOverride$zodSchema
+export const CreateIncidentConditionWhen = {
+  WhenUnspecified: "WHEN_UNSPECIFIED",
+  WhenAlways: "WHEN_ALWAYS",
+} as const;
+export type CreateIncidentConditionWhen = ClosedEnum<
+  typeof CreateIncidentConditionWhen
 >;
 
 export const CreateIncidentConditionWhen$zodSchema = z.enum([
   "WHEN_UNSPECIFIED",
   "WHEN_ALWAYS",
 ]);
-
-export type CreateIncidentConditionWhen = z.infer<
-  typeof CreateIncidentConditionWhen$zodSchema
->;
 
 /**
  * Signals_API_RuleEntity model
@@ -61,13 +72,11 @@ export type NullableSignalsAPIRuleEntity = {
 };
 
 export const NullableSignalsAPIRuleEntity$zodSchema: z.ZodType<
-  NullableSignalsAPIRuleEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableSignalsAPIRuleEntity
 > = z.object({
   create_incident_condition_when: CreateIncidentConditionWhen$zodSchema
     .nullable().optional(),
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   created_by: NullableAuthorEntity$zodSchema.nullable().optional(),
   deduplication_expiry: z.string().nullable().optional(),
   expression: z.string().nullable().optional(),
@@ -78,5 +87,5 @@ export const NullableSignalsAPIRuleEntity$zodSchema: z.ZodType<
     .nullable().optional(),
   target: NullableSignalsAPITargetEntity$zodSchema.nullable().optional(),
   team_id: z.string().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
 }).describe("Signals_API_RuleEntity model");

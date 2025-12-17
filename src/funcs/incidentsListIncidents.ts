@@ -90,6 +90,7 @@ async function $do(
   const query$ = encodeFormQuery({
     "archived": payload$?.archived,
     "assigned_teams": payload$?.assigned_teams,
+    "attached_runbooks": payload$?.attached_runbooks,
     "closed_at_or_after": payload$?.closed_at_or_after,
     "closed_at_or_before": payload$?.closed_at_or_before,
     "conditions": payload$?.conditions,

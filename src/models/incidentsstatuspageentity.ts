@@ -21,9 +21,7 @@ export type IncidentsStatusPageEntity = {
 };
 
 export const IncidentsStatusPageEntity$zodSchema: z.ZodType<
-  IncidentsStatusPageEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsStatusPageEntity
 > = z.object({
   display_name: z.string().nullable().optional(),
   external_id: z.string().nullable().optional(),

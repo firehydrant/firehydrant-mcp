@@ -9,9 +9,9 @@ import * as z from "zod";
  */
 export type Data = {};
 
-export const Data$zodSchema: z.ZodType<Data, z.ZodTypeDef, unknown> = z.object(
-  {},
-).describe("The event's payload");
+export const Data$zodSchema: z.ZodType<Data> = z.object({}).describe(
+  "The event's payload",
+);
 
 export type AlertsSirenEventEntity = {
   id?: string | null | undefined;
@@ -21,11 +21,9 @@ export type AlertsSirenEventEntity = {
 };
 
 export const AlertsSirenEventEntity$zodSchema: z.ZodType<
-  AlertsSirenEventEntity,
-  z.ZodTypeDef,
-  unknown
+  AlertsSirenEventEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   data: z.lazy(() => Data$zodSchema).nullable().optional(),
   id: z.string().nullable().optional(),
   type: z.string().nullable().optional(),

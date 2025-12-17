@@ -16,13 +16,11 @@ export type NullableSeverityMatrixImpactEntity = {
 };
 
 export const NullableSeverityMatrixImpactEntity$zodSchema: z.ZodType<
-  NullableSeverityMatrixImpactEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableSeverityMatrixImpactEntity
 > = z.object({
   affects_id: z.string().nullable().optional(),
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
-  position: z.number().int().nullable().optional(),
+  position: z.int().nullable().optional(),
   type: z.string().nullable().optional(),
 }).describe("SeverityMatrix_ImpactEntity model");

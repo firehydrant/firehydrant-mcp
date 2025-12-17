@@ -366,6 +366,12 @@ function serializeValue(value: unknown): string {
   } else if (value instanceof Uint8Array) {
     return bytesToBase64(value);
   } else if (typeof value === "object") {
+    if (
+      "toJSON" in value
+      && typeof value.toJSON === "function"
+    ) {
+      return String(value.toJSON());
+    }
     return JSON.stringify(value, jsonReplacer);
   }
 
@@ -375,6 +381,8 @@ function serializeValue(value: unknown): string {
 function jsonReplacer(_: string, value: unknown): unknown {
   if (value instanceof Uint8Array) {
     return bytesToBase64(value);
+  } else if (typeof value === "bigint") {
+    return value.toString();
   } else {
     return value;
   }

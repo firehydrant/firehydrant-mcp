@@ -7,9 +7,7 @@ import * as z from "zod";
 export type IncidentsConferenceBridgeEntityAttachment = {};
 
 export const IncidentsConferenceBridgeEntityAttachment$zodSchema: z.ZodType<
-  IncidentsConferenceBridgeEntityAttachment,
-  z.ZodTypeDef,
-  unknown
+  IncidentsConferenceBridgeEntityAttachment
 > = z.object({});
 
 /**
@@ -29,9 +27,7 @@ export type IncidentsConferenceBridgeEntity = {
 };
 
 export const IncidentsConferenceBridgeEntity$zodSchema: z.ZodType<
-  IncidentsConferenceBridgeEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsConferenceBridgeEntity
 > = z.object({
   attachments: z.array(
     z.lazy(() => IncidentsConferenceBridgeEntityAttachment$zodSchema),

@@ -21,9 +21,7 @@ export type AlertsAlertEntityPaginated = {
 };
 
 export const AlertsAlertEntityPaginated$zodSchema: z.ZodType<
-  AlertsAlertEntityPaginated,
-  z.ZodTypeDef,
-  unknown
+  AlertsAlertEntityPaginated
 > = z.object({
   data: z.array(AlertsAlertEntity$zodSchema).nullable().optional(),
   pagination: NullablePaginationEntity$zodSchema.nullable().optional(),

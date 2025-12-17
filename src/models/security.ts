@@ -6,7 +6,6 @@ import * as z from "zod";
 
 export type Security = { api_key: string };
 
-export const Security$zodSchema: z.ZodType<Security, z.ZodTypeDef, unknown> = z
-  .object({
-    api_key: z.string().describe("API Key"),
-  });
+export const Security$zodSchema: z.ZodType<Security> = z.object({
+  api_key: z.string().describe("API Key"),
+});

@@ -11,11 +11,9 @@ export type PublicApiv1IncidentsSuccinctEntity = {
 };
 
 export const PublicApiv1IncidentsSuccinctEntity$zodSchema: z.ZodType<
-  PublicApiv1IncidentsSuccinctEntity,
-  z.ZodTypeDef,
-  unknown
+  PublicApiv1IncidentsSuccinctEntity
 > = z.object({
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
-  number: z.number().int().nullable().optional(),
+  number: z.int().nullable().optional(),
 });

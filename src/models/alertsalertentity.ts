@@ -35,9 +35,7 @@ import { SuccinctEntity, SuccinctEntity$zodSchema } from "./succinctentity.js";
 export type AlertsAlertEntityLabels = {};
 
 export const AlertsAlertEntityLabels$zodSchema: z.ZodType<
-  AlertsAlertEntityLabels,
-  z.ZodTypeDef,
-  unknown
+  AlertsAlertEntityLabels
 > = z.object({}).describe("Arbitrary key:value pairs of labels.");
 
 /**
@@ -76,42 +74,42 @@ export type AlertsAlertEntity = {
   conversations?: Array<ConversationsAPIEntitiesReference> | null | undefined;
 };
 
-export const AlertsAlertEntity$zodSchema: z.ZodType<
-  AlertsAlertEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  child_alerts: z.array(AlertsSirenAlertEntity$zodSchema).nullable().optional(),
-  conversations: z.array(ConversationsAPIEntitiesReference$zodSchema).nullable()
-    .optional(),
-  description: z.string().nullable().optional(),
-  duration_iso8601: z.string().nullable().optional(),
-  duration_ms: z.number().int().nullable().optional(),
-  ends_at: z.string().datetime({ offset: true }).nullable().optional(),
-  environments: z.array(SuccinctEntity$zodSchema).nullable().optional(),
-  events: z.array(AlertsSirenEventEntity$zodSchema).nullable().optional(),
-  id: z.string().nullable().optional(),
-  incidents: z.array(PublicApiv1IncidentsSuccinctEntity$zodSchema).nullable()
-    .optional(),
-  integration_name: z.string().nullable().optional(),
-  is_expired: z.boolean().nullable().optional(),
-  is_noise: z.boolean().nullable().optional(),
-  labels: z.lazy(() => AlertsAlertEntityLabels$zodSchema).nullable().optional(),
-  parent_alerts: z.array(AlertsSirenAlertEntity$zodSchema).nullable()
-    .optional(),
-  position: z.number().int().nullable().optional(),
-  priority: z.string().nullable().optional(),
-  remote_id: z.string().nullable().optional(),
-  remote_url: z.string().nullable().optional(),
-  services: z.array(SuccinctEntity$zodSchema).nullable().optional(),
-  signal_id: z.string().nullable().optional(),
-  signal_rule: NullableSignalsAPIRuleEntity$zodSchema.nullable().optional(),
-  signal_target: NullableSignalsAPITargetEntity$zodSchema.nullable().optional(),
-  source_icon: z.string().nullable().optional(),
-  starts_at: z.string().datetime({ offset: true }).nullable().optional(),
-  status: z.string().nullable().optional(),
-  summary: z.string().nullable().optional(),
-  tags: z.array(z.string()).nullable().optional(),
-  team_id: z.string().nullable().optional(),
-  team_name: z.string().nullable().optional(),
-}).describe("Alerts_AlertEntity model");
+export const AlertsAlertEntity$zodSchema: z.ZodType<AlertsAlertEntity> = z
+  .object({
+    child_alerts: z.array(AlertsSirenAlertEntity$zodSchema).nullable()
+      .optional(),
+    conversations: z.array(ConversationsAPIEntitiesReference$zodSchema)
+      .nullable().optional(),
+    description: z.string().nullable().optional(),
+    duration_iso8601: z.string().nullable().optional(),
+    duration_ms: z.int().nullable().optional(),
+    ends_at: z.iso.datetime({ offset: true }).nullable().optional(),
+    environments: z.array(SuccinctEntity$zodSchema).nullable().optional(),
+    events: z.array(AlertsSirenEventEntity$zodSchema).nullable().optional(),
+    id: z.string().nullable().optional(),
+    incidents: z.array(PublicApiv1IncidentsSuccinctEntity$zodSchema).nullable()
+      .optional(),
+    integration_name: z.string().nullable().optional(),
+    is_expired: z.boolean().nullable().optional(),
+    is_noise: z.boolean().nullable().optional(),
+    labels: z.lazy(() => AlertsAlertEntityLabels$zodSchema).nullable()
+      .optional(),
+    parent_alerts: z.array(AlertsSirenAlertEntity$zodSchema).nullable()
+      .optional(),
+    position: z.int().nullable().optional(),
+    priority: z.string().nullable().optional(),
+    remote_id: z.string().nullable().optional(),
+    remote_url: z.string().nullable().optional(),
+    services: z.array(SuccinctEntity$zodSchema).nullable().optional(),
+    signal_id: z.string().nullable().optional(),
+    signal_rule: NullableSignalsAPIRuleEntity$zodSchema.nullable().optional(),
+    signal_target: NullableSignalsAPITargetEntity$zodSchema.nullable()
+      .optional(),
+    source_icon: z.string().nullable().optional(),
+    starts_at: z.iso.datetime({ offset: true }).nullable().optional(),
+    status: z.string().nullable().optional(),
+    summary: z.string().nullable().optional(),
+    tags: z.array(z.string()).nullable().optional(),
+    team_id: z.string().nullable().optional(),
+    team_name: z.string().nullable().optional(),
+  }).describe("Alerts_AlertEntity model");

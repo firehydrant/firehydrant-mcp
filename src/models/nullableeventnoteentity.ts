@@ -24,14 +24,12 @@ export type NullableEventNoteEntity = {
 };
 
 export const NullableEventNoteEntity$zodSchema: z.ZodType<
-  NullableEventNoteEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableEventNoteEntity
 > = z.object({
   body: z.string().nullable().optional(),
   conversations: z.array(ConversationsAPIEntitiesReference$zodSchema).nullable()
     .optional(),
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   id: z.string().nullable().optional(),
   status_pages: z.array(IncidentsStatusPageEntity$zodSchema).nullable()
     .optional(),

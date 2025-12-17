@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import {
   AlertsAlertEntityPaginated,
   AlertsAlertEntityPaginated$zodSchema,
@@ -11,6 +12,18 @@ import {
 /**
  * The strategy to match tags. `any` will return alerts that have at least one of the supplied tags, `match_all` will return only alerts that have all of the supplied tags, and `exclude` will only return alerts that have none of the supplied tags. This currently only works for Signals alerts.
  */
+export const ListAlertsTagMatchStrategy = {
+  Any: "any",
+  MatchAll: "match_all",
+  Exclude: "exclude",
+} as const;
+/**
+ * The strategy to match tags. `any` will return alerts that have at least one of the supplied tags, `match_all` will return only alerts that have all of the supplied tags, and `exclude` will only return alerts that have none of the supplied tags. This currently only works for Signals alerts.
+ */
+export type ListAlertsTagMatchStrategy = ClosedEnum<
+  typeof ListAlertsTagMatchStrategy
+>;
+
 export const ListAlertsTagMatchStrategy$zodSchema = z.enum([
   "any",
   "match_all",
@@ -18,10 +31,6 @@ export const ListAlertsTagMatchStrategy$zodSchema = z.enum([
 ]).describe(
   "The strategy to match tags. `any` will return alerts that have at least one of the supplied tags, `match_all` will return only alerts that have all of the supplied tags, and `exclude` will only return alerts that have none of the supplied tags. This currently only works for Signals alerts.",
 );
-
-export type ListAlertsTagMatchStrategy = z.infer<
-  typeof ListAlertsTagMatchStrategy$zodSchema
->;
 
 export type ListAlertsRequest = {
   page?: number | null | undefined;
@@ -36,43 +45,56 @@ export type ListAlertsRequest = {
   tags?: string | null | undefined;
   tag_match_strategy?: ListAlertsTagMatchStrategy | null | undefined;
   statuses?: string | null | undefined;
+  start_date?: string | null | undefined;
+  end_date?: string | null | undefined;
+  start_datetime?: string | null | undefined;
+  end_datetime?: string | null | undefined;
 };
 
-export const ListAlertsRequest$zodSchema: z.ZodType<
-  ListAlertsRequest,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  environments: z.string().describe(
-    "A comma separated list of environment IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  functionalities: z.string().describe(
-    "A comma separated list of functionality IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  page: z.number().int().nullable().optional(),
-  per_page: z.number().int().nullable().optional(),
-  query: z.string().describe("A text query for alerts").nullable().optional(),
-  services: z.string().describe(
-    "A comma separated list of service IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  signal_rules: z.string().describe(
-    "A comma separated list of signals rule IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  statuses: z.string().describe(
-    "A comma separated list of statuses to filter by. Valid statuses are: opened, acknowledged, resolved, ignored, expired, linked, or snoozed",
-  ).nullable().optional(),
-  tag_match_strategy: ListAlertsTagMatchStrategy$zodSchema.nullable()
-    .optional(),
-  tags: z.string().describe(
-    "A comma separated list of tags. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  teams: z.string().describe(
-    "A comma separated list of team IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-  users: z.string().describe(
-    "A comma separated list of user IDs. This currently only works for Signals alerts.",
-  ).nullable().optional(),
-});
+export const ListAlertsRequest$zodSchema: z.ZodType<ListAlertsRequest> = z
+  .object({
+    end_date: z.iso.datetime({ offset: true }).describe(
+      "Filters for alerts that started on or before the end of this date",
+    ).nullable().optional(),
+    end_datetime: z.iso.datetime({ offset: true }).describe(
+      "Filters for alerts that started at or before this exact datetime",
+    ).nullable().optional(),
+    environments: z.string().describe(
+      "A comma separated list of environment IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    functionalities: z.string().describe(
+      "A comma separated list of functionality IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    page: z.int().nullable().optional(),
+    per_page: z.int().nullable().optional(),
+    query: z.string().describe("A text query for alerts").nullable().optional(),
+    services: z.string().describe(
+      "A comma separated list of service IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    signal_rules: z.string().describe(
+      "A comma separated list of signals rule IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    start_date: z.iso.datetime({ offset: true }).describe(
+      "Filters for alerts that started on or after the beginning of this date",
+    ).nullable().optional(),
+    start_datetime: z.iso.datetime({ offset: true }).describe(
+      "Filters for alerts that started at or after this exact datetime",
+    ).nullable().optional(),
+    statuses: z.string().describe(
+      "A comma separated list of statuses to filter by. Valid statuses are: opened, acknowledged, resolved, ignored, expired, linked, or snoozed",
+    ).nullable().optional(),
+    tag_match_strategy: ListAlertsTagMatchStrategy$zodSchema.nullable()
+      .optional(),
+    tags: z.string().describe(
+      "A comma separated list of tags. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    teams: z.string().describe(
+      "A comma separated list of team IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+    users: z.string().describe(
+      "A comma separated list of user IDs. This currently only works for Signals alerts.",
+    ).nullable().optional(),
+  });
 
 export type ListAlertsResponse = {
   ContentType: string;
@@ -81,13 +103,11 @@ export type ListAlertsResponse = {
   Alerts_AlertEntityPaginated?: AlertsAlertEntityPaginated | undefined;
 };
 
-export const ListAlertsResponse$zodSchema: z.ZodType<
-  ListAlertsResponse,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  Alerts_AlertEntityPaginated: AlertsAlertEntityPaginated$zodSchema.optional(),
-  ContentType: z.string(),
-  RawResponse: z.instanceof(Response),
-  StatusCode: z.number().int(),
-});
+export const ListAlertsResponse$zodSchema: z.ZodType<ListAlertsResponse> = z
+  .object({
+    Alerts_AlertEntityPaginated: AlertsAlertEntityPaginated$zodSchema
+      .optional(),
+    ContentType: z.string(),
+    RawResponse: z.custom<Response>(x => x instanceof Response),
+    StatusCode: z.int(),
+  });

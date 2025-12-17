@@ -16,13 +16,11 @@ export type NullableTicketingPriorityEntity = {
 };
 
 export const NullableTicketingPriorityEntity$zodSchema: z.ZodType<
-  NullableTicketingPriorityEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableTicketingPriorityEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
-  position: z.number().int().nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  position: z.int().nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
 }).describe("Ticketing_PriorityEntity model");

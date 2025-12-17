@@ -13,9 +13,7 @@ export type UpdateIncidentRetrospectiveField = {
 };
 
 export const UpdateIncidentRetrospectiveField$zodSchema: z.ZodType<
-  UpdateIncidentRetrospectiveField,
-  z.ZodTypeDef,
-  unknown
+  UpdateIncidentRetrospectiveField
 > = z.object({
   dynamic_input_field_id: z.string().nullable().optional(),
   value: z.string(),

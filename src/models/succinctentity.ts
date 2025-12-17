@@ -9,11 +9,7 @@ export type SuccinctEntity = {
   name?: string | null | undefined;
 };
 
-export const SuccinctEntity$zodSchema: z.ZodType<
-  SuccinctEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
+export const SuccinctEntity$zodSchema: z.ZodType<SuccinctEntity> = z.object({
   id: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
 });

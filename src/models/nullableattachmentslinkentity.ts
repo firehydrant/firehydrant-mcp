@@ -18,9 +18,7 @@ export type NullableAttachmentsLinkEntity = {
 };
 
 export const NullableAttachmentsLinkEntity$zodSchema: z.ZodType<
-  NullableAttachmentsLinkEntity,
-  z.ZodTypeDef,
-  unknown
+  NullableAttachmentsLinkEntity
 > = z.object({
   deletable: z.boolean().nullable().optional(),
   display_text: z.string().nullable().optional(),

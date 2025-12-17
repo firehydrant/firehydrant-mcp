@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import {
   NullableIncidentRoleEntity,
   NullableIncidentRoleEntity$zodSchema,
@@ -12,12 +13,16 @@ import {
   NullableUserEntity$zodSchema,
 } from "./nullableuserentity.js";
 
+export const Status = {
+  Active: "active",
+  Inactive: "inactive",
+} as const;
+export type Status = ClosedEnum<typeof Status>;
+
 export const Status$zodSchema = z.enum([
   "active",
   "inactive",
 ]);
-
-export type Status = z.infer<typeof Status$zodSchema>;
 
 /**
  * Incidents_RoleAssignmentEntity model
@@ -32,14 +37,12 @@ export type IncidentsRoleAssignmentEntity = {
 };
 
 export const IncidentsRoleAssignmentEntity$zodSchema: z.ZodType<
-  IncidentsRoleAssignmentEntity,
-  z.ZodTypeDef,
-  unknown
+  IncidentsRoleAssignmentEntity
 > = z.object({
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   id: z.string().nullable().optional(),
   incident_role: NullableIncidentRoleEntity$zodSchema.nullable().optional(),
   status: Status$zodSchema.nullable().optional(),
-  updated_at: z.string().datetime({ offset: true }).nullable().optional(),
+  updated_at: z.iso.datetime({ offset: true }).nullable().optional(),
   user: NullableUserEntity$zodSchema.nullable().optional(),
 }).describe("Incidents_RoleAssignmentEntity model");

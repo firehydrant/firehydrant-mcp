@@ -94,19 +94,12 @@ import {
  */
 export type IncidentEntityLabels = {};
 
-export const IncidentEntityLabels$zodSchema: z.ZodType<
-  IncidentEntityLabels,
-  z.ZodTypeDef,
-  unknown
-> = z.object({}).describe("A key/value of labels");
+export const IncidentEntityLabels$zodSchema: z.ZodType<IncidentEntityLabels> = z
+  .object({}).describe("A key/value of labels");
 
 export type RetroExport = {};
 
-export const RetroExport$zodSchema: z.ZodType<
-  RetroExport,
-  z.ZodTypeDef,
-  unknown
-> = z.object({});
+export const RetroExport$zodSchema: z.ZodType<RetroExport> = z.object({});
 
 /**
  * IncidentEntity model
@@ -189,11 +182,7 @@ export type IncidentEntity = {
     | undefined;
 };
 
-export const IncidentEntity$zodSchema: z.ZodType<
-  IncidentEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
+export const IncidentEntity$zodSchema: z.ZodType<IncidentEntity> = z.object({
   active: z.boolean().nullable().optional(),
   ai_incident_summary: z.string().nullable().optional(),
   channel_id: z.string().nullable().optional(),
@@ -206,15 +195,15 @@ export const IncidentEntity$zodSchema: z.ZodType<
     .optional(),
   conversations: z.array(ConversationsAPIEntitiesReference$zodSchema).nullable()
     .optional(),
-  created_at: z.string().datetime({ offset: true }).nullable().optional(),
+  created_at: z.iso.datetime({ offset: true }).nullable().optional(),
   created_by: NullableAuthorEntity$zodSchema.nullable().optional(),
   current_milestone: z.string().nullable().optional(),
   custom_fields: z.array(CustomFieldsFieldValue$zodSchema).nullable()
     .optional(),
   customer_impact_summary: z.string().nullable().optional(),
-  customers_impacted: z.number().int().nullable().optional(),
+  customers_impacted: z.int().nullable().optional(),
   description: z.string().nullable().optional(),
-  discarded_at: z.string().datetime({ offset: true }).nullable().optional(),
+  discarded_at: z.iso.datetime({ offset: true }).nullable().optional(),
   environments: z.array(SuccinctEntity$zodSchema).nullable().optional(),
   field_requirements: z.array(IncidentEntityFieldRequirementEntity$zodSchema)
     .nullable().optional(),
@@ -235,10 +224,10 @@ export const IncidentEntity$zodSchema: z.ZodType<
   lifecycle_phases: z.array(IncidentsLifecyclePhaseEntity$zodSchema).nullable()
     .optional(),
   milestones: z.array(IncidentsMilestoneEntity$zodSchema).nullable().optional(),
-  monetary_impact: z.number().int().nullable().optional(),
-  monetary_impact_cents: z.number().int().nullable().optional(),
+  monetary_impact: z.int().nullable().optional(),
+  monetary_impact_cents: z.int().nullable().optional(),
   name: z.string().nullable().optional(),
-  number: z.number().int().nullable().optional(),
+  number: z.int().nullable().optional(),
   organization: NullableOrganizationEntity$zodSchema.nullable().optional(),
   organization_id: z.string().nullable().optional(),
   priority: z.string().nullable().optional(),
@@ -258,7 +247,7 @@ export const IncidentEntity$zodSchema: z.ZodType<
   severity_impact: z.string().nullable().optional(),
   severity_impact_object: NullableSeverityMatrixImpactEntity$zodSchema
     .nullable().optional(),
-  started_at: z.string().datetime({ offset: true }).nullable().optional(),
+  started_at: z.iso.datetime({ offset: true }).nullable().optional(),
   status_pages: z.array(IncidentsStatusPageEntity$zodSchema).nullable()
     .optional(),
   summary: z.string().nullable().optional(),

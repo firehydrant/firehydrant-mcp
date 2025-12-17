@@ -3,6 +3,7 @@
  */
 
 import * as z from "zod";
+import { ClosedEnum } from "../types/enums.js";
 import {
   ConversationsAPIEntitiesReference,
   ConversationsAPIEntitiesReference$zodSchema,
@@ -16,16 +17,22 @@ import {
   NullableSuccinctEntity$zodSchema,
 } from "./nullablesuccinctentity.js";
 
+export const IncidentsImpactEntityType = {
+  Customer: "customer",
+  Environment: "environment",
+  Functionality: "functionality",
+  Service: "service",
+} as const;
+export type IncidentsImpactEntityType = ClosedEnum<
+  typeof IncidentsImpactEntityType
+>;
+
 export const IncidentsImpactEntityType$zodSchema = z.enum([
   "customer",
   "environment",
   "functionality",
   "service",
 ]);
-
-export type IncidentsImpactEntityType = z.infer<
-  typeof IncidentsImpactEntityType$zodSchema
->;
 
 export type IncidentsImpactEntity = {
   id?: string | null | undefined;
@@ -35,16 +42,13 @@ export type IncidentsImpactEntity = {
   conversations?: Array<ConversationsAPIEntitiesReference> | null | undefined;
 };
 
-export const IncidentsImpactEntity$zodSchema: z.ZodType<
-  IncidentsImpactEntity,
-  z.ZodTypeDef,
-  unknown
-> = z.object({
-  condition: NullableSeverityMatrixConditionEntity$zodSchema.nullable()
-    .optional(),
-  conversations: z.array(ConversationsAPIEntitiesReference$zodSchema).nullable()
-    .optional(),
-  id: z.string().nullable().optional(),
-  impact: NullableSuccinctEntity$zodSchema.nullable().optional(),
-  type: IncidentsImpactEntityType$zodSchema.nullable().optional(),
-});
+export const IncidentsImpactEntity$zodSchema: z.ZodType<IncidentsImpactEntity> =
+  z.object({
+    condition: NullableSeverityMatrixConditionEntity$zodSchema.nullable()
+      .optional(),
+    conversations: z.array(ConversationsAPIEntitiesReference$zodSchema)
+      .nullable().optional(),
+    id: z.string().nullable().optional(),
+    impact: NullableSuccinctEntity$zodSchema.nullable().optional(),
+    type: IncidentsImpactEntityType$zodSchema.nullable().optional(),
+  });
