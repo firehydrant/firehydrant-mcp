@@ -15,9 +15,9 @@ import {
   Hook,
   Hooks,
   SDKInitHook,
-  SDKInitOptions,
 } from "./types.js";
 
+import { SDKOptions } from "../lib/config.js";
 import { RequestInput } from "../lib/http.js";
 
 export class SDKHooks implements Hooks {
@@ -70,7 +70,7 @@ export class SDKHooks implements Hooks {
     this.afterErrorHooks.push(hook);
   }
 
-  sdkInit(opts: SDKInitOptions): SDKInitOptions {
+  sdkInit(opts: SDKOptions): SDKOptions {
     return this.sdkInitHooks.reduce((opts, hook) => hook.sdkInit(opts), opts);
   }
 

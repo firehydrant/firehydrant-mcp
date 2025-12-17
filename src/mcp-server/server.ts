@@ -32,7 +32,7 @@ export function createMCPServer(deps: {
 }) {
   const server = new McpServer({
     name: "FireHydrant",
-    version: "0.0.1-beta.14",
+    version: "0.0.1-beta.15",
   });
 
   const getClient = deps.getSDK || (() =>
@@ -52,7 +52,7 @@ export function createMCPServer(deps: {
   const scopes = new Set(deps.scopes);
 
   const allowedTools = deps.allowedTools && new Set(deps.allowedTools);
-  const tool = createRegisterTool(
+  const [tool, tools] = createRegisterTool(
     deps.logger,
     server,
     getClient,
@@ -83,5 +83,5 @@ export function createMCPServer(deps: {
 
   registerMCPExtensions(register satisfies Register);
 
-  return server;
+  return { server, tools };
 }

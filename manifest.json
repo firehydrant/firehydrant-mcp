@@ -1,7 +1,7 @@
 {
-  "dxt_version": "0.1",
+  "manifest_version": "0.3",
   "name": "firehydrant-mcp",
-  "version": "0.0.1-beta.14",
+  "version": "0.0.1-beta.15",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {
@@ -21,6 +21,21 @@
     }
   },
   "display_name": "Firehydrant Mcp",
+  "prompts": [],
+  "keywords": [
+    "firehydrant",
+    "mcp",
+    "server"
+  ],
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "api_key",
+      "description": "The api_key to use for the request",
+      "required": true,
+      "sensitive": true
+    }
+  },
   "tools": [
     {
       "name": "list-incidents",
@@ -40,22 +55,7 @@
     },
     {
       "name": "list-alerts",
-      "description": "List alerts\n\nRetrieve all alerts from third parties"
+      "description": "List alerts\n\nRetrieve all alerts, including Signals alerts and third-party"
     }
-  ],
-  "prompts": [],
-  "keywords": [
-      "firehydrant",
-      "mcp",
-      "server"
-    ],
-  "user_config": {
-      "api_key": {
-        "type": "string",
-        "title": "api_key",
-        "description": "The api_key to use for the request",
-        "required": true,
-        "sensitive": true
-      }
-    }
+  ]
 }

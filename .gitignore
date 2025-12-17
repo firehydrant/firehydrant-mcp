@@ -1,3 +1,6 @@
+bun.lock
+.env.local
+*.mcpb
 **/.speakeasy/logs/
 **/.speakeasy/reports/
 **/.speakeasy/temp/

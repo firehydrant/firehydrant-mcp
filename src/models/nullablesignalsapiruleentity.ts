@@ -20,6 +20,7 @@ export const NotificationPriorityOverride$zodSchema = z.enum([
   "HIGH",
   "MEDIUM",
   "LOW",
+  "",
 ]);
 
 export type NotificationPriorityOverride = z.infer<

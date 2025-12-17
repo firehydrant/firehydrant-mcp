@@ -46,7 +46,7 @@ export async function main(this: LocalContext, flags: StartCommandFlags) {
 async function startStdio(flags: StartCommandFlags) {
   const logger = createConsoleLogger(flags["log-level"]);
   const transport = new StdioServerTransport();
-  const server = createMCPServer({
+  const { server } = createMCPServer({
     logger,
     allowedTools: flags.tool,
     scopes: flags.scope,
@@ -67,7 +67,7 @@ async function startStdio(flags: StartCommandFlags) {
 async function startSSE(flags: StartCommandFlags) {
   const logger = createConsoleLogger(flags["log-level"]);
   const app = express();
-  const mcpServer = createMCPServer({
+  const { server: mcpServer } = createMCPServer({
     logger,
     allowedTools: flags.tool,
     scopes: flags.scope,

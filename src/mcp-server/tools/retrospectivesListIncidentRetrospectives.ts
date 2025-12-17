@@ -22,6 +22,13 @@ export const tool$retrospectivesListIncidentRetrospectives: ToolDefinition<
   - Getting the fields of a retrospective.
 `,
   scopes: ["read"],
+  annotations: {
+    "title": "",
+    "destructiveHint": false,
+    "idempotentHint": false,
+    "openWorldHint": false,
+    "readOnlyHint": false,
+  },
   args,
   tool: async (client, args, ctx) => {
     const [result, apiCall] = await retrospectivesListIncidentRetrospectives(
