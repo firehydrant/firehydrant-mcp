@@ -1,18 +1,18 @@
 lockVersion: 2.0.0
 id: 0dd544ca-3933-4c41-a5b5-b9a57ec94099
 management:
-  docChecksum: 631ded78c1d27f09ccbc699cb5470818
+  docChecksum: 0c35c85bc50ae20fb6833c3585119722
   docVersion: 0.0.1
-  speakeasyVersion: 1.680.0
-  generationVersion: 2.788.4
-  releaseVersion: 0.0.2
-  configChecksum: 8d470cdf3a68524ac9ce921012ac9430
+  speakeasyVersion: 1.680.3
+  generationVersion: 2.788.5
+  releaseVersion: 0.0.3
+  configChecksum: 003d1c6939e186ddf78f3ab04258f1f5
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
   published: true
 persistentEdits:
-  generation_id: 3cd62e32-0982-400f-8aa8-dbb9815e2ac6
-  pristine_commit_hash: 44aedaa0b23e7d3bede8157d9820ee9408aa6242
-  pristine_tree_hash: bc2d47c18ce8a520a6b9fd4598ffa2ffe881c134
+  generation_id: 89cf8e9d-8575-494f-9884-9ad69a607f17
+  pristine_commit_hash: a54076ddd41673cbdb7317dd2955ec6714bcc5ee
+  pristine_tree_hash: 8f0743d322a002b39763f2d17f134ba48b3ef13c
 features:
   mcp-typescript:
     additionalDependencies: 0.1.0
@@ -47,12 +47,12 @@ trackedFiles:
     pristine_git_object: 4f9e60a9462fc4def738d60c3aaadf8232ef185f
   manifest.json:
     id: ca642a226869
-    last_write_checksum: sha1:99afc6bdde4a7ead8e2475563e795dd11ffcec24
-    pristine_git_object: d1655448e5218800defb6653f87e0af2b9e0c558
+    last_write_checksum: sha1:54edfb0a50375ac6bba7ae1a92c113616d30e149
+    pristine_git_object: c21c2b0fdb4201cac134b51d108fb4e7ddf7bc53
   package.json:
     id: 7030d0b2f71b
-    last_write_checksum: sha1:f1a170de5ba750e4c80aa41ac81d8668b473303c
-    pristine_git_object: 8d9c2c0dcf3015ffbd7166a3ac12e24e885ce08f
+    last_write_checksum: sha1:52e0f16e947bf179370e256ea99f5b8c9c900094
+    pristine_git_object: e441a2a197142ddc47acc852f7049ddc0e75f241
   src/core.ts:
     id: f431fdbcd144
     last_write_checksum: sha1:06da1e4774afba1db41952aec33c2dc0e872b809
@@ -91,8 +91,8 @@ trackedFiles:
     pristine_git_object: d4bd8b341290e7a828a171d840bd0b0fff7c7cd7
   src/lib/config.ts:
     id: 320761608fb3
-    last_write_checksum: sha1:b938c201ea50ce9a0cc45cf56762c29487ee7cd3
-    pristine_git_object: f9c9b6dff0f3172eed44be026fc158f199f1be4e
+    last_write_checksum: sha1:570c758d353bd25732d0d5ada8381166999bea29
+    pristine_git_object: a307afaa9dfc0f21ac3a15315edee682fbc919c5
   src/lib/dlv.ts:
     id: b1988214835a
     last_write_checksum: sha1:1dd3e3fbb4550c4bf31f5ef997faff355d6f3250
@@ -175,8 +175,8 @@ trackedFiles:
     pristine_git_object: 78394e413ea070824f370b829eaf1416883e6680
   src/mcp-server/mcp-server.ts:
     id: aabbc4ab07c1
-    last_write_checksum: sha1:6a5236bd6dfbbd63b67fc68f57fdb43e4bfbc5db
-    pristine_git_object: 392d64d8a502b53fe83548be6de48a619dc606d0
+    last_write_checksum: sha1:747bc439428a5043afaf45fc868397009f2db901
+    pristine_git_object: b43a6af4c3e485922343af8664a410a5483b62e7
   src/mcp-server/prompts.ts:
     id: 26f3d73cbf31
     last_write_checksum: sha1:2ce2eb360aa2b2e77079bc2b707dbb649efbc87c
@@ -191,8 +191,8 @@ trackedFiles:
     pristine_git_object: cb8330e4ae705d283de6ab337eefd3b4b8191fca
   src/mcp-server/server.ts:
     id: 2784dd48e82a
-    last_write_checksum: sha1:047647d13c849a09f832c3ee38bdaa11efa793e6
-    pristine_git_object: fa35a0b980ce01e75dbd31c0e6de515333307481
+    last_write_checksum: sha1:02d877d0e24d1253f55e0c966d145ea3b6cfc768
+    pristine_git_object: 2fb11a9f7742c72eb56ebafc24fe59ef81f600b4
   src/mcp-server/shared.ts:
     id: 074e80d4be1e
     last_write_checksum: sha1:19c9034032819a14f15c430de4350c8aba99d725
@@ -487,7 +487,6 @@ trackedFiles:
     pristine_git_object: 0ca48942a1b9cd923d614985dfb81f0dc7e1d298
 examplesVersion: 1.0.2
 generatedTests: {}
-releaseNotes: "## Mcp-typescript SDK Changes:\n* `FireHydrant.Incidents.list_incidents()`: \n  *  `request.attached_runbooks` **Added**\n  *  `response.data.[]` **Changed**\n* `FireHydrant.Incidents.create_incident()`:  `response` **Changed**\n* `FireHydrant.Retrospectives.list_incident_retrospectives()`:  `response.data.[].retrospective_template_id` **Added**\n* `FireHydrant.Alerts.list_alerts()`:  `request` **Changed**\n"
 generatedFiles:
   - .dxtignore
   - .gitattributes
