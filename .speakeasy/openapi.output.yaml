@@ -7746,16 +7746,17 @@ components:
           format: "date-time"
           nullable: true
       description: "Update a CloudTrail batch with new information."
-    "Integrations_ConfluenceCloud_SpaceKeyEntity":
+    "Integrations_ConfluenceCloud_SpaceEntity":
       type: "object"
       properties:
-        "key":
-          type: "string"
+        "id":
+          type: "integer"
+          format: "int32"
           nullable: true
         "name":
           type: "string"
           nullable: true
-      description: "Integrations_ConfluenceCloud_SpaceKeyEntity model"
+      description: "Integrations_ConfluenceCloud_SpaceEntity model"
     "Integrations_Slack_WorkspaceEntity":
       type: "object"
       properties:
@@ -9442,6 +9443,9 @@ components:
           type: "string"
           nullable: true
         "oidc_authentication_config": {"$ref": "#/components/schemas/NullableNuncOidcAuthenticationConfigEntity"}
+        "has_custom_configuration":
+          type: "boolean"
+          nullable: true
       description: "NuncConnectionEntity model"
     "NuncConditionEntity":
       type: "object"
@@ -13885,10 +13889,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_aws_cloudtrail_batch"}
-    "NullableIntegrations_ConfluenceCloud_SpaceKeyEntity":
+    "NullableIntegrations_ConfluenceCloud_SpaceEntity":
       nullable: true
       allOf:
-        - {"$ref": "#/components/schemas/Integrations_ConfluenceCloud_SpaceKeyEntity"}
+        - {"$ref": "#/components/schemas/Integrations_ConfluenceCloud_SpaceEntity"}
     "NullableIntegrations_Slack_WorkspaceEntity":
       nullable: true
       allOf:
