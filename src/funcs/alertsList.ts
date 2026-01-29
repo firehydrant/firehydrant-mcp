@@ -3,7 +3,7 @@
  */
 
 import { FireHydrantCore } from "../core.js";
-import { encodeSimple } from "../lib/encodings.js";
+import { encodeFormQuery } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
@@ -20,27 +20,27 @@ import {
 } from "../models/errors/httpclienterrors.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
 import {
-  GetAudienceSummaryRequest,
-  GetAudienceSummaryRequest$zodSchema,
-  GetAudienceSummaryResponse,
-  GetAudienceSummaryResponse$zodSchema,
-} from "../models/getaudiencesummaryop.js";
+  ListAlertsRequest,
+  ListAlertsRequest$zodSchema,
+  ListAlertsResponse,
+  ListAlertsResponse$zodSchema,
+} from "../models/listalertsop.js";
 import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Get latest summary
+ * List alerts
  *
  * @remarks
- * Get the latest audience-specific summary for an incident
+ * Retrieve all alerts, including Signals alerts and third-party
  */
-export function audiencesGetAudienceSummary(
+export function alertsList(
   client$: FireHydrantCore,
-  request: GetAudienceSummaryRequest,
+  request?: ListAlertsRequest | undefined,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    GetAudienceSummaryResponse,
+    ListAlertsResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -59,12 +59,12 @@ export function audiencesGetAudienceSummary(
 
 async function $do(
   client$: FireHydrantCore,
-  request: GetAudienceSummaryRequest,
+  request?: ListAlertsRequest | undefined,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      GetAudienceSummaryResponse,
+      ListAlertsResponse,
       | APIError
       | SDKValidationError
       | UnexpectedClientError
@@ -78,7 +78,7 @@ async function $do(
 > {
   const parsed$ = safeParse(
     request,
-    (value$) => GetAudienceSummaryRequest$zodSchema.parse(value$),
+    (value$) => ListAlertsRequest$zodSchema.optional().parse(value$),
     "Input validation failed",
   );
   if (!parsed$.ok) {
@@ -86,22 +86,25 @@ async function $do(
   }
   const payload$ = parsed$.value;
   const body$ = null;
-
-  const pathParams$ = {
-    audience_id: encodeSimple("audience_id", payload$.audience_id, {
-      explode: false,
-      charEncoding: "percent",
-    }),
-    incident_id: encodeSimple("incident_id", payload$.incident_id, {
-      explode: false,
-      charEncoding: "percent",
-    }),
-  };
-  const path$ = pathToFunc(
-    "/v1/audiences/{audience_id}/summaries/{incident_id}",
-  )(
-    pathParams$,
-  );
+  const path$ = pathToFunc("/v1/alerts")();
+  const query$ = encodeFormQuery({
+    "end_date": payload$?.end_date,
+    "end_datetime": payload$?.end_datetime,
+    "environments": payload$?.environments,
+    "functionalities": payload$?.functionalities,
+    "page": payload$?.page,
+    "per_page": payload$?.per_page,
+    "query": payload$?.query,
+    "services": payload$?.services,
+    "signal_rules": payload$?.signal_rules,
+    "start_date": payload$?.start_date,
+    "start_datetime": payload$?.start_datetime,
+    "statuses": payload$?.statuses,
+    "tag_match_strategy": payload$?.tag_match_strategy,
+    "tags": payload$?.tags,
+    "teams": payload$?.teams,
+    "users": payload$?.users,
+  });
 
   const headers$ = new Headers(compactMap({
     Accept: "application/json",
@@ -112,7 +115,7 @@ async function $do(
   const context = {
     options: client$._options,
     baseURL: options?.serverURL ?? client$._baseURL ?? "",
-    operationID: "get_audience_summary",
+    operationID: "list_alerts",
     oAuth2Scopes: null,
     resolvedSecurity: requestSecurity,
     securitySource: client$._options.security,
@@ -134,6 +137,7 @@ async function $do(
     baseURL: options?.serverURL,
     path: path$,
     headers: headers$,
+    query: query$,
     body: body$,
     userAgent: client$._options.userAgent,
     timeoutMs: options?.timeoutMs || client$._options.timeoutMs
@@ -159,7 +163,7 @@ async function $do(
   };
 
   const [result$] = await M.match<
-    GetAudienceSummaryResponse,
+    ListAlertsResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -168,8 +172,8 @@ async function $do(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.json(200, GetAudienceSummaryResponse$zodSchema, {
-      key: "AI_Entities_IncidentSummaryEntity",
+    M.json(200, ListAlertsResponse$zodSchema, {
+      key: "Alerts_AlertEntityPaginated",
     }),
   )(response, req$, { extraFields: responseFields$ });
 

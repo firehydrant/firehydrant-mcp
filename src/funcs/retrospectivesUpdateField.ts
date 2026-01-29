@@ -34,7 +34,7 @@ import { Result } from "../types/fp.js";
  * @remarks
  * Update retrospective field value
  */
-export function retrospectivesUpdateIncidentRetrospectiveField(
+export function retrospectivesUpdateField(
   client$: FireHydrantCore,
   request: UpdateIncidentRetrospectiveFieldRequest,
   options?: RequestOptions,

@@ -3,21 +3,13 @@
  */
 
 import { FireHydrantCore } from "../core.js";
-import { encodeJSON } from "../lib/encodings.js";
+import { encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
 import { extractSecurity, resolveGlobalSecurity } from "../lib/security.js";
 import { pathToFunc } from "../lib/url.js";
-import {
-  CreateIncident,
-  CreateIncident$zodSchema,
-} from "../models/createincident.js";
-import {
-  CreateIncidentResponse,
-  CreateIncidentResponse$zodSchema,
-} from "../models/createincidentop.js";
 import { APIError } from "../models/errors/apierror.js";
 import {
   ConnectionError,
@@ -27,22 +19,28 @@ import {
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
+import {
+  GetAudienceSummaryRequest,
+  GetAudienceSummaryRequest$zodSchema,
+  GetAudienceSummaryResponse,
+  GetAudienceSummaryResponse$zodSchema,
+} from "../models/getaudiencesummaryop.js";
 import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * Create an incident
+ * Get latest summary
  *
  * @remarks
- * Create a new incident
+ * Get the latest audience-specific summary for an incident
  */
-export function incidentsCreateIncident(
+export function audiencesGetSummary(
   client$: FireHydrantCore,
-  request: CreateIncident,
+  request: GetAudienceSummaryRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    CreateIncidentResponse,
+    GetAudienceSummaryResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -61,12 +59,12 @@ export function incidentsCreateIncident(
 
 async function $do(
   client$: FireHydrantCore,
-  request: CreateIncident,
+  request: GetAudienceSummaryRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      CreateIncidentResponse,
+      GetAudienceSummaryResponse,
       | APIError
       | SDKValidationError
       | UnexpectedClientError
@@ -80,18 +78,32 @@ async function $do(
 > {
   const parsed$ = safeParse(
     request,
-    (value$) => CreateIncident$zodSchema.parse(value$),
+    (value$) => GetAudienceSummaryRequest$zodSchema.parse(value$),
     "Input validation failed",
   );
   if (!parsed$.ok) {
     return [parsed$, { status: "invalid" }];
   }
   const payload$ = parsed$.value;
-  const body$ = encodeJSON("body", payload$, { explode: true });
-  const path$ = pathToFunc("/v1/incidents")();
+  const body$ = null;
+
+  const pathParams$ = {
+    audience_id: encodeSimple("audience_id", payload$.audience_id, {
+      explode: false,
+      charEncoding: "percent",
+    }),
+    incident_id: encodeSimple("incident_id", payload$.incident_id, {
+      explode: false,
+      charEncoding: "percent",
+    }),
+  };
+  const path$ = pathToFunc(
+    "/v1/audiences/{audience_id}/summaries/{incident_id}",
+  )(
+    pathParams$,
+  );
 
   const headers$ = new Headers(compactMap({
-    "Content-Type": "application/json",
     Accept: "application/json",
   }));
   const securityInput = await extractSecurity(client$._options.security);
@@ -100,7 +112,7 @@ async function $do(
   const context = {
     options: client$._options,
     baseURL: options?.serverURL ?? client$._baseURL ?? "",
-    operationID: "create_incident",
+    operationID: "get_audience_summary",
     oAuth2Scopes: null,
     resolvedSecurity: requestSecurity,
     securitySource: client$._options.security,
@@ -118,7 +130,7 @@ async function $do(
 
   const requestRes = client$._createRequest(context, {
     security: requestSecurity,
-    method: "POST",
+    method: "GET",
     baseURL: options?.serverURL,
     path: path$,
     headers: headers$,
@@ -147,7 +159,7 @@ async function $do(
   };
 
   const [result$] = await M.match<
-    CreateIncidentResponse,
+    GetAudienceSummaryResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -156,7 +168,9 @@ async function $do(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.json(201, CreateIncidentResponse$zodSchema, { key: "IncidentEntity" }),
+    M.json(200, GetAudienceSummaryResponse$zodSchema, {
+      key: "AI_Entities_IncidentSummaryEntity",
+    }),
   )(response, req$, { extraFields: responseFields$ });
 
   return [result$, { status: "complete", request: req$, response }];

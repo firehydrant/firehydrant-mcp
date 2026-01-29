@@ -3,7 +3,7 @@
  */
 
 import { FireHydrantCore } from "../core.js";
-import { encodeFormQuery } from "../lib/encodings.js";
+import { encodeFormQuery, encodeSimple } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
@@ -20,27 +20,27 @@ import {
 } from "../models/errors/httpclienterrors.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
 import {
-  ListAlertsRequest,
-  ListAlertsRequest$zodSchema,
-  ListAlertsResponse,
-  ListAlertsResponse$zodSchema,
-} from "../models/listalertsop.js";
+  ListIncidentRetrospectivesRequest,
+  ListIncidentRetrospectivesRequest$zodSchema,
+  ListIncidentRetrospectivesResponse,
+  ListIncidentRetrospectivesResponse$zodSchema,
+} from "../models/listincidentretrospectivesop.js";
 import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * List alerts
+ * All attached retrospectives for an incident
  *
  * @remarks
- * Retrieve all alerts, including Signals alerts and third-party
+ * Retrieve retrospectives attached to an incident
  */
-export function alertsListAlerts(
+export function retrospectivesList(
   client$: FireHydrantCore,
-  request?: ListAlertsRequest | undefined,
+  request: ListIncidentRetrospectivesRequest,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    ListAlertsResponse,
+    ListIncidentRetrospectivesResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -59,12 +59,12 @@ export function alertsListAlerts(
 
 async function $do(
   client$: FireHydrantCore,
-  request?: ListAlertsRequest | undefined,
+  request: ListIncidentRetrospectivesRequest,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      ListAlertsResponse,
+      ListIncidentRetrospectivesResponse,
       | APIError
       | SDKValidationError
       | UnexpectedClientError
@@ -78,7 +78,7 @@ async function $do(
 > {
   const parsed$ = safeParse(
     request,
-    (value$) => ListAlertsRequest$zodSchema.optional().parse(value$),
+    (value$) => ListIncidentRetrospectivesRequest$zodSchema.parse(value$),
     "Input validation failed",
   );
   if (!parsed$.ok) {
@@ -86,24 +86,20 @@ async function $do(
   }
   const payload$ = parsed$.value;
   const body$ = null;
-  const path$ = pathToFunc("/v1/alerts")();
+
+  const pathParams$ = {
+    incident_id: encodeSimple("incident_id", payload$.incident_id, {
+      explode: false,
+      charEncoding: "percent",
+    }),
+  };
+  const path$ = pathToFunc("/v1/incidents/{incident_id}/retrospectives")(
+    pathParams$,
+  );
   const query$ = encodeFormQuery({
-    "end_date": payload$?.end_date,
-    "end_datetime": payload$?.end_datetime,
-    "environments": payload$?.environments,
-    "functionalities": payload$?.functionalities,
-    "page": payload$?.page,
-    "per_page": payload$?.per_page,
-    "query": payload$?.query,
-    "services": payload$?.services,
-    "signal_rules": payload$?.signal_rules,
-    "start_date": payload$?.start_date,
-    "start_datetime": payload$?.start_datetime,
-    "statuses": payload$?.statuses,
-    "tag_match_strategy": payload$?.tag_match_strategy,
-    "tags": payload$?.tags,
-    "teams": payload$?.teams,
-    "users": payload$?.users,
+    "is_hidden": payload$.is_hidden,
+    "page": payload$.page,
+    "per_page": payload$.per_page,
   });
 
   const headers$ = new Headers(compactMap({
@@ -115,7 +111,7 @@ async function $do(
   const context = {
     options: client$._options,
     baseURL: options?.serverURL ?? client$._baseURL ?? "",
-    operationID: "list_alerts",
+    operationID: "list_incident_retrospectives",
     oAuth2Scopes: null,
     resolvedSecurity: requestSecurity,
     securitySource: client$._options.security,
@@ -163,7 +159,7 @@ async function $do(
   };
 
   const [result$] = await M.match<
-    ListAlertsResponse,
+    ListIncidentRetrospectivesResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -172,8 +168,8 @@ async function $do(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.json(200, ListAlertsResponse$zodSchema, {
-      key: "Alerts_AlertEntityPaginated",
+    M.json(200, ListIncidentRetrospectivesResponse$zodSchema, {
+      key: "Incidents_RetrospectiveEntityPaginated",
     }),
   )(response, req$, { extraFields: responseFields$ });
 

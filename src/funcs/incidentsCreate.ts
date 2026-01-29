@@ -3,13 +3,21 @@
  */
 
 import { FireHydrantCore } from "../core.js";
-import { encodeFormQuery, encodeSimple } from "../lib/encodings.js";
+import { encodeJSON } from "../lib/encodings.js";
 import * as M from "../lib/matchers.js";
 import { compactMap } from "../lib/primitives.js";
 import { safeParse } from "../lib/schemas.js";
 import { RequestOptions } from "../lib/sdks.js";
 import { extractSecurity, resolveGlobalSecurity } from "../lib/security.js";
 import { pathToFunc } from "../lib/url.js";
+import {
+  CreateIncident,
+  CreateIncident$zodSchema,
+} from "../models/createincident.js";
+import {
+  CreateIncidentResponse,
+  CreateIncidentResponse$zodSchema,
+} from "../models/createincidentop.js";
 import { APIError } from "../models/errors/apierror.js";
 import {
   ConnectionError,
@@ -19,28 +27,22 @@ import {
   UnexpectedClientError,
 } from "../models/errors/httpclienterrors.js";
 import { SDKValidationError } from "../models/errors/sdkvalidationerror.js";
-import {
-  ListIncidentRetrospectivesRequest,
-  ListIncidentRetrospectivesRequest$zodSchema,
-  ListIncidentRetrospectivesResponse,
-  ListIncidentRetrospectivesResponse$zodSchema,
-} from "../models/listincidentretrospectivesop.js";
 import { APICall, APIPromise } from "../types/async.js";
 import { Result } from "../types/fp.js";
 
 /**
- * All attached retrospectives for an incident
+ * Create an incident
  *
  * @remarks
- * Retrieve retrospectives attached to an incident
+ * Create a new incident
  */
-export function retrospectivesListIncidentRetrospectives(
+export function incidentsCreate(
   client$: FireHydrantCore,
-  request: ListIncidentRetrospectivesRequest,
+  request: CreateIncident,
   options?: RequestOptions,
 ): APIPromise<
   Result<
-    ListIncidentRetrospectivesResponse,
+    CreateIncidentResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -59,12 +61,12 @@ export function retrospectivesListIncidentRetrospectives(
 
 async function $do(
   client$: FireHydrantCore,
-  request: ListIncidentRetrospectivesRequest,
+  request: CreateIncident,
   options?: RequestOptions,
 ): Promise<
   [
     Result<
-      ListIncidentRetrospectivesResponse,
+      CreateIncidentResponse,
       | APIError
       | SDKValidationError
       | UnexpectedClientError
@@ -78,31 +80,18 @@ async function $do(
 > {
   const parsed$ = safeParse(
     request,
-    (value$) => ListIncidentRetrospectivesRequest$zodSchema.parse(value$),
+    (value$) => CreateIncident$zodSchema.parse(value$),
     "Input validation failed",
   );
   if (!parsed$.ok) {
     return [parsed$, { status: "invalid" }];
   }
   const payload$ = parsed$.value;
-  const body$ = null;
-
-  const pathParams$ = {
-    incident_id: encodeSimple("incident_id", payload$.incident_id, {
-      explode: false,
-      charEncoding: "percent",
-    }),
-  };
-  const path$ = pathToFunc("/v1/incidents/{incident_id}/retrospectives")(
-    pathParams$,
-  );
-  const query$ = encodeFormQuery({
-    "is_hidden": payload$.is_hidden,
-    "page": payload$.page,
-    "per_page": payload$.per_page,
-  });
+  const body$ = encodeJSON("body", payload$, { explode: true });
+  const path$ = pathToFunc("/v1/incidents")();
 
   const headers$ = new Headers(compactMap({
+    "Content-Type": "application/json",
     Accept: "application/json",
   }));
   const securityInput = await extractSecurity(client$._options.security);
@@ -111,7 +100,7 @@ async function $do(
   const context = {
     options: client$._options,
     baseURL: options?.serverURL ?? client$._baseURL ?? "",
-    operationID: "list_incident_retrospectives",
+    operationID: "create_incident",
     oAuth2Scopes: null,
     resolvedSecurity: requestSecurity,
     securitySource: client$._options.security,
@@ -129,11 +118,10 @@ async function $do(
 
   const requestRes = client$._createRequest(context, {
     security: requestSecurity,
-    method: "GET",
+    method: "POST",
     baseURL: options?.serverURL,
     path: path$,
     headers: headers$,
-    query: query$,
     body: body$,
     userAgent: client$._options.userAgent,
     timeoutMs: options?.timeoutMs || client$._options.timeoutMs
@@ -159,7 +147,7 @@ async function $do(
   };
 
   const [result$] = await M.match<
-    ListIncidentRetrospectivesResponse,
+    CreateIncidentResponse,
     | APIError
     | SDKValidationError
     | UnexpectedClientError
@@ -168,9 +156,7 @@ async function $do(
     | RequestTimeoutError
     | ConnectionError
   >(
-    M.json(200, ListIncidentRetrospectivesResponse$zodSchema, {
-      key: "Incidents_RetrospectiveEntityPaginated",
-    }),
+    M.json(201, CreateIncidentResponse$zodSchema, { key: "IncidentEntity" }),
   )(response, req$, { extraFields: responseFields$ });
 
   return [result$, { status: "complete", request: req$, response }];
