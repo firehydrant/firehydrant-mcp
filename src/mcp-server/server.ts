@@ -43,7 +43,7 @@ export function createMCPServer(deps: {
 }) {
   const server = new McpServer({
     name: "FireHydrant",
-    version: "0.2.8",
+    version: "0.2.9",
   });
 
   const getClient = deps.getSDK || (() =>
