@@ -5,9 +5,9 @@
 
 import * as z from "zod";
 import {
-  AudiencesEntitiesAudienceEntity,
-  AudiencesEntitiesAudienceEntity$zodSchema,
-} from "./audiencesentitiesaudienceentity.js";
+  AudiencesEntitiesAudienceEntityPaginated,
+  AudiencesEntitiesAudienceEntityPaginated$zodSchema,
+} from "./audiencesentitiesaudienceentitypaginated.js";
 
 export type ListAudiencesRequest = {
   include_archived?: boolean | null | undefined;
@@ -24,15 +24,15 @@ export type ListAudiencesResponse = {
   ContentType: string;
   StatusCode: number;
   RawResponse: Response;
-  Audiences_Entities_AudienceEntity?:
-    | AudiencesEntitiesAudienceEntity
+  Audiences_Entities_AudienceEntityPaginated?:
+    | AudiencesEntitiesAudienceEntityPaginated
     | undefined;
 };
 
 export const ListAudiencesResponse$zodSchema: z.ZodType<ListAudiencesResponse> =
   z.object({
-    Audiences_Entities_AudienceEntity: AudiencesEntitiesAudienceEntity$zodSchema
-      .optional(),
+    Audiences_Entities_AudienceEntityPaginated:
+      AudiencesEntitiesAudienceEntityPaginated$zodSchema.optional(),
     ContentType: z.string(),
     RawResponse: z.custom<Response>(x => x instanceof Response),
     StatusCode: z.int(),

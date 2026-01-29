@@ -159,7 +159,7 @@ async function $do(
     | ConnectionError
   >(
     M.json(200, ListAudiencesResponse$zodSchema, {
-      key: "Audiences_Entities_AudienceEntity",
+      key: "Audiences_Entities_AudienceEntityPaginated",
     }),
   )(response, req$, { extraFields: responseFields$ });
 
