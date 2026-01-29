@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.3",
   "name": "firehydrant-mcp",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {
@@ -76,6 +76,14 @@
     {
       "name": "list-alerts",
       "description": "List alerts\n\nRetrieve all alerts, including Signals alerts and third-party"
+    },
+    {
+      "name": "list-audiences",
+      "description": "Lists all audiences in the organization. This is useful for:\n\n  - Getting a list of all audiences with their IDs and names,\n  - Finding an audience ID by searching through audience names,\n  - Viewing audience configurations and details.\n"
+    },
+    {
+      "name": "get-audience",
+      "description": "Retrieves detailed information about a specific audience by its ID. This is useful for:\n\n  - Getting audience details and configuration when you have the audience ID,\n  - Viewing audience information.\n"
     },
     {
       "name": "get-audience-incident-ai-summary",
