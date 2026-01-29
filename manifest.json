@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.3",
   "name": "firehydrant-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {
@@ -38,6 +38,14 @@
   },
   "tools": [
     {
+      "name": "list-team-on-call-schedules",
+      "description": "Lists all on-call schedules for a specific team. This is useful for:\n\n  - Getting a list of on-call schedules for a team,\n  - Finding available schedules to assign to incidents,\n  - Viewing schedule configurations.\n"
+    },
+    {
+      "name": "get-team-on-call-schedule",
+      "description": "Retrieves a specific on-call schedule for a team. This is useful for:\n\n  - Getting detailed information about a specific schedule,\n  - Viewing schedule rotations and members,\n  - Checking schedule configuration.\n"
+    },
+    {
       "name": "list-incidents",
       "description": "List incidents\n\nList all of the incidents in the organization"
     },
@@ -56,6 +64,14 @@
     {
       "name": "list-alerts",
       "description": "List alerts\n\nRetrieve all alerts, including Signals alerts and third-party"
+    },
+    {
+      "name": "get-audience-incident-ai-summary",
+      "description": "Retrieves the AI-generated summary for an incident tailored to a specific audience. This is useful for:\n\n  - Getting audience-specific incident summaries,\n  - Viewing summaries customized for different stakeholders,\n  - Understanding how incidents are communicated to different audiences.\n"
+    },
+    {
+      "name": "get-incident-ai-summary",
+      "description": "Retrieves the AI-generated summary for an incident. This is useful for:\n\n  - Getting a concise AI summary of an incident,\n  - Understanding incident context quickly,\n  - Reviewing automated incident summaries.\n"
     }
   ]
 }

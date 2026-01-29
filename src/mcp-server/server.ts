@@ -16,10 +16,14 @@ import { MCPScope } from "./scopes.js";
 import { registerMCPExtensions } from "./server.extensions.js";
 import { createRegisterTool } from "./tools.js";
 import { tool$alertsListAlerts } from "./tools/alertsListAlerts.js";
+import { tool$audiencesGetAudienceSummary } from "./tools/audiencesGetAudienceSummary.js";
+import { tool$audiencesListAudienceSummaries } from "./tools/audiencesListAudienceSummaries.js";
 import { tool$incidentsCreateIncident } from "./tools/incidentsCreateIncident.js";
 import { tool$incidentsListIncidents } from "./tools/incidentsListIncidents.js";
 import { tool$retrospectivesListIncidentRetrospectives } from "./tools/retrospectivesListIncidentRetrospectives.js";
 import { tool$retrospectivesUpdateIncidentRetrospectiveField } from "./tools/retrospectivesUpdateIncidentRetrospectiveField.js";
+import { tool$signalsGetTeamOnCallSchedule } from "./tools/signalsGetTeamOnCallSchedule.js";
+import { tool$signalsListTeamOnCallSchedules } from "./tools/signalsListTeamOnCallSchedules.js";
 
 export function createMCPServer(deps: {
   logger: ConsoleLogger;
@@ -32,7 +36,7 @@ export function createMCPServer(deps: {
 }) {
   const server = new McpServer({
     name: "FireHydrant",
-    version: "0.1.0",
+    version: "0.1.1",
   });
 
   const getClient = deps.getSDK || (() =>
@@ -75,11 +79,15 @@ export function createMCPServer(deps: {
   const register = { tool, resource, resourceTemplate, prompt };
   void register; // suppress unused warnings
 
+  tool(tool$signalsListTeamOnCallSchedules);
+  tool(tool$signalsGetTeamOnCallSchedule);
   tool(tool$incidentsListIncidents);
   tool(tool$incidentsCreateIncident);
   tool(tool$retrospectivesListIncidentRetrospectives);
   tool(tool$retrospectivesUpdateIncidentRetrospectiveField);
   tool(tool$alertsListAlerts);
+  tool(tool$audiencesGetAudienceSummary);
+  tool(tool$audiencesListAudienceSummaries);
 
   registerMCPExtensions(register satisfies Register);
 
