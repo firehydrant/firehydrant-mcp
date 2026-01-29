@@ -1,23 +1,23 @@
 lockVersion: 2.0.0
 id: 0dd544ca-3933-4c41-a5b5-b9a57ec94099
 management:
-  docChecksum: 0c35c85bc50ae20fb6833c3585119722
+  docChecksum: 1cb9905a1a9dc255d522dd76e138d6e4
   docVersion: 0.0.1
-  speakeasyVersion: 1.680.3
-  generationVersion: 2.788.5
-  releaseVersion: 0.0.3
-  configChecksum: 003d1c6939e186ddf78f3ab04258f1f5
+  speakeasyVersion: 1.700.2
+  generationVersion: 2.801.2
+  releaseVersion: 0.1.0
+  configChecksum: 9575ad621ae20c9f1743c0ed0dc9fbe3
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
   published: true
 persistentEdits:
-  generation_id: 89cf8e9d-8575-494f-9884-9ad69a607f17
-  pristine_commit_hash: a54076ddd41673cbdb7317dd2955ec6714bcc5ee
-  pristine_tree_hash: 8f0743d322a002b39763f2d17f134ba48b3ef13c
+  generation_id: 8b0563ce-4fc0-4f5c-8144-3503c6dbe791
+  pristine_commit_hash: c1767849f235d0318e89f0adabca4a833eef9130
+  pristine_tree_hash: 91166a558a2547b42df1362df86f7b43043ed1e1
 features:
   mcp-typescript:
     additionalDependencies: 0.1.0
     constsAndDefaults: 0.1.0
-    core: 1.0.0
+    core: 1.1.1
     defaultEnabledRetries: 0.1.0
     enumUnions: 0.1.0
     globalSecurity: 0.1.1
@@ -47,12 +47,12 @@ trackedFiles:
     pristine_git_object: 4f9e60a9462fc4def738d60c3aaadf8232ef185f
   manifest.json:
     id: ca642a226869
-    last_write_checksum: sha1:54edfb0a50375ac6bba7ae1a92c113616d30e149
-    pristine_git_object: c21c2b0fdb4201cac134b51d108fb4e7ddf7bc53
+    last_write_checksum: sha1:4b5097a65cf454ae6440e090c47fd08847ec83f8
+    pristine_git_object: caa0b087cc86583919eaed0e310fa01ea8bfa3dc
   package.json:
     id: 7030d0b2f71b
-    last_write_checksum: sha1:52e0f16e947bf179370e256ea99f5b8c9c900094
-    pristine_git_object: e441a2a197142ddc47acc852f7049ddc0e75f241
+    last_write_checksum: sha1:d8200789f68f5d15f13f1dab58fe1e9f94c518e2
+    pristine_git_object: 247716eba2ada091064f9a24218cbd9f9bad3a2a
   src/core.ts:
     id: f431fdbcd144
     last_write_checksum: sha1:06da1e4774afba1db41952aec33c2dc0e872b809
@@ -91,8 +91,8 @@ trackedFiles:
     pristine_git_object: d4bd8b341290e7a828a171d840bd0b0fff7c7cd7
   src/lib/config.ts:
     id: 320761608fb3
-    last_write_checksum: sha1:570c758d353bd25732d0d5ada8381166999bea29
-    pristine_git_object: a307afaa9dfc0f21ac3a15315edee682fbc919c5
+    last_write_checksum: sha1:20b4c80adee91ed931ff1efdf9d0ce12c2c2c99b
+    pristine_git_object: 1af15122b84b274a1588b86a75b95c4787c1cca4
   src/lib/dlv.ts:
     id: b1988214835a
     last_write_checksum: sha1:1dd3e3fbb4550c4bf31f5ef997faff355d6f3250
@@ -139,8 +139,8 @@ trackedFiles:
     pristine_git_object: 542d9972403c5bc4aa70619f8c4b0af3ef2ce679
   src/lib/sdks.ts:
     id: 8a6d91f1218d
-    last_write_checksum: sha1:bbc42f6a0fe0d37bb38530ebbf585ce2a1227c87
-    pristine_git_object: cab0cbba63d3a473d02dbc670533561becb074d2
+    last_write_checksum: sha1:2be2abf6cc046a8de887e87f2423fc3f1455726d
+    pristine_git_object: 366041fbd9443cdbe0eb258b5f4bee8d594dd6e4
   src/lib/security.ts:
     id: 0502afa7922e
     last_write_checksum: sha1:5256c0e2d7775f7a2ac538bdbcc221a5e852154c
@@ -163,8 +163,8 @@ trackedFiles:
     pristine_git_object: b9994ff011501d7d75b88df1cd00f8724d3622b3
   src/mcp-server/cli/start/impl.ts:
     id: 37494f674015
-    last_write_checksum: sha1:797d94b8af017213abb098a561dcd1d07ab4b24a
-    pristine_git_object: b35f4e3ee91a3923286ed0c43e4d8ed3f307edba
+    last_write_checksum: sha1:6553c2b08c218f112e01541902279e8f7ff84adf
+    pristine_git_object: 740797dbc6fa0b6d9989e94a9230f89617c9115c
   src/mcp-server/console-logger.ts:
     id: 57aff4ff2e15
     last_write_checksum: sha1:0c4b9b7c79ad0a81359210cb31b9ee4d887d5de1
@@ -173,10 +173,14 @@ trackedFiles:
     id: 3d9d20ff158f
     last_write_checksum: sha1:27de1e2b8aaedc8965d1d4c4d4c500df1f28b483
     pristine_git_object: 78394e413ea070824f370b829eaf1416883e6680
+  src/mcp-server/flags.ts:
+    id: 0167e624a516
+    last_write_checksum: sha1:68a40ceeb7ef9f540e3060cc0b63cbafe53adca5
+    pristine_git_object: 4c96149f60025d9f3d5555961200b27ab86d6ce9
   src/mcp-server/mcp-server.ts:
     id: aabbc4ab07c1
-    last_write_checksum: sha1:747bc439428a5043afaf45fc868397009f2db901
-    pristine_git_object: b43a6af4c3e485922343af8664a410a5483b62e7
+    last_write_checksum: sha1:c60bbca308826546d60250db994bd9b37ebb7f07
+    pristine_git_object: 549dc47b46472e4b00fdc5461b976e6117ba36fb
   src/mcp-server/prompts.ts:
     id: 26f3d73cbf31
     last_write_checksum: sha1:2ce2eb360aa2b2e77079bc2b707dbb649efbc87c
@@ -191,16 +195,16 @@ trackedFiles:
     pristine_git_object: cb8330e4ae705d283de6ab337eefd3b4b8191fca
   src/mcp-server/server.ts:
     id: 2784dd48e82a
-    last_write_checksum: sha1:02d877d0e24d1253f55e0c966d145ea3b6cfc768
-    pristine_git_object: 2fb11a9f7742c72eb56ebafc24fe59ef81f600b4
+    last_write_checksum: sha1:a9cadaab5bb50eb6f5648d3a17c1686d0945135c
+    pristine_git_object: 00fc5ed121dbc6108be187e4bd9dc87f9769c22a
   src/mcp-server/shared.ts:
     id: 074e80d4be1e
     last_write_checksum: sha1:19c9034032819a14f15c430de4350c8aba99d725
     pristine_git_object: bb74a74788ebd7d11262f5f63b8fdd29ab817f48
   src/mcp-server/tools.ts:
     id: 654d5d1f2062
-    last_write_checksum: sha1:06b16f25b38c4596810cd9bfc221e3309ccb07ea
-    pristine_git_object: f7ce4dc9762a760048c0d94a5f128fd553f9af4b
+    last_write_checksum: sha1:272b01e5536fc2c1b6ae95364baa88f19b50312e
+    pristine_git_object: b8ac06b13be97af5dc5afe3918902d2fb3bbe7c1
   src/mcp-server/tools/alertsListAlerts.ts:
     id: 42da0380b4c0
     last_write_checksum: sha1:a56792573fdd12ecee5e2067b9923d1d62e50357
@@ -323,8 +327,8 @@ trackedFiles:
     pristine_git_object: 9eba91d0bff124cd3cb623b1b8f3bcf4a03a4371
   src/models/incidentsretrospectivefieldentity.ts:
     id: 67543dc2d961
-    last_write_checksum: sha1:994dd003613e689564a88bc4002a5ad539f8d462
-    pristine_git_object: 2960e4d2e8f28fcce90f3763209b2cdd14e5d4b1
+    last_write_checksum: sha1:bd293868b7b3f96c530e2ff107768a8d2c1a90fd
+    pristine_git_object: b76405a43e0103c6f91ea85978994c8b786320fe
   src/models/incidentsroleassignmententity.ts:
     id: d52a1d87540d
     last_write_checksum: sha1:f7fb643bad8dfc11117980f1af9a4a1b6d8903b3
@@ -485,8 +489,50 @@ trackedFiles:
     id: 61ebb9fd6e8c
     last_write_checksum: sha1:2a1769fabf9e934fa0b118db46d3b66cb500a6b7
     pristine_git_object: 0ca48942a1b9cd923d614985dfb81f0dc7e1d298
+examples:
+  list_incidents:
+    speakeasy-default-list-incidents:
+      responses:
+        "200":
+          application/json: {}
+  create_incident:
+    speakeasy-default-create-incident:
+      requestBody:
+        application/json: {"name": "<value>", "skip_incident_type_values": false}
+      responses:
+        "201":
+          application/json: {}
+  list_incident_retrospectives:
+    speakeasy-default-list-incident-retrospectives:
+      parameters:
+        path:
+          incident_id: "<id>"
+      responses:
+        "200":
+          application/json: {}
+  update_incident_retrospective_field:
+    speakeasy-default-update-incident-retrospective-field:
+      parameters:
+        path:
+          retrospective_id: "<id>"
+          field_id: "<id>"
+          incident_id: "<id>"
+      requestBody:
+        application/json: {"value": "<value>"}
+      responses:
+        "200":
+          application/json: {}
+  list_alerts:
+    speakeasy-default-list-alerts:
+      responses:
+        "200":
+          application/json: {"data": null}
 examplesVersion: 1.0.2
 generatedTests: {}
+releaseNotes: |
+  ## Mcp-typescript SDK Changes:
+  * `FireHydrant.Retrospectives.list_incident_retrospectives()`:  `response.data[].fields[].retrospective_field_id` **Added**
+  * `FireHydrant.Retrospectives.update_incident_retrospective_field()`:  `response.retrospective_field_id` **Added**
 generatedFiles:
   - .dxtignore
   - .gitattributes

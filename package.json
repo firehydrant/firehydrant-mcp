@@ -1,6 +1,6 @@
 {
   "name": "firehydrant-mcp",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "author": "FireHydrant",
   "type": "module",
   "sideEffects": false,
@@ -20,7 +20,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.23.0",
+    "@modelcontextprotocol/sdk": "1.25.2",
     "@stricli/core": "^1.1.2",
     "@tiptap/core": "^3.0.7",
     "@tiptap/html": "^3.0.7",
