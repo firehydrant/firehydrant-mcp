@@ -92,21 +92,22 @@ import {
 /**
  * A key/value of labels
  */
-export type IncidentEntityLabels = {};
+export type NullableIncidentEntityLabels = {};
 
-export const IncidentEntityLabels$zodSchema: z.ZodType<IncidentEntityLabels> = z
-  .object({}).describe("A key/value of labels");
+export const NullableIncidentEntityLabels$zodSchema: z.ZodType<
+  NullableIncidentEntityLabels
+> = z.object({}).describe("A key/value of labels");
 
-export type IncidentEntityRetroExport = {};
+export type NullableIncidentEntityRetroExport = {};
 
-export const IncidentEntityRetroExport$zodSchema: z.ZodType<
-  IncidentEntityRetroExport
+export const NullableIncidentEntityRetroExport$zodSchema: z.ZodType<
+  NullableIncidentEntityRetroExport
 > = z.object({});
 
 /**
  * IncidentEntity model
  */
-export type IncidentEntity = {
+export type NullableIncidentEntity = {
   id?: string | null | undefined;
   name?: string | null | undefined;
   created_at?: string | null | undefined;
@@ -141,7 +142,7 @@ export type IncidentEntity = {
     | null
     | undefined;
   active?: boolean | null | undefined;
-  labels?: IncidentEntityLabels | null | undefined;
+  labels?: NullableIncidentEntityLabels | null | undefined;
   role_assignments?: Array<IncidentsRoleAssignmentEntity> | null | undefined;
   status_pages?: Array<IncidentsStatusPageEntity> | null | undefined;
   incident_url?: string | null | undefined;
@@ -169,7 +170,7 @@ export type IncidentEntity = {
     | null
     | undefined;
   incident_channels?: Array<IncidentsChannelEntity> | null | undefined;
-  retro_exports?: Array<IncidentEntityRetroExport> | null | undefined;
+  retro_exports?: Array<NullableIncidentEntityRetroExport> | null | undefined;
   created_by?: NullableAuthorEntity | null | undefined;
   context_object?: NullableIncidentsContextObjectEntity | null | undefined;
   team_assignments?:
@@ -184,7 +185,9 @@ export type IncidentEntity = {
     | undefined;
 };
 
-export const IncidentEntity$zodSchema: z.ZodType<IncidentEntity> = z.object({
+export const NullableIncidentEntity$zodSchema: z.ZodType<
+  NullableIncidentEntity
+> = z.object({
   active: z.boolean().nullable().optional(),
   ai_incident_summary: z.string().nullable().optional(),
   channel_id: z.string().nullable().optional(),
@@ -218,7 +221,8 @@ export const IncidentEntity$zodSchema: z.ZodType<IncidentEntity> = z.object({
     .optional(),
   incident_type: NullableSuccinctEntity$zodSchema.nullable().optional(),
   incident_url: z.string().nullable().optional(),
-  labels: z.lazy(() => IncidentEntityLabels$zodSchema).nullable().optional(),
+  labels: z.lazy(() => NullableIncidentEntityLabels$zodSchema).nullable()
+    .optional(),
   last_note: NullableEventNoteEntity$zodSchema.nullable().optional(),
   last_update: z.string().nullable().optional(),
   lifecycle_measurements: z.array(IncidentsLifecycleMeasurementEntity$zodSchema)
@@ -236,8 +240,9 @@ export const IncidentEntity$zodSchema: z.ZodType<IncidentEntity> = z.object({
   private_id: z.string().nullable().optional(),
   private_status_page_url: z.string().nullable().optional(),
   report_id: z.string().nullable().optional(),
-  retro_exports: z.array(z.lazy(() => IncidentEntityRetroExport$zodSchema))
-    .nullable().optional(),
+  retro_exports: z.array(
+    z.lazy(() => NullableIncidentEntityRetroExport$zodSchema),
+  ).nullable().optional(),
   role_assignments: z.array(IncidentsRoleAssignmentEntity$zodSchema).nullable()
     .optional(),
   services: z.array(SuccinctEntity$zodSchema).nullable().optional(),

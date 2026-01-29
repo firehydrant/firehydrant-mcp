@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.3",
   "name": "firehydrant-mcp",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {
@@ -38,6 +38,14 @@
   },
   "tools": [
     {
+      "name": "list-teams",
+      "description": "Lists all teams in the organization. This is useful for:\n\n  - Getting a list of all teams,\n  - Finding team IDs for other operations,\n  - Viewing team configurations.\n"
+    },
+    {
+      "name": "get-team",
+      "description": "Retrieves detailed information about a specific team, including its members. This is useful for:\n\n  - Getting team details and configuration,\n  - Viewing team members and memberships,\n  - Finding users on a specific team,\n  - Checking team assignments and roles.\n"
+    },
+    {
       "name": "list-team-on-call-schedules",
       "description": "Lists all on-call schedules for a specific team. This is useful for:\n\n  - Getting a list of on-call schedules for a team,\n  - Finding available schedules to assign to incidents,\n  - Viewing schedule configurations.\n"
     },
@@ -60,6 +68,10 @@
     {
       "name": "update-retrospective-field",
       "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nThe value should be unstyled HTML.\n"
+    },
+    {
+      "name": "list-users",
+      "description": "Lists all users in the organization. This is useful for:\n\n  - Getting a list of all users,\n  - Finding user IDs for other operations,\n  - Searching for users by name or email,\n  - Viewing user information.\n"
     },
     {
       "name": "list-alerts",
