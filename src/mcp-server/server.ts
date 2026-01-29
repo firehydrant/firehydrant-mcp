@@ -20,7 +20,9 @@ import { tool$audiencesGetAudience } from "./tools/audiencesGetAudience.js";
 import { tool$audiencesGetSummary } from "./tools/audiencesGetSummary.js";
 import { tool$audiencesListAudiences } from "./tools/audiencesListAudiences.js";
 import { tool$audiencesListSummaries } from "./tools/audiencesListSummaries.js";
+import { tool$catalogEntriesGetService } from "./tools/catalogEntriesGetService.js";
 import { tool$incidentsCreate } from "./tools/incidentsCreate.js";
+import { tool$incidentsGetIncident } from "./tools/incidentsGetIncident.js";
 import { tool$incidentsList } from "./tools/incidentsList.js";
 import { tool$retrospectivesList } from "./tools/retrospectivesList.js";
 import { tool$retrospectivesUpdateField } from "./tools/retrospectivesUpdateField.js";
@@ -41,7 +43,7 @@ export function createMCPServer(deps: {
 }) {
   const server = new McpServer({
     name: "FireHydrant",
-    version: "0.2.7",
+    version: "0.2.8",
   });
 
   const getClient = deps.getSDK || (() =>
@@ -84,12 +86,14 @@ export function createMCPServer(deps: {
   const register = { tool, resource, resourceTemplate, prompt };
   void register; // suppress unused warnings
 
+  tool(tool$catalogEntriesGetService);
   tool(tool$teamsListTeams);
   tool(tool$teamsGetTeam);
   tool(tool$signalsListTeamOnCallSchedules);
   tool(tool$signalsGetTeamOnCallSchedule);
   tool(tool$incidentsList);
   tool(tool$incidentsCreate);
+  tool(tool$incidentsGetIncident);
   tool(tool$retrospectivesList);
   tool(tool$retrospectivesUpdateField);
   tool(tool$usersListUsers);

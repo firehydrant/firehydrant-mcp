@@ -7,16 +7,16 @@ import * as z from "zod";
 /**
  * The event's payload
  */
-export type Data = {};
+export type AlertsSirenEventEntityData = {};
 
-export const Data$zodSchema: z.ZodType<Data> = z.object({}).describe(
-  "The event's payload",
-);
+export const AlertsSirenEventEntityData$zodSchema: z.ZodType<
+  AlertsSirenEventEntityData
+> = z.object({}).describe("The event's payload");
 
 export type AlertsSirenEventEntity = {
   id?: string | null | undefined;
   type?: string | null | undefined;
-  data?: Data | null | undefined;
+  data?: AlertsSirenEventEntityData | null | undefined;
   created_at?: string | null | undefined;
 };
 
@@ -24,7 +24,8 @@ export const AlertsSirenEventEntity$zodSchema: z.ZodType<
   AlertsSirenEventEntity
 > = z.object({
   created_at: z.iso.datetime({ offset: true }).nullable().optional(),
-  data: z.lazy(() => Data$zodSchema).nullable().optional(),
+  data: z.lazy(() => AlertsSirenEventEntityData$zodSchema).nullable()
+    .optional(),
   id: z.string().nullable().optional(),
   type: z.string().nullable().optional(),
 });

@@ -1,7 +1,7 @@
 {
   "manifest_version": "0.3",
   "name": "firehydrant-mcp",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "",
   "long_description": "FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.",
   "author": {
@@ -38,6 +38,10 @@
   },
   "tools": [
     {
+      "name": "get-service",
+      "description": "Retrieves detailed information about a specific service. This is useful for:\n\n  - Getting service details including the team that owns it,\n  - Finding which team is responsible for a service,\n  - Viewing service configuration and metadata,\n  - Identifying service ownership for incident response.\n"
+    },
+    {
       "name": "list-teams",
       "description": "Lists all teams in the organization. This is useful for:\n\n  - Getting a list of all teams,\n  - Finding team IDs for other operations,\n  - Viewing team configurations.\n"
     },
@@ -60,6 +64,10 @@
     {
       "name": "create-incident",
       "description": "Create an incident\n\nCreate a new incident"
+    },
+    {
+      "name": "get-incident",
+      "description": "Retrieves detailed information about a specific incident. This is useful for:\n\n  - Getting incident details including affected services,\n  - Viewing incident status, severity, and impact,\n  - Finding services impacted by an incident,\n  - Getting team assignments and other incident metadata.\n"
     },
     {
       "name": "list-retros-by-incident",
