@@ -5,23 +5,17 @@
 import { SSEServerTransport } from "@modelcontextprotocol/sdk/server/sse.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import express from "express";
-import { SDKOptions } from "../../../lib/config.js";
 import { LocalContext } from "../../cli.js";
 import {
   ConsoleLoggerLevel,
   createConsoleLogger,
 } from "../../console-logger.js";
-import { MCPScope } from "../../scopes.js";
+import { MCPServerFlags } from "../../flags.js";
 import { createMCPServer } from "../../server.js";
 
-interface StartCommandFlags {
+interface StartCommandFlags extends MCPServerFlags {
   readonly transport: "stdio" | "sse";
   readonly port: number;
-  readonly tool?: string[];
-  readonly scope?: MCPScope[];
-  readonly "api-key"?: string;
-  readonly "server-url"?: string;
-  readonly "server-index"?: SDKOptions["serverIdx"];
   readonly "log-level": ConsoleLoggerLevel;
   readonly env?: [string, string][];
 }

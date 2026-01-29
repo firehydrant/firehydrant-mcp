@@ -93,7 +93,8 @@ export async function formatResult(
     };
   }
 
-  return { content };
+  const isError = response ? !response.ok : false;
+  return isError ? { content, isError } : { content };
 }
 
 async function consumeSSE(
