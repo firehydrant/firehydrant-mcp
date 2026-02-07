@@ -29,11 +29,11 @@ FireHydrant MCP Server: An MCP server for interacting with FireHydrant's API.
 ## Installation
 
 <details>
-<summary>MCP Bundle (Desktop Extension)</summary>
+<summary>Claude Desktop</summary>
 
-Install the MCP server as a Desktop Extension using the pre-built [`mcp-server.mcpb`](https://github.com/firehydrant/firehydrant-mcp/releases/download/v0.0.3/mcp-server.mcpb) file:
+Install the MCP server as a Desktop Extension using the pre-built [`mcp-server.mcpb`](https://github.com/firehydrant/firehydrant-mcp/releases/download/v0.1.0/mcp-server.mcpb) file:
 
-Simply drag and drop the [`mcp-server.mcpb`](https://github.com/firehydrant/firehydrant-mcp/releases/download/v0.0.3/mcp-server.mcpb) file onto Claude Desktop to install the extension.
+Simply drag and drop the [`mcp-server.mcpb`](https://github.com/firehydrant/firehydrant-mcp/releases/download/v0.1.0/mcp-server.mcpb) file onto Claude Desktop to install the extension.
 
 The MCP bundle package includes the MCP server and all necessary configuration. Once installed, the server will be available without additional setup.
 
@@ -45,7 +45,7 @@ The MCP bundle package includes the MCP server and all necessary configuration. 
 <details>
 <summary>Cursor</summary>
 
-[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=FireHydrant&config=eyJtY3BTZXJ2ZXJzIjp7IkZpcmVIeWRyYW50Ijp7ImNvbW1hbmQiOiJucHgiLCJhcmdzIjpbImZpcmVoeWRyYW50LW1jcCIsInN0YXJ0IiwiLS1hcGkta2V5IiwiLi4uIl19fX0=)
+[![Install MCP Server](https://cursor.com/deeplink/mcp-install-dark.svg)](cursor://anysphere.cursor-deeplink/mcp/install?name=FireHydrant&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJmaXJlaHlkcmFudC1tY3AiLCJzdGFydCIsIi0tYXBpLWtleSIsIiJdfQ==)
 
 Or manually:
 
@@ -56,17 +56,13 @@ Or manually:
 
 ```json
 {
-  "mcpServers": {
-    "FireHydrant": {
-      "command": "npx",
-      "args": [
-        "firehydrant-mcp",
-        "start",
-        "--api-key",
-        "..."
-      ]
-    }
-  }
+  "command": "npx",
+  "args": [
+    "firehydrant-mcp",
+    "start",
+    "--api-key",
+    ""
+  ]
 }
 ```
 
@@ -76,7 +72,15 @@ Or manually:
 <summary>Claude Code CLI</summary>
 
 ```bash
-claude mcp add firehydrant-mcp npx firehydrant-mcp start -- --api-key ...
+claude mcp add FireHydrant -- npx -y firehydrant-mcp start --api-key 
+```
+
+</details>
+<details>
+<summary>Gemini</summary>
+
+```bash
+gemini mcp add FireHydrant -- npx -y firehydrant-mcp start --api-key 
 ```
 
 </details>
@@ -90,84 +94,51 @@ Refer to [Official Windsurf documentation](https://docs.windsurf.com/windsurf/ca
 3. Click on `Manage MCPs`. (To Manage MCPs you should be signed in with a Windsurf Account)
 4. Click on `View raw config` to open up the mcp configuration file.
 5. If the configuration file is empty paste the full json
-```
+
+```bash
 {
-  "mcpServers": {
-    "FireHydrant": {
-      "command": "npx",
-      "args": [
-        "firehydrant-mcp",
-        "start",
-        "--api-key",
-        "..."
-      ]
-    }
-  }
+  "command": "npx",
+  "args": [
+    "firehydrant-mcp",
+    "start",
+    "--api-key",
+    ""
+  ]
 }
 ```
 </details>
 <details>
 <summary>VS Code</summary>
 
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-VS_Code?style=flat-square&label=Install%20FireHydrant%20MCP&color=0098FF)](vscode://ms-vscode.vscode-mcp/install?name=FireHydrant&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyJmaXJlaHlkcmFudC1tY3AiLCJzdGFydCIsIi0tYXBpLWtleSIsIiJdfQ==)
+
+Or manually:
+
 Refer to [Official VS Code documentation](https://code.visualstudio.com/api/extension-guides/ai/mcp) for latest information
 
 1. Open [Command Palette](https://code.visualstudio.com/docs/getstarted/userinterface#_command-palette)
 1. Search and open `MCP: Open User Configuration`. This should open mcp.json file
 2. If the configuration file is empty paste the full json
-```
+
+```bash
 {
-  "mcpServers": {
-    "FireHydrant": {
-      "command": "npx",
-      "args": [
-        "firehydrant-mcp",
-        "start",
-        "--api-key",
-        "..."
-      ]
-    }
-  }
+  "command": "npx",
+  "args": [
+    "firehydrant-mcp",
+    "start",
+    "--api-key",
+    ""
+  ]
 }
 ```
 
 </details>
-<details>
-<summary>Claude Desktop</summary>
-Claude Desktop doesn't yet support SSE/remote MCP servers.
-
-You need to do the following
-1. Open claude Desktop
-2. Open left hand side pane, then click on your Username
-3. Go to `Settings`
-4. Go to `Developer` tab (on the left hand side)
-5. Click on `Edit Config`
-Paste the following config in the configuration
-
-```json
-{
-  "mcpServers": {
-    "FireHydrant": {
-      "command": "npx",
-      "args": [
-        "firehydrant-mcp",
-        "start",
-        "--api-key",
-        "..."
-      ]
-    }
-  }
-}
-```
-
-</details>
-
-
 <details>
 <summary> Stdio installation via npm </summary>
 To start the MCP server, run:
 
 ```bash
-npx firehydrant-mcp start --api-key ...
+npx firehydrant-mcp start --api-key 
 ```
 
 For a full list of server arguments, run:

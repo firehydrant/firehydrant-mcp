@@ -93,7 +93,8 @@ export async function formatResult(
     };
   }
 
-  return { content };
+  const isError = response ? !response.ok : false;
+  return isError ? { content, isError } : { content };
 }
 
 async function consumeSSE(
@@ -143,21 +144,25 @@ export function createRegisterTool(
     }
 
     if (tool.args) {
-      server.tool(
+      server.registerTool(
         tool.name,
-        tool.description,
-        tool.args,
-        tool.annotations,
+        {
+          description: tool.description,
+          inputSchema: tool.args,
+          annotations: tool.annotations,
+        },
         async (args, ctx) => {
           return tool.tool(getSDK(), args, ctx);
         },
       );
     } else {
-      server.tool(
+      server.registerTool(
         tool.name,
-        tool.description,
-        tool.annotations,
-        async (_, ctx) => {
+        {
+          description: tool.description,
+          annotations: tool.annotations,
+        },
+        async (ctx) => {
           return tool.tool(getSDK(), ctx);
         },
       );
