@@ -31,6 +31,21 @@ actions:
         scopes:
           - "read"
 
+  - target: $.paths["/v1/incidents/{incident_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-incident
+        scopes:
+          - "read"
+        description: >
+          Retrieves detailed information about a specific incident. This is useful for:
+          
+            - Getting incident details including affected services,
+            - Viewing incident status, severity, and impact,
+            - Finding services impacted by an incident,
+            - Getting team assignments and other incident metadata.
+
   - target: $.paths..[?@.operationId == "create_incident"]
     update:
       x-speakeasy-mcp:
@@ -79,6 +94,17 @@ actions:
                 items:
                   type: object
                   additionalProperties: true
+      Audiences_Entities_AudienceEntityPaginated:
+        type: object
+        properties:
+          data:
+            type: array
+            nullable: true
+            items:
+              $ref: "#/components/schemas/Audiences_Entities_AudienceEntity"
+          pagination:
+            $ref: "#/components/schemas/NullablePaginationEntity"
+        description: "Audiences_Entities_AudienceEntityPaginated model"
 
   - target: $.paths..[?@.operationId == "list_alerts"]
     update:
@@ -87,6 +113,154 @@ actions:
         name: list-alerts
         scopes:
           - "read"
+
+  - target: $.paths["/v1/teams/{team_id}/on_call_schedules"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: list-team-on-call-schedules
+        scopes:
+          - "read"
+        description: >
+          Lists all on-call schedules for a specific team. This is useful for:
+          
+            - Getting a list of on-call schedules for a team,
+            - Finding available schedules to assign to incidents,
+            - Viewing schedule configurations.
+
+  - target: $.paths["/v1/teams/{team_id}/on_call_schedules/{schedule_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-team-on-call-schedule
+        scopes:
+          - "read"
+        description: >
+          Retrieves a specific on-call schedule for a team. This is useful for:
+          
+            - Getting detailed information about a specific schedule,
+            - Viewing schedule rotations and members,
+            - Checking schedule configuration.
+
+  - target: $.paths["/v1/audiences/summaries/{incident_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-incident-ai-summary
+        scopes:
+          - "read"
+        description: >
+          Retrieves the AI-generated summary for an incident. This is useful for:
+          
+            - Getting a concise AI summary of an incident,
+            - Understanding incident context quickly,
+            - Reviewing automated incident summaries.
+
+  - target: $.paths["/v1/audiences/{audience_id}/summaries/{incident_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-audience-incident-ai-summary
+        scopes:
+          - "read"
+        description: >
+          Retrieves the AI-generated summary for an incident tailored to a specific audience. This is useful for:
+          
+            - Getting audience-specific incident summaries,
+            - Viewing summaries customized for different stakeholders,
+            - Understanding how incidents are communicated to different audiences.
+
+  - target: $.paths["/v1/audiences"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: list-audiences
+        scopes:
+          - "read"
+        description: >
+          Lists all audiences in the organization. This is useful for:
+          
+            - Getting a list of all audiences with their IDs and names,
+            - Finding an audience ID by searching through audience names,
+            - Viewing audience configurations and details.
+      responses:
+        "200":
+          content:
+            "application/json":
+              schema:
+                $ref: "#/components/schemas/Audiences_Entities_AudienceEntityPaginated"
+
+  - target: $.paths["/v1/audiences/{audience_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-audience
+        scopes:
+          - "read"
+        description: >
+          Retrieves detailed information about a specific audience by its ID. This is useful for:
+          
+            - Getting audience details and configuration when you have the audience ID,
+            - Viewing audience information.
+
+  - target: $.paths["/v1/teams"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: list-teams
+        scopes:
+          - "read"
+        description: >
+          Lists all teams in the organization. This is useful for:
+          
+            - Getting a list of all teams,
+            - Finding team IDs for other operations,
+            - Viewing team configurations.
+
+  - target: $.paths["/v1/teams/{team_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-team
+        scopes:
+          - "read"
+        description: >
+          Retrieves detailed information about a specific team, including its members. This is useful for:
+          
+            - Getting team details and configuration,
+            - Viewing team members and memberships,
+            - Finding users on a specific team,
+            - Checking team assignments and roles.
+
+  - target: $.paths["/v1/users"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: list-users
+        scopes:
+          - "read"
+        description: >
+          Lists all users in the organization. This is useful for:
+          
+            - Getting a list of all users,
+            - Finding user IDs for other operations,
+            - Searching for users by name or email,
+            - Viewing user information.
+
+  - target: $.paths["/v1/services/{service_id}"].get
+    update:
+      x-speakeasy-mcp:
+        disabled: false
+        name: get-service
+        scopes:
+          - "read"
+        description: >
+          Retrieves detailed information about a specific service. This is useful for:
+          
+            - Getting service details including the team that owns it,
+            - Finding which team is responsible for a service,
+            - Viewing service configuration and metadata,
+            - Identifying service ownership for incident response.
 
   - target: $.paths.*[?@["x-speakeasy-mcp"].disabled != false]
     remove: true

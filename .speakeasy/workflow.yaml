@@ -6,6 +6,7 @@ sources:
             - location: registry.speakeasyapi.dev/firehydrant/firehydrant/firehydrant-oas:main
         overlays:
             - location: .speakeasy/overlay.mcp.yaml
+            - location: .speakeasy/speakeasy-modifications-overlay.yaml
         output: .speakeasy/openapi.output.yaml
         registry:
             location: registry.speakeasyapi.dev/firehydrant/firehydrant/fire-hydrant-mcp-oas
