@@ -64,9 +64,31 @@ paths:
   "/v1/ping": {}
   "/v1/environments": {}
   "/v1/environments/{environment_id}": {}
+  "/v1/environments/{environment_id}/services": {}
+  "/v1/environments/{environment_id}/functionalities": {}
   "/v1/services": {}
   "/v1/services/service_links": {}
-  "/v1/services/{service_id}": {}
+  "/v1/services/{service_id}":
+    get:
+      tags:
+        - "Catalog Entries"
+      summary: "Get a service"
+      description: "Retrieves a single service by ID"
+      operationId: "get_service"
+      parameters:
+        - name: "service_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Retrieves a single service by ID"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/ServiceEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-service", "scopes": ["read"], "description": "Retrieves detailed information about a specific service. This is useful for:\n\n  - Getting service details including the team that owns it,\n  - Finding which team is responsible for a service,\n  - Viewing service configuration and metadata,\n  - Identifying service ownership for incident response.\n"}
+  "/v1/services/{service_id}/environments": {}
   "/v1/services/{service_id}/dependencies": {}
   "/v1/services/{service_id}/available_upstream_dependencies": {}
   "/v1/services/{service_id}/available_downstream_dependencies": {}
@@ -76,15 +98,184 @@ paths:
   "/v1/service_dependencies/{service_dependency_id}": {}
   "/v1/functionalities": {}
   "/v1/functionalities/{functionality_id}": {}
+  "/v1/functionalities/{functionality_id}/environments": {}
   "/v1/functionalities/{functionality_id}/services": {}
-  "/v1/teams": {}
-  "/v1/teams/{team_id}": {}
+  "/v1/teams":
+    get:
+      tags:
+        - "Teams"
+      summary: "List teams"
+      description: "List all of the teams in the organization"
+      operationId: "list_teams"
+      parameters:
+        - name: "page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+        - name: "per_page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+        - name: "query"
+          in: "query"
+          description: "A query to search teams by their name or description"
+          schema:
+            type: "string"
+            nullable: true
+        - name: "name"
+          in: "query"
+          description: "A query to search teams by their name"
+          schema:
+            type: "string"
+            nullable: true
+        - name: "services"
+          in: "query"
+          description: "A comma separated list of service IDs"
+          schema:
+            type: "string"
+            nullable: true
+        - name: "default_incident_role"
+          in: "query"
+          description: "Filter by teams that have or do not have members with a default incident role asssigned. Value may be 'present', 'blank', or the ID of an incident role."
+          schema:
+            type: "string"
+            nullable: true
+        - name: "lite"
+          in: "query"
+          description: "Boolean to determine whether to return a slimified version of the teams object"
+          schema:
+            type: "boolean"
+            nullable: true
+      responses:
+        "200":
+          description: "List all of the teams in the organization"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/TeamEntityPaginated"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-teams", "scopes": ["read"], "description": "Lists all teams in the organization. This is useful for:\n\n  - Getting a list of all teams,\n  - Finding team IDs for other operations,\n  - Viewing team configurations.\n"}
+  "/v1/teams/{team_id}":
+    get:
+      tags:
+        - "Teams"
+      summary: "Get a team"
+      description: "Retrieve a single team from its ID"
+      operationId: "get_team"
+      parameters:
+        - name: "team_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "lite"
+          in: "query"
+          description: "Boolean to determine whether to return a slimified version of the teams object"
+          schema:
+            type: "boolean"
+            nullable: true
+      responses:
+        "200":
+          description: "Retrieve a single team from its ID"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/TeamEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-team", "scopes": ["read"], "description": "Retrieves detailed information about a specific team, including its members. This is useful for:\n\n  - Getting team details and configuration,\n  - Viewing team members and memberships,\n  - Finding users on a specific team,\n  - Checking team assignments and roles.\n"}
   "/v1/teams/{team_id}/call_routes": {}
   "/v1/teams/{team_id}/escalation_policies": {}
   "/v1/teams/{team_id}/escalation_policies/{id}": {}
   "/v1/teams/{team_id}/on_call_schedules/preview": {}
-  "/v1/teams/{team_id}/on_call_schedules": {}
-  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}": {}
+  "/v1/teams/{team_id}/on_call_schedules":
+    get:
+      tags:
+        - "Signals"
+      summary: "List on-call schedules for a team"
+      description: "List all Signals on-call schedules for a team."
+      operationId: "list_team_on_call_schedules"
+      parameters:
+        - name: "team_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "shift_time_window_start"
+          in: "query"
+          description: "An optional ISO8601 timestamp for filtering the shifts listed in each on-call schedule to only include shifts that overlap with the provided time window. If provided, only shifts that end at or after this time will be included."
+          schema:
+            type: "string"
+            nullable: true
+        - name: "shift_time_window_end"
+          in: "query"
+          description: "An optional ISO8601 timestamp for filtering the shifts listed in each on-call schedule to only include shifts that overlap with the provided time window.. If provided, only shifts that start at or before this time will be included."
+          schema:
+            type: "string"
+            nullable: true
+        - name: "query"
+          in: "query"
+          description: "A query string for searching through the list of on-call schedules."
+          schema:
+            type: "string"
+            nullable: true
+        - name: "page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+        - name: "per_page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+      responses:
+        "200":
+          description: "List all Signals on-call schedules for a team."
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/Signals_API_OnCallScheduleEntityPaginated"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-team-on-call-schedules", "scopes": ["read"], "description": "Lists all on-call schedules for a specific team. This is useful for:\n\n  - Getting a list of on-call schedules for a team,\n  - Finding available schedules to assign to incidents,\n  - Viewing schedule configurations.\n"}
+      x-speakeasy-name-override: listTeamOnCallSchedules
+  "/v1/teams/{team_id}/on_call_schedules/{schedule_id}":
+    get:
+      tags:
+        - "Signals"
+      summary: "Get an on-call schedule for a team"
+      description: "Get a Signals on-call schedule by ID"
+      operationId: "get_team_on_call_schedule"
+      parameters:
+        - name: "team_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "schedule_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+        - name: "shift_time_window_start"
+          in: "query"
+          description: "An optional ISO8601 timestamp for filtering the shifts listed in each on-call schedule to only include shifts that overlap with the provided time window. If provided, only shifts that end at or after this time will be included."
+          schema:
+            type: "string"
+            nullable: true
+        - name: "shift_time_window_end"
+          in: "query"
+          description: "An optional ISO8601 timestamp for filtering the shifts listed in each on-call schedule to only include shifts that overlap with the provided time window.. If provided, only shifts that start at or before this time will be included."
+          schema:
+            type: "string"
+            nullable: true
+      responses:
+        "200":
+          description: "Get a Signals on-call schedule by ID"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/Signals_API_OnCallScheduleEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-team-on-call-schedule", "scopes": ["read"], "description": "Retrieves a specific on-call schedule for a team. This is useful for:\n\n  - Getting detailed information about a specific schedule,\n  - Viewing schedule rotations and members,\n  - Checking schedule configuration.\n"}
+      x-speakeasy-name-override: getTeamOnCallSchedule
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/preview": {}
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations": {}
   "/v1/teams/{team_id}/on_call_schedules/{schedule_id}/rotations/{rotation_id}/copy": {}
@@ -335,6 +526,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/IncidentEntityPaginated"}
       x-speakeasy-mcp: {"disabled": false, "name": "list-incidents", "scopes": ["read"]}
+      x-speakeasy-name-override: list
     post:
       tags:
         - "Incidents"
@@ -354,10 +546,30 @@ paths:
               schema: {"$ref": "#/components/schemas/IncidentEntity"}
       x-codegen-request-body-name: "create_incident"
       x-speakeasy-mcp: {"disabled": false, "name": "create-incident", "scopes": ["read", "write"]}
+      x-speakeasy-name-override: create
   "/v1/incidents/{incident_id}/channel": {}
   "/v1/incidents/{incident_id}/close": {}
   "/v1/incidents/{incident_id}/resolve": {}
-  "/v1/incidents/{incident_id}": {}
+  "/v1/incidents/{incident_id}":
+    get:
+      tags:
+        - "Incidents"
+      summary: "Get an incident"
+      description: "Retrieve a single incident from its ID"
+      operationId: "get_incident"
+      parameters:
+        - name: "incident_id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Retrieve a single incident from its ID"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/IncidentEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-incident", "scopes": ["read"], "description": "Retrieves detailed information about a specific incident. This is useful for:\n\n  - Getting incident details including affected services,\n  - Viewing incident status, severity, and impact,\n  - Finding services impacted by an incident,\n  - Getting team assignments and other incident metadata.\n"}
   "/v1/incidents/{incident_id}/unarchive": {}
   "/v1/incidents/{incident_id}/alerts": {}
   "/v1/incidents/{incident_id}/alerts/{incident_alert_id}/primary": {}
@@ -438,6 +650,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/Incidents_RetrospectiveEntityPaginated"}
       x-speakeasy-mcp: {"disabled": false, "name": "list-retros-by-incident", "scopes": ["read"], "description": "Lists all retrospectives (RCAs) for an incident. Among other things, this is useful for:\n\n  - Getting a list of retrospectives for an incident,\n  - Getting basic data about a retrospective.\n  - Getting the fields of a retrospective.\n"}
+      x-speakeasy-name-override: list
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}": {}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields": {}
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}":
@@ -476,6 +689,7 @@ paths:
               schema: {"$ref": "#/components/schemas/Incidents_RetrospectiveFieldEntity"}
       x-codegen-request-body-name: "update_incident_retrospective_field"
       x-speakeasy-mcp: {"disabled": false, "name": "update-retrospective-field", "scopes": ["read", "write"], "description": "Updates a field in a retrospective (RCA) for an incident. Among other things, this is useful for:\n\n  - Updating a field in a retrospective,\n  - Updating the value of a field in a retrospective.\n\nThe value should be unstyled HTML.\n"}
+      x-speakeasy-name-override: updateField
   "/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}/inputs": {}
   "/v1/incident_roles": {}
   "/v1/incident_roles/{incident_role_id}": {}
@@ -511,7 +725,45 @@ paths:
   "/v1/integrations/statuspage/connections/{connection_id}/pages": {}
   "/v1/integrations/zendesk/{connection_id}/tickets/search": {}
   "/v1/integrations/zendesk/search": {}
-  "/v1/users": {}
+  "/v1/users":
+    get:
+      tags:
+        - "Users"
+      summary: "List users"
+      description: "Retrieve a list of all users in an organization"
+      operationId: "list_users"
+      parameters:
+        - name: "page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+        - name: "per_page"
+          in: "query"
+          schema:
+            type: "integer"
+            format: "int32"
+            nullable: true
+        - name: "query"
+          in: "query"
+          description: "Text string of a query to filter users by name or email"
+          schema:
+            type: "string"
+            nullable: true
+        - name: "name"
+          in: "query"
+          description: "Text string of a query to filter users by name"
+          schema:
+            type: "string"
+            nullable: true
+      responses:
+        "200":
+          description: "Retrieve a list of all users in an organization"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/UserEntityPaginated"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-users", "scopes": ["read"], "description": "Lists all users in the organization. This is useful for:\n\n  - Getting a list of all users,\n  - Finding user IDs for other operations,\n  - Searching for users by name or email,\n  - Viewing user information.\n"}
   "/v1/users/{id}": {}
   "/v1/users/{id}/services": {}
   "/v1/current_user": {}
@@ -590,7 +842,6 @@ paths:
   "/v1/post_mortems/questions/{question_id}": {}
   "/v1/retrospective_templates": {}
   "/v1/retrospective_templates/{retrospective_template_id}": {}
-  "/v1/retrospective_report_templates/{id}": {}
   "/v1/alerts":
     get:
       tags:
@@ -710,6 +961,7 @@ paths:
             "application/json":
               schema: {"$ref": "#/components/schemas/Alerts_AlertEntityPaginated"}
       x-speakeasy-mcp: {"disabled": false, "name": "list-alerts", "scopes": ["read"]}
+      x-speakeasy-name-override: list
   "/v1/alerts/{alert_id}": {}
   "/v1/processing_log_entries": {}
   "/v1/page/signals": {}
@@ -780,12 +1032,101 @@ paths:
   "/v1/ai/summarize_incident/{incident_id}/{generated_summary_id}/voted": {}
   "/v1/ai/summarize_incident/{incident_id}/{generated_summary_id}/vote": {}
   "/v1/ai/preferences": {}
-  "/v1/audiences": {}
-  "/v1/audiences/{audience_id}": {}
+  "/v1/audiences":
+    get:
+      tags:
+        - "Audiences"
+      summary: "List audiences"
+      description: "List all audiences"
+      operationId: "list_audiences"
+      parameters:
+        - name: "include_archived"
+          in: "query"
+          description: "Include archived (discarded) audiences"
+          schema:
+            type: "boolean"
+            nullable: true
+            default: false
+      responses:
+        "200":
+          description: "List all audiences"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/Audiences_Entities_AudienceEntityPaginated"}
+      x-speakeasy-mcp: {"disabled": false, "name": "list-audiences", "scopes": ["read"], "description": "Lists all audiences in the organization. This is useful for:\n\n  - Getting a list of all audiences with their IDs and names,\n  - Finding an audience ID by searching through audience names,\n  - Viewing audience configurations and details.\n"}
+  "/v1/audiences/{audience_id}":
+    get:
+      tags:
+        - "Audiences"
+      summary: "Get audience"
+      description: "Get audience details"
+      operationId: "get_audience"
+      parameters:
+        - name: "audience_id"
+          in: "path"
+          description: "Unique identifier of the audience"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get audience details"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/Audiences_Entities_AudienceEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-audience", "scopes": ["read"], "description": "Retrieves detailed information about a specific audience by its ID. This is useful for:\n\n  - Getting audience details and configuration when you have the audience ID,\n  - Viewing audience information.\n"}
   "/v1/audiences/{audience_id}/restore": {}
   "/v1/audiences/member/{member_id}/default": {}
-  "/v1/audiences/{audience_id}/summaries/{incident_id}": {}
-  "/v1/audiences/summaries/{incident_id}": {}
+  "/v1/audiences/{audience_id}/summaries/{incident_id}":
+    get:
+      tags:
+        - "Audiences"
+      summary: "Get latest summary"
+      description: "Get the latest audience-specific summary for an incident"
+      operationId: "get_audience_summary"
+      parameters:
+        - name: "audience_id"
+          in: "path"
+          description: "Unique identifier of the audience"
+          required: true
+          schema:
+            type: "string"
+        - name: "incident_id"
+          in: "path"
+          description: "Unique identifier of the incident to summarize"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "Get the latest audience-specific summary for an incident"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/AI_Entities_IncidentSummaryEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-audience-incident-ai-summary", "scopes": ["read"], "description": "Retrieves the AI-generated summary for an incident tailored to a specific audience. This is useful for:\n\n  - Getting audience-specific incident summaries,\n  - Viewing summaries customized for different stakeholders,\n  - Understanding how incidents are communicated to different audiences.\n"}
+      x-speakeasy-name-override: getSummary
+  "/v1/audiences/summaries/{incident_id}":
+    get:
+      tags:
+        - "Audiences"
+      summary: "List audience summaries"
+      description: "List all audience summaries for an incident"
+      operationId: "list_audience_summaries"
+      parameters:
+        - name: "incident_id"
+          in: "path"
+          description: "Unique identifier of the incident to summarize"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "List all audience summaries for an incident"
+          content:
+            "application/json":
+              schema: {"$ref": "#/components/schemas/Audiences_Entities_AudienceSummariesEntity"}
+      x-speakeasy-mcp: {"disabled": false, "name": "get-incident-ai-summary", "scopes": ["read"], "description": "Retrieves the AI-generated summary for an incident. This is useful for:\n\n  - Getting a concise AI summary of an incident,\n  - Understanding incident context quickly,\n  - Reviewing automated incident summaries.\n"}
+      x-speakeasy-name-override: listSummaries
 components:
   schemas:
     "ErrorEntity":
@@ -889,6 +1230,28 @@ components:
         "description":
           type: "string"
           nullable: true
+        "functionalities":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a functionality"
+        "services":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a service"
       description: "Creates an environment for the organization"
     "EnvironmentEntryEntity":
       type: "object"
@@ -930,6 +1293,16 @@ components:
           description: "Information about known linkages to representations of services outside of FireHydrant."
           nullable: true
           items: {"$ref": "#/components/schemas/ExternalResourceEntity"}
+        "functionalities":
+          type: "array"
+          description: "Functionalities related to this environment"
+          nullable: true
+          items: {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+        "services":
+          type: "array"
+          description: "Services related to this environment"
+          nullable: true
+          items: {"$ref": "#/components/schemas/ServiceEntityLite"}
       description: "EnvironmentEntryEntity model"
     "ExternalResourceEntity":
       type: "object"
@@ -963,6 +1336,165 @@ components:
         "name":
           type: "string"
           nullable: true
+    "FunctionalityEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "labels":
+          type: "object"
+          additionalProperties: true
+          description: "An object of label key and values"
+          nullable: true
+        "active_incidents":
+          type: "array"
+          description: "List of active incident guids"
+          nullable: true
+          items:
+            type: "string"
+        "links":
+          type: "array"
+          description: "List of links attached to this functionality."
+          nullable: true
+          items: {"$ref": "#/components/schemas/LinksEntity"}
+        "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier (0-5, lower is more critical)"
+          format: "int32"
+          nullable: true
+        "alert_on_add":
+          type: "boolean"
+          nullable: true
+        "auto_add_responding_team":
+          type: "boolean"
+          nullable: true
+        "updated_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
+    "LinksEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "href_url":
+          type: "string"
+          nullable: true
+        "icon_url":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+    "TeamEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "signals_ical_url":
+          type: "string"
+          nullable: true
+        "created_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
+        "in_support_hours":
+          type: "boolean"
+          nullable: true
+        "restrict_signals_resource_management":
+          type: "boolean"
+          nullable: true
+    "AuthorEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "source":
+          type: "string"
+          nullable: true
+        "email":
+          type: "string"
+          nullable: true
+    "ServiceEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "service_tier":
+          type: "integer"
+          format: "int32"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "allowed_params":
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
+        "labels":
+          type: "object"
+          additionalProperties: true
+          description: "An object of label key and values"
+          nullable: true
+        "alert_on_add":
+          type: "boolean"
+          nullable: true
+        "auto_add_responding_team":
+          type: "boolean"
+          nullable: true
+      description: "ServiceEntityLite model"
     "EnvironmentEntryEntityPaginated":
       type: "object"
       properties:
@@ -1004,16 +1536,73 @@ components:
           format: "int32"
           nullable: true
     "update_environment":
-      required:
-        - "name"
       type: "object"
       properties:
         "name":
           type: "string"
+          nullable: true
         "description":
           type: "string"
           nullable: true
+        "functionalities":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a functionality"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given functionality from the environment"
+                nullable: true
+        "remove_remaining_functionalities":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the functionalities that are not included in the functionalities array from the environment"
+          nullable: true
+          default: false
+        "services":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a service"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given service from the environment"
+                nullable: true
+        "remove_remaining_services":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the services that are not included in the services array from the environment"
+          nullable: true
+          default: false
       description: "Update a environments attributes"
+    "ServiceEntityLitePaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/ServiceEntityLite"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "ServiceEntityLitePaginated model"
+    "FunctionalityEntityLitePaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "FunctionalityEntityLitePaginated model"
     "create_service":
       required:
         - "name"
@@ -1057,6 +1646,17 @@ components:
                 type: "string"
                 description: "If you are trying to reuse a functionality, you may set the ID to attach it to the service"
                 nullable: true
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
         "links":
           type: "array"
           description: "An array of links to associate with this service"
@@ -1187,6 +1787,11 @@ components:
           description: "List of functionalities attached to the service"
           nullable: true
           items: {"$ref": "#/components/schemas/FunctionalityEntity"}
+        "environments":
+          type: "array"
+          description: "Environments related to this service"
+          nullable: true
+          items: {"$ref": "#/components/schemas/EnvironmentEntryEntity"}
         "last_import": {"$ref": "#/components/schemas/NullableImports_ImportableResourceEntity"}
         "links":
           type: "array"
@@ -1257,54 +1862,6 @@ components:
           nullable: true
         "status":
           type: "boolean"
-          nullable: true
-    "TeamEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "signals_ical_url":
-          type: "string"
-          nullable: true
-        "created_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
-        "in_support_hours":
-          type: "boolean"
-          nullable: true
-        "restrict_signals_resource_management":
-          type: "boolean"
-          nullable: true
-    "AuthorEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "source":
-          type: "string"
-          nullable: true
-        "email":
-          type: "string"
           nullable: true
     "ServiceEntityChecklist":
       type: "object"
@@ -1415,6 +1972,11 @@ components:
           description: "Services this functionality provides"
           nullable: true
           items: {"$ref": "#/components/schemas/ServiceEntityLite"}
+        "environments":
+          type: "array"
+          description: "Environments related to this functionality"
+          nullable: true
+          items: {"$ref": "#/components/schemas/EnvironmentEntryEntity"}
         "external_resources":
           type: "array"
           description: "Information about known linkages to representations of services outside of FireHydrant."
@@ -1426,65 +1988,6 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/TeamEntityLite"}
       description: "FunctionalityEntity model"
-    "LinksEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "href_url":
-          type: "string"
-          nullable: true
-        "icon_url":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-    "ServiceEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "service_tier":
-          type: "integer"
-          format: "int32"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "allowed_params":
-          type: "array"
-          nullable: true
-          items:
-            type: "string"
-        "labels":
-          type: "object"
-          additionalProperties: true
-          description: "An object of label key and values"
-          nullable: true
-        "alert_on_add":
-          type: "boolean"
-          nullable: true
-        "auto_add_responding_team":
-          type: "boolean"
-          nullable: true
-      description: "ServiceEntityLite model"
     "Imports_ImportableResourceEntity":
       type: "object"
       properties:
@@ -1641,6 +2144,30 @@ components:
                 type: "string"
                 description: "If you are trying to create a new functionality and attach it to this service, set the summary key"
                 nullable: true
+        "remove_remaining_functionalities":
+          type: "boolean"
+          description: "If set to true, any functionalities tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the functionalities"
+          nullable: true
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given environment from the service"
+                nullable: true
+        "remove_remaining_environments":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the environments that are not included in the environments array from the service"
+          nullable: true
+          default: false
         "labels":
           type: "object"
           additionalProperties:
@@ -1698,10 +2225,6 @@ components:
         "remove_remaining_external_resources":
           type: "boolean"
           description: "If set to true, any external_resources tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the external_resources"
-          nullable: true
-        "remove_remaining_functionalities":
-          type: "boolean"
-          description: "If set to true, any functionalities tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the functionalities"
           nullable: true
         "remove_remaining_teams":
           type: "boolean"
@@ -1873,6 +2396,17 @@ components:
               "id":
                 type: "string"
                 description: "ID of a service"
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
         "labels":
           type: "object"
           additionalProperties:
@@ -1998,6 +2532,31 @@ components:
                 type: "boolean"
                 description: "Set to true if you want to remove the given service from the functionality"
                 nullable: true
+        "remove_remaining_services":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the services that are not included in the services array from the functionality"
+          nullable: true
+          default: false
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given environment from the functionality"
+                nullable: true
+        "remove_remaining_environments":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the environments that are not included in the environments array from the functionality"
+          nullable: true
+          default: false
         "links":
           type: "array"
           description: "An array of links to associate with this functionality. This will remove all links not present in the patch. Only acts if 'links' key is included in the payload."
@@ -2093,11 +2652,6 @@ components:
         "auto_add_responding_team":
           type: "boolean"
           nullable: true
-        "remove_remaining_services":
-          type: "boolean"
-          description: "Set this to true if you want to remove all of the services that are not included in the services array from the functionality"
-          nullable: true
-          default: false
       description: "Update a functionalities attributes"
     "FunctionalityWithAllServicesEntity":
       type: "object"
@@ -3165,58 +3719,6 @@ components:
         "discarded":
           type: "boolean"
           nullable: true
-    "FunctionalityEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "labels":
-          type: "object"
-          additionalProperties: true
-          description: "An object of label key and values"
-          nullable: true
-        "active_incidents":
-          type: "array"
-          description: "List of active incident guids"
-          nullable: true
-          items:
-            type: "string"
-        "links":
-          type: "array"
-          description: "List of links attached to this functionality."
-          nullable: true
-          items: {"$ref": "#/components/schemas/LinksEntity"}
-        "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
-        "service_tier":
-          type: "integer"
-          description: "Integer representing functionality tier (0-5, lower is more critical)"
-          format: "int32"
-          nullable: true
-        "alert_on_add":
-          type: "boolean"
-          nullable: true
-        "auto_add_responding_team":
-          type: "boolean"
-          nullable: true
-        "updated_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
     "SlimRunbookEntity":
       type: "object"
       properties:
@@ -3261,8 +3763,8 @@ components:
       type: "object"
       properties:
         "logic":
-          type: "string"
-          description: "JSON stringified object of key/value pairs describing the logic for applying the rule."
+          type: "object"
+          description: "An unstructured object of key/value pairs describing the logic for applying the rule."
           nullable: true
         "user_data": {"$ref": "#/components/schemas/NullableFHTypes_GenericEntity"}
     "FHTypes_GenericEntity":
@@ -7006,6 +7508,9 @@ components:
               items:
                 type: "object"
                 additionalProperties: true
+        "retrospective_field_id":
+          type: "string"
+          nullable: true
         "schema":
           type: "array"
           nullable: true
@@ -8836,7 +9341,6 @@ components:
         "is_multi":
           type: "boolean"
           nullable: true
-        "default_value": {"$ref": "#/components/schemas/NullableRunbooks_ElementDynamicSelectEntity_SelectOptionEntity"}
         "options":
           type: "array"
           nullable: true
@@ -9247,6 +9751,15 @@ components:
           type: "integer"
           format: "int32"
           nullable: true
+    "SlimRunbookEntityPaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/SlimRunbookEntity"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "SlimRunbookEntityPaginated model"
     "update_runbook":
       type: "object"
       properties:
@@ -10723,55 +11236,6 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
     "Retrospectives_TemplateEntity_ReportElementEntity":
-      type: "object"
-      properties:
-        "type":
-          type: "string"
-          nullable: true
-        "data":
-          type: "string"
-          nullable: true
-        "id":
-          type: "string"
-          nullable: true
-        "label":
-          type: "string"
-          nullable: true
-        "content":
-          type: "object"
-          nullable: true
-    "Retrospectives_ReportTemplateEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "is_default":
-          type: "boolean"
-          nullable: true
-        "elements":
-          type: "array"
-          nullable: true
-          items: {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
-        "retrospective_template_id":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-      description: "Retrospectives_ReportTemplateEntity model"
-    "Retrospectives_ReportTemplateEntity_ElementEntity":
       type: "object"
       properties:
         "type":
@@ -13049,6 +13513,26 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ExternalResourceEntity"}
+    "NullableFunctionalityEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+    "NullableLinksEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/LinksEntity"}
+    "NullableTeamEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/TeamEntityLite"}
+    "NullableAuthorEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/AuthorEntity"}
+    "NullableServiceEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/ServiceEntityLite"}
     "NullableEnvironmentEntryEntityPaginated":
       nullable: true
       allOf:
@@ -13061,6 +13545,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_environment"}
+    "NullableServiceEntityLitePaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/ServiceEntityLitePaginated"}
+    "NullableFunctionalityEntityLitePaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/FunctionalityEntityLitePaginated"}
     "Nullablecreate_service":
       nullable: true
       allOf:
@@ -13077,14 +13569,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ChecklistCheckEntity"}
-    "NullableTeamEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/TeamEntityLite"}
-    "NullableAuthorEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/AuthorEntity"}
     "NullableServiceEntityChecklist":
       nullable: true
       allOf:
@@ -13093,14 +13577,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/FunctionalityEntity"}
-    "NullableLinksEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/LinksEntity"}
-    "NullableServiceEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/ServiceEntityLite"}
     "NullableImports_ImportableResourceEntity":
       nullable: true
       allOf:
@@ -13309,10 +13785,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ScheduleEntity"}
-    "NullableFunctionalityEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/FunctionalityEntityLite"}
     "NullableSlimRunbookEntity":
       nullable: true
       allOf:
@@ -14153,6 +14625,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/EmptyVotesEntity"}
+    "NullableSlimRunbookEntityPaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/SlimRunbookEntityPaginated"}
     "Nullableupdate_runbook":
       nullable: true
       allOf:
@@ -14425,14 +14901,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
-    "NullableRetrospectives_ReportTemplateEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity"}
-    "NullableRetrospectives_ReportTemplateEntity_ElementEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
     "NullableAlerts_AlertEntityPaginated":
       nullable: true
       allOf:
@@ -14793,6 +15261,15 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Audiences_Entities_AudienceSummariesEntity"}
+    "Audiences_Entities_AudienceEntityPaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/Audiences_Entities_AudienceEntity"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "Audiences_Entities_AudienceEntityPaginated model"
   securitySchemes:
     "api_key":
       type: "apiKey"

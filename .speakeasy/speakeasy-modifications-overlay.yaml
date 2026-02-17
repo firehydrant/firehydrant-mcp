@@ -1,0 +1,91 @@
+overlay: 1.0.0
+x-speakeasy-jsonpath: rfc9535
+info:
+  title: Speakeasy Modifications
+  version: 0.0.2
+  x-speakeasy-metadata:
+    after: ""
+    before: ""
+    type: speakeasy-modifications
+actions:
+  - target: $["paths"]["/v1/teams/{team_id}/on_call_schedules/{schedule_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getTeamOnCallSchedule
+    x-speakeasy-metadata:
+      after: sdk.signals.getTeamOnCallSchedule()
+      before: sdk.Signals.get_team_on_call_schedule()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/audiences/{audience_id}/summaries/{incident_id}"]["get"]
+    update:
+      x-speakeasy-name-override: getSummary
+    x-speakeasy-metadata:
+      after: sdk.audiences.getSummary()
+      before: sdk.Audiences.get_audience_summary()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/incidents"]["post"]
+    update:
+      x-speakeasy-name-override: create
+    x-speakeasy-metadata:
+      after: sdk.incidents.create()
+      before: sdk.Incidents.create_incident()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/alerts"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.alerts.list()
+      before: sdk.Alerts.list_alerts()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/incidents"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.incidents.list()
+      before: sdk.Incidents.list_incidents()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/audiences/summaries/{incident_id}"]["get"]
+    update:
+      x-speakeasy-name-override: listSummaries
+    x-speakeasy-metadata:
+      after: sdk.audiences.listSummaries()
+      before: sdk.Audiences.list_audience_summaries()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/incidents/{incident_id}/retrospectives/{retrospective_id}/fields/{field_id}"]["patch"]
+    update:
+      x-speakeasy-name-override: updateField
+    x-speakeasy-metadata:
+      after: sdk.retrospectives.updateField()
+      before: sdk.Retrospectives.update_incident_retrospective_field()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/incidents/{incident_id}/retrospectives"]["get"]
+    update:
+      x-speakeasy-name-override: list
+    x-speakeasy-metadata:
+      after: sdk.retrospectives.list()
+      before: sdk.Retrospectives.list_incident_retrospectives()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
+  - target: $["paths"]["/v1/teams/{team_id}/on_call_schedules"]["get"]
+    update:
+      x-speakeasy-name-override: listTeamOnCallSchedules
+    x-speakeasy-metadata:
+      after: sdk.signals.listTeamOnCallSchedules()
+      before: sdk.Signals.list_team_on_call_schedules()
+      created_at: 1769716230480
+      reviewed_at: 1769716258124
+      type: method-name
