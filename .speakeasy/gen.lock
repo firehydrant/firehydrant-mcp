@@ -1,18 +1,18 @@
 lockVersion: 2.0.0
 id: 0dd544ca-3933-4c41-a5b5-b9a57ec94099
 management:
-  docChecksum: 0c35c85bc50ae20fb6833c3585119722
+  docChecksum: 1cb9905a1a9dc255d522dd76e138d6e4
   docVersion: 0.0.1
   speakeasyVersion: 1.680.3
   generationVersion: 2.788.5
-  releaseVersion: 0.0.3
-  configChecksum: 003d1c6939e186ddf78f3ab04258f1f5
+  releaseVersion: 0.0.4
+  configChecksum: f22965a325ae0de61faf49171b653967
   repoURL: https://github.com/firehydrant/firehydrant-mcp.git
   published: true
 persistentEdits:
-  generation_id: 89cf8e9d-8575-494f-9884-9ad69a607f17
-  pristine_commit_hash: a54076ddd41673cbdb7317dd2955ec6714bcc5ee
-  pristine_tree_hash: 8f0743d322a002b39763f2d17f134ba48b3ef13c
+  generation_id: 6f474945-32be-420f-9654-0ac6aa2414f6
+  pristine_commit_hash: 3e60ecc3aa6de57ff49efd59893dac0d43c09eb6
+  pristine_tree_hash: 2479d79d01887545130a415f2e69310ca9448fe6
 features:
   mcp-typescript:
     additionalDependencies: 0.1.0
@@ -47,12 +47,12 @@ trackedFiles:
     pristine_git_object: 4f9e60a9462fc4def738d60c3aaadf8232ef185f
   manifest.json:
     id: ca642a226869
-    last_write_checksum: sha1:54edfb0a50375ac6bba7ae1a92c113616d30e149
-    pristine_git_object: c21c2b0fdb4201cac134b51d108fb4e7ddf7bc53
+    last_write_checksum: sha1:9988bff8a6df95663f984312f6605a4509065882
+    pristine_git_object: d0666ba31dfe478eb3a93d2062d9bda785f468d4
   package.json:
     id: 7030d0b2f71b
-    last_write_checksum: sha1:52e0f16e947bf179370e256ea99f5b8c9c900094
-    pristine_git_object: e441a2a197142ddc47acc852f7049ddc0e75f241
+    last_write_checksum: sha1:e7c53da317ccefa3a9119f97ae0a2428105b27e4
+    pristine_git_object: 226acde2d7ba7f1b5bd96ca162853cb50e6f6f29
   src/core.ts:
     id: f431fdbcd144
     last_write_checksum: sha1:06da1e4774afba1db41952aec33c2dc0e872b809
@@ -91,8 +91,8 @@ trackedFiles:
     pristine_git_object: d4bd8b341290e7a828a171d840bd0b0fff7c7cd7
   src/lib/config.ts:
     id: 320761608fb3
-    last_write_checksum: sha1:570c758d353bd25732d0d5ada8381166999bea29
-    pristine_git_object: a307afaa9dfc0f21ac3a15315edee682fbc919c5
+    last_write_checksum: sha1:0efa5e2c7711d391555563966f8e895b5912ef1d
+    pristine_git_object: 0ddbd9f937df3bdf9d51700392da2065d577373c
   src/lib/dlv.ts:
     id: b1988214835a
     last_write_checksum: sha1:1dd3e3fbb4550c4bf31f5ef997faff355d6f3250
@@ -175,8 +175,8 @@ trackedFiles:
     pristine_git_object: 78394e413ea070824f370b829eaf1416883e6680
   src/mcp-server/mcp-server.ts:
     id: aabbc4ab07c1
-    last_write_checksum: sha1:747bc439428a5043afaf45fc868397009f2db901
-    pristine_git_object: b43a6af4c3e485922343af8664a410a5483b62e7
+    last_write_checksum: sha1:32726c53e64b2efe00deed4d21c0d828a22afc6a
+    pristine_git_object: 024f2624cf21d70d49595ebbd69233ff70481b43
   src/mcp-server/prompts.ts:
     id: 26f3d73cbf31
     last_write_checksum: sha1:2ce2eb360aa2b2e77079bc2b707dbb649efbc87c
@@ -191,8 +191,8 @@ trackedFiles:
     pristine_git_object: cb8330e4ae705d283de6ab337eefd3b4b8191fca
   src/mcp-server/server.ts:
     id: 2784dd48e82a
-    last_write_checksum: sha1:02d877d0e24d1253f55e0c966d145ea3b6cfc768
-    pristine_git_object: 2fb11a9f7742c72eb56ebafc24fe59ef81f600b4
+    last_write_checksum: sha1:f2e964032457fed292af8ad8fecd7c1f766f5642
+    pristine_git_object: d8e180d9030dbfbb1997629b8a913afeb1a3c041
   src/mcp-server/shared.ts:
     id: 074e80d4be1e
     last_write_checksum: sha1:19c9034032819a14f15c430de4350c8aba99d725
@@ -323,8 +323,8 @@ trackedFiles:
     pristine_git_object: 9eba91d0bff124cd3cb623b1b8f3bcf4a03a4371
   src/models/incidentsretrospectivefieldentity.ts:
     id: 67543dc2d961
-    last_write_checksum: sha1:994dd003613e689564a88bc4002a5ad539f8d462
-    pristine_git_object: 2960e4d2e8f28fcce90f3763209b2cdd14e5d4b1
+    last_write_checksum: sha1:bd293868b7b3f96c530e2ff107768a8d2c1a90fd
+    pristine_git_object: b76405a43e0103c6f91ea85978994c8b786320fe
   src/models/incidentsroleassignmententity.ts:
     id: d52a1d87540d
     last_write_checksum: sha1:f7fb643bad8dfc11117980f1af9a4a1b6d8903b3
@@ -487,6 +487,10 @@ trackedFiles:
     pristine_git_object: 0ca48942a1b9cd923d614985dfb81f0dc7e1d298
 examplesVersion: 1.0.2
 generatedTests: {}
+releaseNotes: |
+  ## Mcp-typescript SDK Changes:
+  * `FireHydrant.Retrospectives.list_incident_retrospectives()`:  `response.data.[].fields.[].retrospective_field_id` **Added**
+  * `FireHydrant.Retrospectives.update_incident_retrospective_field()`:  `response.retrospective_field_id` **Added**
 generatedFiles:
   - .dxtignore
   - .gitattributes

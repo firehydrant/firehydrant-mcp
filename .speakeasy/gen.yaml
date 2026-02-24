@@ -27,7 +27,7 @@ generation:
     generateNewTests: false
     skipResponseBodyAssertions: false
 mcp-typescript:
-  version: 0.0.3
+  version: 0.0.4
   additionalDependencies:
     dependencies:
       '@tiptap/core': ^3.0.7
