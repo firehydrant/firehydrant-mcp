@@ -64,9 +64,12 @@ paths:
   "/v1/ping": {}
   "/v1/environments": {}
   "/v1/environments/{environment_id}": {}
+  "/v1/environments/{environment_id}/services": {}
+  "/v1/environments/{environment_id}/functionalities": {}
   "/v1/services": {}
   "/v1/services/service_links": {}
   "/v1/services/{service_id}": {}
+  "/v1/services/{service_id}/environments": {}
   "/v1/services/{service_id}/dependencies": {}
   "/v1/services/{service_id}/available_upstream_dependencies": {}
   "/v1/services/{service_id}/available_downstream_dependencies": {}
@@ -76,6 +79,7 @@ paths:
   "/v1/service_dependencies/{service_dependency_id}": {}
   "/v1/functionalities": {}
   "/v1/functionalities/{functionality_id}": {}
+  "/v1/functionalities/{functionality_id}/environments": {}
   "/v1/functionalities/{functionality_id}/services": {}
   "/v1/teams": {}
   "/v1/teams/{team_id}": {}
@@ -590,7 +594,6 @@ paths:
   "/v1/post_mortems/questions/{question_id}": {}
   "/v1/retrospective_templates": {}
   "/v1/retrospective_templates/{retrospective_template_id}": {}
-  "/v1/retrospective_report_templates/{id}": {}
   "/v1/alerts":
     get:
       tags:
@@ -889,6 +892,28 @@ components:
         "description":
           type: "string"
           nullable: true
+        "functionalities":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a functionality"
+        "services":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a service"
       description: "Creates an environment for the organization"
     "EnvironmentEntryEntity":
       type: "object"
@@ -930,6 +955,16 @@ components:
           description: "Information about known linkages to representations of services outside of FireHydrant."
           nullable: true
           items: {"$ref": "#/components/schemas/ExternalResourceEntity"}
+        "functionalities":
+          type: "array"
+          description: "Functionalities related to this environment"
+          nullable: true
+          items: {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+        "services":
+          type: "array"
+          description: "Services related to this environment"
+          nullable: true
+          items: {"$ref": "#/components/schemas/ServiceEntityLite"}
       description: "EnvironmentEntryEntity model"
     "ExternalResourceEntity":
       type: "object"
@@ -963,6 +998,165 @@ components:
         "name":
           type: "string"
           nullable: true
+    "FunctionalityEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "labels":
+          type: "object"
+          additionalProperties: true
+          description: "An object of label key and values"
+          nullable: true
+        "active_incidents":
+          type: "array"
+          description: "List of active incident guids"
+          nullable: true
+          items:
+            type: "string"
+        "links":
+          type: "array"
+          description: "List of links attached to this functionality."
+          nullable: true
+          items: {"$ref": "#/components/schemas/LinksEntity"}
+        "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
+        "service_tier":
+          type: "integer"
+          description: "Integer representing functionality tier (0-5, lower is more critical)"
+          format: "int32"
+          nullable: true
+        "alert_on_add":
+          type: "boolean"
+          nullable: true
+        "auto_add_responding_team":
+          type: "boolean"
+          nullable: true
+        "updated_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
+    "LinksEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "href_url":
+          type: "string"
+          nullable: true
+        "icon_url":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+    "TeamEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "signals_ical_url":
+          type: "string"
+          nullable: true
+        "created_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
+        "in_support_hours":
+          type: "boolean"
+          nullable: true
+        "restrict_signals_resource_management":
+          type: "boolean"
+          nullable: true
+    "AuthorEntity":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "source":
+          type: "string"
+          nullable: true
+        "email":
+          type: "string"
+          nullable: true
+    "ServiceEntityLite":
+      type: "object"
+      properties:
+        "id":
+          type: "string"
+          nullable: true
+        "name":
+          type: "string"
+          nullable: true
+        "description":
+          type: "string"
+          nullable: true
+        "slug":
+          type: "string"
+          nullable: true
+        "service_tier":
+          type: "integer"
+          format: "int32"
+          nullable: true
+        "created_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "updated_at":
+          type: "string"
+          format: "date-time"
+          nullable: true
+        "allowed_params":
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
+        "labels":
+          type: "object"
+          additionalProperties: true
+          description: "An object of label key and values"
+          nullable: true
+        "alert_on_add":
+          type: "boolean"
+          nullable: true
+        "auto_add_responding_team":
+          type: "boolean"
+          nullable: true
+      description: "ServiceEntityLite model"
     "EnvironmentEntryEntityPaginated":
       type: "object"
       properties:
@@ -1004,16 +1198,73 @@ components:
           format: "int32"
           nullable: true
     "update_environment":
-      required:
-        - "name"
       type: "object"
       properties:
         "name":
           type: "string"
+          nullable: true
         "description":
           type: "string"
           nullable: true
+        "functionalities":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a functionality"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given functionality from the environment"
+                nullable: true
+        "remove_remaining_functionalities":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the functionalities that are not included in the functionalities array from the environment"
+          nullable: true
+          default: false
+        "services":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of a service"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given service from the environment"
+                nullable: true
+        "remove_remaining_services":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the services that are not included in the services array from the environment"
+          nullable: true
+          default: false
       description: "Update a environments attributes"
+    "ServiceEntityLitePaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/ServiceEntityLite"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "ServiceEntityLitePaginated model"
+    "FunctionalityEntityLitePaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "FunctionalityEntityLitePaginated model"
     "create_service":
       required:
         - "name"
@@ -1057,6 +1308,17 @@ components:
                 type: "string"
                 description: "If you are trying to reuse a functionality, you may set the ID to attach it to the service"
                 nullable: true
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
         "links":
           type: "array"
           description: "An array of links to associate with this service"
@@ -1187,6 +1449,11 @@ components:
           description: "List of functionalities attached to the service"
           nullable: true
           items: {"$ref": "#/components/schemas/FunctionalityEntity"}
+        "environments":
+          type: "array"
+          description: "Environments related to this service"
+          nullable: true
+          items: {"$ref": "#/components/schemas/EnvironmentEntryEntity"}
         "last_import": {"$ref": "#/components/schemas/NullableImports_ImportableResourceEntity"}
         "links":
           type: "array"
@@ -1257,54 +1524,6 @@ components:
           nullable: true
         "status":
           type: "boolean"
-          nullable: true
-    "TeamEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "signals_ical_url":
-          type: "string"
-          nullable: true
-        "created_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
-        "in_support_hours":
-          type: "boolean"
-          nullable: true
-        "restrict_signals_resource_management":
-          type: "boolean"
-          nullable: true
-    "AuthorEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "source":
-          type: "string"
-          nullable: true
-        "email":
-          type: "string"
           nullable: true
     "ServiceEntityChecklist":
       type: "object"
@@ -1415,6 +1634,11 @@ components:
           description: "Services this functionality provides"
           nullable: true
           items: {"$ref": "#/components/schemas/ServiceEntityLite"}
+        "environments":
+          type: "array"
+          description: "Environments related to this functionality"
+          nullable: true
+          items: {"$ref": "#/components/schemas/EnvironmentEntryEntity"}
         "external_resources":
           type: "array"
           description: "Information about known linkages to representations of services outside of FireHydrant."
@@ -1426,65 +1650,6 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/TeamEntityLite"}
       description: "FunctionalityEntity model"
-    "LinksEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "href_url":
-          type: "string"
-          nullable: true
-        "icon_url":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-    "ServiceEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "service_tier":
-          type: "integer"
-          format: "int32"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "allowed_params":
-          type: "array"
-          nullable: true
-          items:
-            type: "string"
-        "labels":
-          type: "object"
-          additionalProperties: true
-          description: "An object of label key and values"
-          nullable: true
-        "alert_on_add":
-          type: "boolean"
-          nullable: true
-        "auto_add_responding_team":
-          type: "boolean"
-          nullable: true
-      description: "ServiceEntityLite model"
     "Imports_ImportableResourceEntity":
       type: "object"
       properties:
@@ -1641,6 +1806,30 @@ components:
                 type: "string"
                 description: "If you are trying to create a new functionality and attach it to this service, set the summary key"
                 nullable: true
+        "remove_remaining_functionalities":
+          type: "boolean"
+          description: "If set to true, any functionalities tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the functionalities"
+          nullable: true
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given environment from the service"
+                nullable: true
+        "remove_remaining_environments":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the environments that are not included in the environments array from the service"
+          nullable: true
+          default: false
         "labels":
           type: "object"
           additionalProperties:
@@ -1698,10 +1887,6 @@ components:
         "remove_remaining_external_resources":
           type: "boolean"
           description: "If set to true, any external_resources tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the external_resources"
-          nullable: true
-        "remove_remaining_functionalities":
-          type: "boolean"
-          description: "If set to true, any functionalities tagged on the service that are not included in the given array will be removed. Set this to true if you want to do a replacement operation for the functionalities"
           nullable: true
         "remove_remaining_teams":
           type: "boolean"
@@ -1873,6 +2058,17 @@ components:
               "id":
                 type: "string"
                 description: "ID of a service"
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
         "labels":
           type: "object"
           additionalProperties:
@@ -1998,6 +2194,31 @@ components:
                 type: "boolean"
                 description: "Set to true if you want to remove the given service from the functionality"
                 nullable: true
+        "remove_remaining_services":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the services that are not included in the services array from the functionality"
+          nullable: true
+          default: false
+        "environments":
+          type: "array"
+          nullable: true
+          items:
+            required:
+              - "id"
+            type: "object"
+            properties:
+              "id":
+                type: "string"
+                description: "ID of an environment"
+              "remove":
+                type: "boolean"
+                description: "Set to true if you want to remove the given environment from the functionality"
+                nullable: true
+        "remove_remaining_environments":
+          type: "boolean"
+          description: "Set this to true if you want to remove all of the environments that are not included in the environments array from the functionality"
+          nullable: true
+          default: false
         "links":
           type: "array"
           description: "An array of links to associate with this functionality. This will remove all links not present in the patch. Only acts if 'links' key is included in the payload."
@@ -2093,11 +2314,6 @@ components:
         "auto_add_responding_team":
           type: "boolean"
           nullable: true
-        "remove_remaining_services":
-          type: "boolean"
-          description: "Set this to true if you want to remove all of the services that are not included in the services array from the functionality"
-          nullable: true
-          default: false
       description: "Update a functionalities attributes"
     "FunctionalityWithAllServicesEntity":
       type: "object"
@@ -3165,58 +3381,6 @@ components:
         "discarded":
           type: "boolean"
           nullable: true
-    "FunctionalityEntityLite":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "slug":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "labels":
-          type: "object"
-          additionalProperties: true
-          description: "An object of label key and values"
-          nullable: true
-        "active_incidents":
-          type: "array"
-          description: "List of active incident guids"
-          nullable: true
-          items:
-            type: "string"
-        "links":
-          type: "array"
-          description: "List of links attached to this functionality."
-          nullable: true
-          items: {"$ref": "#/components/schemas/LinksEntity"}
-        "owner": {"$ref": "#/components/schemas/NullableTeamEntityLite"}
-        "service_tier":
-          type: "integer"
-          description: "Integer representing functionality tier (0-5, lower is more critical)"
-          format: "int32"
-          nullable: true
-        "alert_on_add":
-          type: "boolean"
-          nullable: true
-        "auto_add_responding_team":
-          type: "boolean"
-          nullable: true
-        "updated_by": {"$ref": "#/components/schemas/NullableAuthorEntity"}
     "SlimRunbookEntity":
       type: "object"
       properties:
@@ -3261,8 +3425,8 @@ components:
       type: "object"
       properties:
         "logic":
-          type: "string"
-          description: "JSON stringified object of key/value pairs describing the logic for applying the rule."
+          type: "object"
+          description: "An unstructured object of key/value pairs describing the logic for applying the rule."
           nullable: true
         "user_data": {"$ref": "#/components/schemas/NullableFHTypes_GenericEntity"}
     "FHTypes_GenericEntity":
@@ -7006,6 +7170,9 @@ components:
               items:
                 type: "object"
                 additionalProperties: true
+        "retrospective_field_id":
+          type: "string"
+          nullable: true
         "schema":
           type: "array"
           nullable: true
@@ -8836,7 +9003,6 @@ components:
         "is_multi":
           type: "boolean"
           nullable: true
-        "default_value": {"$ref": "#/components/schemas/NullableRunbooks_ElementDynamicSelectEntity_SelectOptionEntity"}
         "options":
           type: "array"
           nullable: true
@@ -9247,6 +9413,15 @@ components:
           type: "integer"
           format: "int32"
           nullable: true
+    "SlimRunbookEntityPaginated":
+      type: "object"
+      properties:
+        "data":
+          type: "array"
+          nullable: true
+          items: {"$ref": "#/components/schemas/SlimRunbookEntity"}
+        "pagination": {"$ref": "#/components/schemas/NullablePaginationEntity"}
+      description: "SlimRunbookEntityPaginated model"
     "update_runbook":
       type: "object"
       properties:
@@ -10723,55 +10898,6 @@ components:
           nullable: true
           items: {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
     "Retrospectives_TemplateEntity_ReportElementEntity":
-      type: "object"
-      properties:
-        "type":
-          type: "string"
-          nullable: true
-        "data":
-          type: "string"
-          nullable: true
-        "id":
-          type: "string"
-          nullable: true
-        "label":
-          type: "string"
-          nullable: true
-        "content":
-          type: "object"
-          nullable: true
-    "Retrospectives_ReportTemplateEntity":
-      type: "object"
-      properties:
-        "id":
-          type: "string"
-          nullable: true
-        "name":
-          type: "string"
-          nullable: true
-        "description":
-          type: "string"
-          nullable: true
-        "is_default":
-          type: "boolean"
-          nullable: true
-        "elements":
-          type: "array"
-          nullable: true
-          items: {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
-        "retrospective_template_id":
-          type: "string"
-          nullable: true
-        "created_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-        "updated_at":
-          type: "string"
-          format: "date-time"
-          nullable: true
-      description: "Retrospectives_ReportTemplateEntity model"
-    "Retrospectives_ReportTemplateEntity_ElementEntity":
       type: "object"
       properties:
         "type":
@@ -13049,6 +13175,26 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ExternalResourceEntity"}
+    "NullableFunctionalityEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/FunctionalityEntityLite"}
+    "NullableLinksEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/LinksEntity"}
+    "NullableTeamEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/TeamEntityLite"}
+    "NullableAuthorEntity":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/AuthorEntity"}
+    "NullableServiceEntityLite":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/ServiceEntityLite"}
     "NullableEnvironmentEntryEntityPaginated":
       nullable: true
       allOf:
@@ -13061,6 +13207,14 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/update_environment"}
+    "NullableServiceEntityLitePaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/ServiceEntityLitePaginated"}
+    "NullableFunctionalityEntityLitePaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/FunctionalityEntityLitePaginated"}
     "Nullablecreate_service":
       nullable: true
       allOf:
@@ -13077,14 +13231,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ChecklistCheckEntity"}
-    "NullableTeamEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/TeamEntityLite"}
-    "NullableAuthorEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/AuthorEntity"}
     "NullableServiceEntityChecklist":
       nullable: true
       allOf:
@@ -13093,14 +13239,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/FunctionalityEntity"}
-    "NullableLinksEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/LinksEntity"}
-    "NullableServiceEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/ServiceEntityLite"}
     "NullableImports_ImportableResourceEntity":
       nullable: true
       allOf:
@@ -13309,10 +13447,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/ScheduleEntity"}
-    "NullableFunctionalityEntityLite":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/FunctionalityEntityLite"}
     "NullableSlimRunbookEntity":
       nullable: true
       allOf:
@@ -14153,6 +14287,10 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/EmptyVotesEntity"}
+    "NullableSlimRunbookEntityPaginated":
+      nullable: true
+      allOf:
+        - {"$ref": "#/components/schemas/SlimRunbookEntityPaginated"}
     "Nullableupdate_runbook":
       nullable: true
       allOf:
@@ -14425,14 +14563,6 @@ components:
       nullable: true
       allOf:
         - {"$ref": "#/components/schemas/Retrospectives_TemplateEntity_ReportElementEntity"}
-    "NullableRetrospectives_ReportTemplateEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity"}
-    "NullableRetrospectives_ReportTemplateEntity_ElementEntity":
-      nullable: true
-      allOf:
-        - {"$ref": "#/components/schemas/Retrospectives_ReportTemplateEntity_ElementEntity"}
     "NullableAlerts_AlertEntityPaginated":
       nullable: true
       allOf:

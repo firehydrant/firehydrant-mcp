@@ -53,6 +53,7 @@ export type IncidentsRetrospectiveFieldEntity = {
   permissible_values?: Array<string> | null | undefined;
   is_required?: boolean | null | undefined;
   value?: number | string | Array<{ [k: string]: any }> | null | undefined;
+  retrospective_field_id?: string | null | undefined;
   schema?: Array<Schema> | null | undefined;
   required_at_milestone_id?: string | null | undefined;
 };
@@ -66,6 +67,7 @@ export const IncidentsRetrospectiveFieldEntity$zodSchema: z.ZodType<
   label: z.string().nullable().optional(),
   permissible_values: z.array(z.string()).nullable().optional(),
   required_at_milestone_id: z.string().nullable().optional(),
+  retrospective_field_id: z.string().nullable().optional(),
   schema: z.array(z.lazy(() => Schema$zodSchema)).nullable().optional(),
   type: IncidentsRetrospectiveFieldEntityType$zodSchema.nullable().optional(),
   value: z.union([
